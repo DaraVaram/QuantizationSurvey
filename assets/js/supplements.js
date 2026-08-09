@@ -1,5 +1,5 @@
 /* =========================================================================
-   supplements.js — progressive interactivity for the TMLR Beyond-PDF page.
+   supplements.js — table interactivity + deployment-landscape explorer.
    The static page is complete and word-exact without this file.
    ========================================================================= */
 (function () {
@@ -7,40 +7,170 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* ---------- sortable paper tables (non-destructive) ---------- */
+  /* =======================================================================
+     TABLE TOOLKIT — search, filter chips, sorting (rowspan-aware), reset
+     ======================================================================= */
+  function cellText(td) {
+    return td ? td.textContent.replace(/\s+/g, " ").trim() : "";
+  }
   function cellVal(td) {
-    var t = td.textContent.trim();
+    var t = cellText(td);
     var m = t.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : t.toLowerCase();
   }
-  $$("table.ptable[data-sortable]").forEach(function (tbl) {
-    // skip tables with rowspans (family-grouped) — sorting would break groups
-    if (tbl.querySelector("td[rowspan]")) return;
-    var ths = $$("thead th", tbl);
+
+  function enhanceTable(tid, opts) {
+    var wrap = $("#" + tid);
+    if (!wrap) return;
+    var table = wrap.querySelector("table");
+    var tbody = table.tBodies[0];
+    var originalHTML = tbody.innerHTML;
+    var flattened = !table.querySelector("td[rowspan]");
+    var state = { q: "", chip: "all", sorted: false };
+
+    // ---- toolbar ----
+    var bar = document.createElement("div");
+    bar.className = "tbl-toolbar";
+    var chipsHtml = "";
+    if (opts.chips) {
+      chipsHtml = '<span class="chip active" data-c="all">All</span>' +
+        opts.chips.map(function (c) { return '<span class="chip" data-c="' + c.key + '">' + c.label + "</span>"; }).join("");
+    }
+    bar.innerHTML = chipsHtml +
+      '<input type="search" placeholder="Search this table&#8230;" aria-label="Search table">' +
+      '<span class="treset" title="Restore original order and filters">&#8635; reset</span>' +
+      '<span class="tcount"></span>';
+    wrap.insertBefore(bar, wrap.firstChild);
+    var input = bar.querySelector("input"), count = bar.querySelector(".tcount");
+
+    // ---- flatten rowspan groups (needed before any sort/filter) ----
+    function flatten() {
+      if (flattened) return;
+      var current = "";
+      $$("tr", tbody).forEach(function (tr) {
+        var first = tr.cells[0];
+        if (first && first.hasAttribute("rowspan")) {
+          current = cellText(first);
+          first.removeAttribute("rowspan");
+        } else {
+          var td = document.createElement("td");
+          td.className = "fam";
+          td.textContent = current;
+          tr.insertBefore(td, tr.firstChild);
+        }
+        tr.classList.remove("rule");
+      });
+      flattened = true;
+    }
+
+    // ---- filtering ----
+    function apply() {
+      var rows = $$("tr", tbody), shown = 0;
+      rows.forEach(function (tr) {
+        var okChip = true;
+        if (opts.chips && state.chip !== "all") {
+          okChip = opts.match(tr, state.chip);
+        }
+        var okQ = true;
+        if (state.q) {
+          okQ = tr.textContent.toLowerCase().indexOf(state.q) !== -1;
+        }
+        var show = okChip && okQ;
+        tr.style.display = show ? "" : "none";
+        if (show) shown++;
+      });
+      count.textContent = shown + " / " + rows.length + " rows";
+    }
+
+    bar.addEventListener("click", function (e) {
+      var chip = e.target.closest ? e.target.closest(".chip") : null;
+      if (chip) {
+        if (!flattened) { flatten(); }
+        $$(".chip", bar).forEach(function (c) { c.classList.remove("active"); });
+        chip.classList.add("active");
+        state.chip = chip.getAttribute("data-c");
+        apply();
+        return;
+      }
+      if (e.target.classList.contains("treset")) {
+        tbody.innerHTML = originalHTML;
+        flattened = !table.querySelector("td[rowspan]");
+        state = { q: "", chip: "all", sorted: false };
+        input.value = "";
+        $$(".chip", bar).forEach(function (c) { c.classList.toggle("active", c.getAttribute("data-c") === "all"); });
+        $$("th.sortable", table).forEach(function (th) {
+          var i = th.querySelector(".sort-ind"); if (i) i.innerHTML = " ⇅";
+        });
+        apply();
+      }
+    });
+    input.addEventListener("input", function () {
+      if (!flattened) flatten();
+      state.q = input.value.trim().toLowerCase();
+      apply();
+    });
+
+    // ---- sorting ----
+    var ths = $$("thead th", table);
     ths.forEach(function (th, ci) {
       th.classList.add("sortable");
       var ind = document.createElement("span");
-      ind.className = "sort-ind"; ind.innerHTML = " &#8645;";
+      ind.className = "sort-ind";
+      ind.innerHTML = " ⇅";
       th.appendChild(ind);
       var dir = 0;
       th.addEventListener("click", function () {
+        if (!flattened) flatten();
         dir = dir === 1 ? -1 : 1;
-        ths.forEach(function (o) { if (o !== th) { var i2 = o.querySelector(".sort-ind"); if (i2) i2.innerHTML = " &#8645;"; } });
-        ind.innerHTML = dir === 1 ? " &#9650;" : " &#9660;";
-        var tb = tbl.tBodies[0];
-        var rows = $$("tr", tb);
+        ths.forEach(function (o) {
+          if (o !== th) { var i2 = o.querySelector(".sort-ind"); if (i2) i2.innerHTML = " ⇅"; }
+        });
+        ind.innerHTML = dir === 1 ? " ▲" : " ▼";
+        var rows = $$("tr", tbody);
         rows.sort(function (a, b) {
           var x = cellVal(a.cells[ci]), y = cellVal(b.cells[ci]);
           if (typeof x === "number" && typeof y === "number") return (x - y) * dir;
           x = String(x); y = String(y);
           return x < y ? -dir : x > y ? dir : 0;
         });
-        rows.forEach(function (r) { r.classList.remove("rule"); tb.appendChild(r); });
+        rows.forEach(function (r) { r.classList.remove("rule"); tbody.appendChild(r); });
       });
     });
-  });
+    apply();
+  }
 
-  /* ---------- deployment landscape scatter ---------- */
+  // Table 1 — scope matrix: filter by surveyed dimension (✓ present in column)
+  enhanceTable("table-1", {
+    chips: [
+      { key: "2", label: "Primary" }, { key: "3", label: "Advanced" }, { key: "4", label: "Numeric" },
+      { key: "5", label: "Hardware" }, { key: "6", label: "Software" }, { key: "7", label: "Applications" }
+    ],
+    match: function (tr, key) {
+      var td = tr.cells[+key];
+      return td && td.querySelector("span") !== null;
+    }
+  });
+  // Table 2 — platforms: family filter (rowspan flattening on demand)
+  enhanceTable("table-2", {
+    chips: [
+      { key: "ARM-based", label: "ARM" }, { key: "RISC-V-based", label: "RISC-V" },
+      { key: "NPU-Integrated", label: "NPU" }
+    ],
+    match: function (tr, key) { return cellText(tr.cells[0]) === key; }
+  });
+  // Tables 4–6 — deployments: quantization-path filter
+  ["table-4", "table-5", "table-6"].forEach(function (tid) {
+    enhanceTable(tid, {
+      chips: [{ key: "PTQ", label: "PTQ" }, { key: "QAT", label: "QAT" }],
+      match: function (tr, key) { return cellText(tr.cells[2]).indexOf(key) !== -1; }
+    });
+  });
+  // Table 3 — three long-prose rows: search only
+  enhanceTable("table-3", {});
+
+  /* =======================================================================
+     Deployment landscape scatter (Tables 4–6)
+     ======================================================================= */
   var D = window.DATA;
   var host = $("#scatter");
   if (D && host) {
@@ -57,23 +187,23 @@
     var famName = { arm: "ARM", risc: "RISC-V", npu: "NPU-integrated" };
     var xKey = "mem", yKey = "lat", filt = "all", tip = null;
 
-    function ensureTip() {
+    var ensureTip = function () {
       if (!tip) { tip = document.createElement("div"); tip.className = "viz-tip"; document.body.appendChild(tip); }
       return tip;
-    }
-    function draw() {
+    };
+    var draw = function () {
       var W = 720, H = 400, m = { l: 60, r: 18, t: 14, b: 48 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
       var ax = AX[xKey], ay = AX[yKey];
       var pts = all.filter(function (r) {
         return (filt === "all" || r.fam === filt) && ax.f(r) != null && ay.f(r) != null && ax.f(r) > 0 && ay.f(r) > 0;
       });
-      function mk(spec, vals) {
+      var mk = function (spec, vals) {
         var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
         if (spec.log) { mn = Math.log10(mn); mx = Math.log10(mx); }
         if (mn === mx) { mn -= 1; mx += 1; }
         var pad = (mx - mn) * 0.08; mn -= pad; mx += pad;
         return function (v) { var t = spec.log ? Math.log10(v) : v; return (t - mn) / (mx - mn); };
-      }
+      };
       var sx = mk(ax, pts.map(ax.f)), sy = mk(ay, pts.map(ay.f));
       var g = '<svg viewBox="0 0 ' + W + " " + H + '" width="100%" style="font-family:Roboto,sans-serif">';
       for (var i = 0; i <= 4; i++) {
@@ -92,7 +222,7 @@
       g += "</svg>";
       host.innerHTML = g;
       host._pts = pts;
-    }
+    };
     var xs = $("#viz-x"), ys = $("#viz-y");
     if (xs) xs.addEventListener("change", function (e) { xKey = e.target.value; draw(); });
     if (ys) ys.addEventListener("change", function (e) { yKey = e.target.value; draw(); });
@@ -103,7 +233,7 @@
       });
     });
     host.addEventListener("mousemove", function (e) {
-      var c = e.target.closest("circle[data-i]");
+      var c = e.target.closest ? e.target.closest("circle[data-i]") : null;
       var t = ensureTip();
       if (c) {
         var r = host._pts[+c.getAttribute("data-i")];
