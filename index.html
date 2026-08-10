@@ -494,7 +494,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <figcaption><b>Figure 1:</b> Structural overview of the survey from quantization preliminaries to deployment, applications, and future directions.</figcaption>
 </figure>
 
-<h2 id="background">2&ensp;Background</h2>
+<h2 id="background">2&ensp;Preliminaries</h2>
 
 <p>This section establishes the numerical and deployment concepts needed to understand quantization in the MCU setting. Because MCU inference is executed by digital hardware with limited memory and fixed arithmetic resources, every weight, activation, and bias must ultimately be stored and processed using a finite number of bits. The choice of <em>numerical representation</em> therefore directly affects precision, memory requirements, and computational efficiency <d-cite key="gohil2021fixed,alsuhli2023number"></d-cite>. In practical MCU deployment, it also determines whether computation can be expressed using simple integer multiply-and-accumulate (MAC) operations, whether tensors fit into limited on-chip memory, and whether the model can be mapped to optimized libraries or NPU backends discussed later in <a class="xref" href="#deployment-stack">Section 5</a>. The same nominal bit-width can therefore have varying practical value depending on the target hardware and runtime.</p>
 
