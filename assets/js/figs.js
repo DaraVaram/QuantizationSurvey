@@ -41,7 +41,7 @@
       var c = e.target;
       if (!c.classList || !c.classList.contains("f2c")) return;
       var cls = null;
-      c.classList.forEach(function (k) { if (/^(t-all|pc-r\d|pg-g\d[LR])$/.test(k)) cls = k; });
+      c.classList.forEach(function (k) { if (/^(t-all|pc-r\d|pg[lr]-g\d[LR])$/.test(k)) cls = k; });
       if (!cls) return;
       var cube = c.closest("g[id]");
       $$(".f2c", cube).forEach(function (el) {
@@ -52,7 +52,7 @@
       var txt;
       if (cls === "t-all") txt = tips.t;
       else if (cls.indexOf("pc-r") === 0) txt = tips.pc(+cls.charAt(4));
-      else txt = tips.pg(+cls.charAt(4));
+      else txt = tips.pg(+cls.charAt(5));
       t.innerHTML = txt; t.style.opacity = "1";
     });
     svg.addEventListener("mouseout", function (e) {
@@ -68,10 +68,10 @@
     if (!svg || reduced) return;
     var path = $("#f4-loop", svg), dot = $("#f4-dot", svg);
     if (!path || !dot) return;
-    var L = path.getTotalLength();          // segment lengths: 677|1832|1477|1832|665
+    var L = path.getTotalLength();          // segment lengths: 677|1972|1477|1972|665
     var GREEN = "#00CC00", BLUE = "#3E8EF7";
     // cumulative breakpoints along the loop
-    var B = { upLeft: 677, topMid: 677 + 917, topEnd: 2509, rightBlue: 3218, rightEnd: 3986, botMid: 4901, botEnd: 5818 };
+    var B = { upLeft: 677, topMid: 1709, topEnd: 2649, rightBlue: 3358, rightEnd: 4126, botMid: 5066, botEnd: 6098 };
     var phases = [
       { until: B.upLeft,    ids: ["f4-plus", "f4-W"],  color: GREEN },
       { until: B.topMid,    ids: ["f4-W", "f4-quant"], color: GREEN },
