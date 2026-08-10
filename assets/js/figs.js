@@ -227,6 +227,96 @@
     window.addEventListener("beforeprint", clear);
   })();
 
+  /* ---------- References: numbered entries + clickable citations ---------- */
+  (function () {
+    // key -> number, by first appearance in document order (manuscript order)
+    var nums = {}, n = 0;
+    $$("d-cite").forEach(function (c) {
+      (c.getAttribute("key") || "").split(",").forEach(function (k) {
+        k = k.trim();
+        if (k && !(k in nums)) nums[k] = ++n;
+      });
+    });
+    var byNum = [];
+    Object.keys(nums).forEach(function (k) { byNum[nums[k]] = k; });
+
+    // urls/dois from the bibliography file (for outbound links on entries)
+    var links = {};
+    fetch("assets/bibliography/references.bib").then(function (r) { return r.text(); }).then(function (bib) {
+      bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
+        var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
+        if (!km) return;
+        var um = chunk.match(/\burl\s*=\s*\{([^}]+)\}/i);
+        var dm = chunk.match(/\bdoi\s*=\s*\{([^}]+)\}/i);
+        var em = chunk.match(/\beprint\s*=\s*\{([^}]+)\}/i);
+        var u = null;
+        if (dm) u = "https://doi.org/" + dm[1].trim();
+        else if (um) u = um[1].trim();
+        else if (em) u = "https://arxiv.org/abs/" + em[1].trim();
+        if (u) links[km[1].trim()] = u;
+      });
+      enhanceSoon();
+    }).catch(enhanceSoon);
+
+    function enhance() {
+      var cl = document.querySelector("d-citation-list");
+      if (!cl) return false;
+      var sr = cl.shadowRoot || cl;
+      var lis = sr.querySelectorAll("li");
+      if (!lis.length) return false;
+      try {
+        var st = sr.querySelector("style");
+        if (st && st.sheet) {
+          st.sheet.insertRule(".ref-num{color:#2698BA;font-weight:700;margin-right:7px}", 0);
+          st.sheet.insertRule("li.ref-flash{background:#fff3c4 !important}", 0);
+          st.sheet.insertRule("a.ref-out{color:#2698BA;text-decoration:none;margin-left:5px;font-size:0.85em}", 0);
+        }
+      } catch (e) { }
+      lis.forEach(function (li, i) {
+        if (li.querySelector(".ref-num")) return;
+        var sp = document.createElement("span");
+        sp.className = "ref-num";
+        sp.textContent = "[" + (i + 1) + "]";
+        li.insertBefore(sp, li.firstChild);
+        var key = byNum[i + 1];
+        if (key && links[key]) {
+          var a = document.createElement("a");
+          a.className = "ref-out";
+          a.href = links[key];
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = "[link ↗]";
+          li.appendChild(a);
+        }
+      });
+      return true;
+    }
+    var tries = 0, timer = null;
+    function enhanceSoon() {
+      if (timer) return;
+      timer = setInterval(function () {
+        if (enhance() || ++tries > 60) { clearInterval(timer); timer = null; }
+      }, 500);
+    }
+    enhanceSoon();
+
+    // clicking an inline citation jumps to its entry in the reference list
+    document.addEventListener("click", function (e) {
+      var c = e.target.closest ? e.target.closest("d-cite") : null;
+      if (!c) return;
+      var key = (c.getAttribute("key") || "").split(",")[0].trim();
+      var num = nums[key];
+      if (!num) return;
+      var cl = document.querySelector("d-citation-list");
+      if (!cl) return;
+      var li = (cl.shadowRoot || cl).querySelectorAll("li")[num - 1];
+      if (!li) return;
+      li.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+      li.classList.add("ref-flash");
+      setTimeout(function () { li.classList.remove("ref-flash"); }, 2200);
+    });
+  })();
+
   /* ---------- Figure 5 taxonomy + generic chip navigation ---------- */
   (function () {
     document.addEventListener("click", function (e) {

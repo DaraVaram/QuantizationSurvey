@@ -114,6 +114,7 @@
     var ths = $$("thead th", table);
     ths.forEach(function (th, ci) {
       th.classList.add("sortable");
+      th.title = "Click to sort by this column";
       var ind = document.createElement("span");
       ind.className = "sort-ind";
       ind.innerHTML = " ⇅";
@@ -158,13 +159,15 @@
     ],
     match: function (tr, key) { return cellText(tr.cells[0]) === key; }
   });
-  // Tables 4–6 — deployments: quantization-path filter
-  ["table-4", "table-5", "table-6"].forEach(function (tid) {
+  // Tables 4 and 6 — deployments: quantization-path filter
+  ["table-4", "table-6"].forEach(function (tid) {
     enhanceTable(tid, {
       chips: [{ key: "PTQ", label: "PTQ" }, { key: "QAT", label: "QAT" }],
       match: function (tr, key) { return cellText(tr.cells[2]).indexOf(key) !== -1; }
     });
   });
+  // Table 5 — all three rows are INT8 PTQ: search and sorting only, no chips
+  enhanceTable("table-5", {});
   // Table 3 — three long-prose rows: search only
   enhanceTable("table-3", {});
 
