@@ -68,10 +68,10 @@
     if (!svg || reduced) return;
     var path = $("#f4-loop", svg), dot = $("#f4-dot", svg);
     if (!path || !dot) return;
-    var L = path.getTotalLength();          // segment lengths: 617|1872|1362|1872|610
+    var L = path.getTotalLength();          // segment lengths: 677|1832|1477|1832|665
     var GREEN = "#00CC00", BLUE = "#3E8EF7";
     // cumulative breakpoints along the loop
-    var B = { upLeft: 617, topMid: 617 + 917, topEnd: 2489, rightBlue: 3151, rightEnd: 3851, botMid: 4806, botEnd: 5723 };
+    var B = { upLeft: 677, topMid: 677 + 917, topEnd: 2509, rightBlue: 3218, rightEnd: 3986, botMid: 4901, botEnd: 5818 };
     var phases = [
       { until: B.upLeft,    ids: ["f4-plus", "f4-W"],  color: GREEN },
       { until: B.topMid,    ids: ["f4-W", "f4-quant"], color: GREEN },
@@ -185,46 +185,42 @@
     render();
   })();
 
-  /* ---------- Figure 8: step-through of the two PTQ pipelines ---------- */
+  /* ---------- Figure 8: continuously looping step-through (gif-style) ---------- */
   (function () {
     var fig = $("#figure-8");
-    if (!fig) return;
+    if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
       { a: ["f8a-cal"], b: [], skip: true },
       { a: ["f8a-q"], b: ["f8b-q"] },
       { a: ["f8a-i8", "f8a-i4", "f8a-ib"], b: ["f8b-i8", "f8b-i4", "f8b-ib"] },
-      { a: ["f8a-dep"], b: ["f8b-dep"] }
+      { a: ["f8a-dep"], b: ["f8b-dep"] },
+      { a: [], b: [], pause: true }          // brief full-lit hold, then restart
     ];
-    var timer = null, played = false;
+    var timer = null, running = false, i = 0;
     function clear() {
       $$(".f8-on, .f8-skipnow", fig).forEach(function (el) { el.classList.remove("f8-on", "f8-skipnow"); });
-      if (timer) { clearTimeout(timer); timer = null; }
     }
-    function play() {
-      clear();
-      var i = 0;
-      function step() {
-        if (i >= seq.length) { timer = setTimeout(clear, 1800); return; }
-        var st = seq[i];
-        st.a.forEach(function (id) { var el = $("#" + id, fig); if (el) el.classList.add("f8-on"); });
-        st.b.forEach(function (id) { var el = $("#" + id, fig); if (el) el.classList.add("f8-on"); });
-        if (st.skip) {
-          ["f8b-cd", "f8b-cal"].forEach(function (id) { var el = $("#" + id, fig); if (el) el.classList.add("f8-skipnow"); });
-        }
-        i++;
-        timer = setTimeout(step, 1150);
+    function step() {
+      if (!running) return;
+      if (i >= seq.length) { i = 0; clear(); timer = setTimeout(step, 700); return; }
+      var st = seq[i];
+      st.a.forEach(function (id) { var el = $("#" + id, fig); if (el) el.classList.add("f8-on"); });
+      st.b.forEach(function (id) { var el = $("#" + id, fig); if (el) el.classList.add("f8-on"); });
+      if (st.skip) {
+        ["f8b-cd", "f8b-cal"].forEach(function (id) { var el = $("#" + id, fig); if (el) el.classList.add("f8-skipnow"); });
       }
-      step();
+      i++;
+      timer = setTimeout(step, st.pause ? 1600 : 1150);
     }
-    var btn = $("#f8-play");
-    if (btn) btn.addEventListener("click", play);
-    if (!reduced && "IntersectionObserver" in window) {
-      new IntersectionObserver(function (es, obs) {
-        es.forEach(function (en) { if (en.isIntersecting && !played) { played = true; play(); obs.disconnect(); } });
-      }, { threshold: 0.35 }).observe(fig);
-    }
-    window.addEventListener("beforeprint", clear);
+    function start() { if (running) return; running = true; i = 0; clear(); step(); }
+    function stop() { running = false; if (timer) { clearTimeout(timer); timer = null; } clear(); }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (en) { en.isIntersecting ? start() : stop(); });
+      }, { threshold: 0.3 }).observe(fig);
+    } else start();
+    window.addEventListener("beforeprint", stop);
   })();
 
   /* ---------- References: numbered entries + clickable citations ---------- */
