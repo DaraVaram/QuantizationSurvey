@@ -125,8 +125,8 @@
     var svg = $("#figure-6 svg");
     if (!svg) return;
     var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
-    var DEFAULT = { "1": "2", "2": "3", "n": "multi" };
-    var state = { "1": "2", "2": "3", "n": "multi" };
+    var DEFAULT = { "1": "2", "2": "3", "n": "b" };
+    var state = { "1": "2", "2": "3", "n": "b" };
     var cells = $$(".f6-cell", svg);
     function cellPos(col, row) {
       var g = cells.filter(function (c) { return c.getAttribute("data-col") === col && c.getAttribute("data-row") === row; })[0];
@@ -136,7 +136,7 @@
       cells.forEach(function (g) {
         var col = g.getAttribute("data-col"), row = g.getAttribute("data-row");
         var rect = g.querySelector("rect");
-        var active = state[col] === row || (col === "n" && state.n === "multi");
+        var active = state[col] === row;
         if (active) {
           rect.setAttribute("fill", rect.getAttribute("data-fill"));
           rect.setAttribute("stroke", rect.getAttribute("data-border"));
@@ -151,21 +151,23 @@
       });
       // selection arrows
       var arr = $("#f6-arrows", svg);
-      var p1 = cellPos("1", state["1"]), p2 = cellPos("2", state["2"]);
+      var p1 = cellPos("1", state["1"]), p2 = cellPos("2", state["2"]), pn = cellPos("n", state.n);
       var h = '<path d="M224,436 L302,436 L302,' + (p1.y + 25) + " L324," + (p1.y + 25) +
               '" fill="none" stroke="#000" stroke-width="2" marker-end="url(#f6a)"/>';
       h += '<path d="M' + (p1.x + 104) + "," + (p1.y + 25) + " L457," + (p1.y + 25) + " L457," + (p2.y + 25) +
            " L" + (p2.x - 6) + "," + (p2.y + 25) + '" fill="none" stroke="#000" stroke-width="2" marker-end="url(#f6a)"/>';
-      if (state.n !== "multi") {
-        var pn = cellPos("n", state.n);
-        h += '<path d="M' + (p2.x + 104) + "," + (p2.y + 25) + " L640," + (p2.y + 25) + " L640," + (pn.y + 25) +
-             " L" + (pn.x - 6) + "," + (pn.y + 25) +
-             '" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#f6a)"/>';
-      }
+      // layer 2 -> layer n: leave the box from below, run in a clear lane, enter
+      // the target box from the top (or from below when it sits higher up), so the
+      // connector never crosses the continuation ellipses.
+      var exitX = p2.x + 80, entryX = pn.x + 30, laneY = p2.y + 74;
+      var endY = (pn.y > laneY) ? pn.y - 4 : pn.y + 54;
+      h += '<path d="M' + exitX + "," + (p2.y + 50) + " L" + exitX + "," + laneY +
+           " L" + entryX + "," + laneY + " L" + entryX + "," + endY +
+           '" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#f6a)"/>';
       arr.innerHTML = h;
       // network node tint
       function tint(sel, key) {
-        var c = key === "multi" ? ["#ffffff", "#000000"] : ROW[key];
+        var c = ROW[key] || ["#ffffff", "#000000"];
         $$(sel, svg).forEach(function (n) { n.setAttribute("fill", c[0]); n.setAttribute("stroke", c[1]); });
       }
       tint(".f6-nodeL1", state["1"]);
@@ -263,17 +265,16 @@
       try {
         var st = sr.querySelector("style");
         if (st && st.sheet) {
-          st.sheet.insertRule(".ref-num{color:#2698BA;font-weight:700;margin-right:7px}", 0);
+          st.sheet.insertRule("ol{list-style:none;counter-reset:refnum;padding-left:2.6em}", 0);
+          st.sheet.insertRule("ol>li{counter-increment:refnum;position:relative}", 0);
+          st.sheet.insertRule("ol>li::before{content:\"[\" counter(refnum) \"]\";position:absolute;left:-2.6em;color:#2698BA;font-weight:700}", 0);
           st.sheet.insertRule("li.ref-flash{background:#fff3c4 !important}", 0);
           st.sheet.insertRule("a.ref-out{color:#2698BA;text-decoration:none;margin-left:5px;font-size:0.85em}", 0);
         }
       } catch (e) { }
       lis.forEach(function (li, i) {
-        if (li.querySelector(".ref-num")) return;
-        var sp = document.createElement("span");
-        sp.className = "ref-num";
-        sp.textContent = "[" + (i + 1) + "]";
-        li.insertBefore(sp, li.firstChild);
+        if (li.dataset.refDone) return;
+        li.dataset.refDone = "1";
         var key = byNum[i + 1];
         if (key && links[key]) {
           var a = document.createElement("a");

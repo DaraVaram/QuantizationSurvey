@@ -13,10 +13,27 @@
   function cellText(td) {
     return td ? td.textContent.replace(/\s+/g, " ").trim() : "";
   }
+  // Unit-aware sort key: memory (KB/MB/GB), clock (MHz/GHz), energy (mJ/J),
+  // power (mW/W) and latency (ms/s) are normalised to a common unit so that
+  // e.g. "1 MB" sorts above "384 KB" and "1.5 GHz" above "800 MHz".
+  var UNITS = {
+    kb: 1, mb: 1024, gb: 1048576,
+    khz: 0.001, mhz: 1, ghz: 1000,
+    uw: 1e-3, mw: 1, w: 1000,
+    uj: 1e-3, mj: 1, j: 1000,
+    us: 1e-3, ms: 1, s: 1000
+  };
   function cellVal(td) {
-    var t = cellText(td);
-    var m = t.match(/-?\d+(\.\d+)?/);
-    return m ? parseFloat(m[0]) : t.toLowerCase();
+    var raw = cellText(td);
+    if (!raw) return "";
+    // strip leading comparators and take the first numeric token with its unit
+    var m = raw.match(/(-?\d+(?:\.\d+)?)\s*(KB|MB|GB|kHz|MHz|GHz|mW|uW|W|mJ|uJ|J|ms|us|s)?/i);
+    if (!m) return raw.toLowerCase();
+    var n = parseFloat(m[1]);
+    if (isNaN(n)) return raw.toLowerCase();
+    var u = (m[2] || "").toLowerCase();
+    if (u && UNITS[u] != null) n *= UNITS[u];
+    return n;
   }
 
   function enhanceTable(tid, opts) {
@@ -36,8 +53,9 @@
       chipsHtml = '<span class="chip active" data-c="all">All</span>' +
         opts.chips.map(function (c) { return '<span class="chip" data-c="' + c.key + '">' + c.label + "</span>"; }).join("");
     }
-    bar.innerHTML = chipsHtml +
-      '<input type="search" placeholder="Search this table&#8230;" aria-label="Search table">' +
+    var searchHtml = opts.noSearch ? "" :
+      '<input type="search" placeholder="Search this table&#8230;" aria-label="Search table">';
+    bar.innerHTML = chipsHtml + searchHtml +
       '<span class="treset" title="Restore original order and filters">&#8635; reset</span>' +
       '<span class="tcount"></span>';
     wrap.insertBefore(bar, wrap.firstChild);
@@ -96,7 +114,7 @@
         tbody.innerHTML = originalHTML;
         flattened = !table.querySelector("td[rowspan]");
         state = { q: "", chip: "all", sorted: false };
-        input.value = "";
+        if (input) input.value = "";
         $$(".chip", bar).forEach(function (c) { c.classList.toggle("active", c.getAttribute("data-c") === "all"); });
         $$("th.sortable", table).forEach(function (th) {
           var i = th.querySelector(".sort-ind"); if (i) i.innerHTML = " ⇅";
@@ -104,11 +122,13 @@
         apply();
       }
     });
-    input.addEventListener("input", function () {
-      if (!flattened) flatten();
-      state.q = input.value.trim().toLowerCase();
-      apply();
-    });
+    if (input) {
+      input.addEventListener("input", function () {
+        if (!flattened) flatten();
+        state.q = input.value.trim().toLowerCase();
+        apply();
+      });
+    }
 
     // ---- sorting ----
     var ths = $$("thead th", table);
@@ -168,8 +188,8 @@
   });
   // Table 5 — all three rows are INT8 PTQ: search and sorting only, no chips
   enhanceTable("table-5", {});
-  // Table 3 — three long-prose rows: search only
-  enhanceTable("table-3", {});
+  // Table 3 — three descriptive rows: sorting/reset only, no search
+  enhanceTable("table-3", { noSearch: true });
 
   /* =======================================================================
      Deployment landscape scatter (Tables 4–6)
