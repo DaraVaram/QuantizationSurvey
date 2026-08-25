@@ -156,6 +156,37 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         color: rgba(0,0,0,0.65); font-size: 0.74rem; line-height: 1.45;
         text-align: left; margin: 0.35rem auto 0.9rem; max-width: 92%;
       }
+      /* ---- Table 1: coverage heat-map (Option D) ---- */
+      #table-1 td.cov-full, #table-1 td.cov-part, #table-1 .hw, #table-1 .sw {
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      #table-1 td.cov-full { background: #2698BA; }
+      #table-1 td.cov-full span { color: #fff; font-weight: 700; font-size: 0.94em; }
+      #table-1 td.cov-part { background: #D8EBF2; }
+      #table-1 td.cov-part span { color: #145E75; font-weight: 500; font-size: 0.94em; }
+      #table-1 td.cov-full, #table-1 td.cov-part, #table-1 td.cov-none { text-align: center; }
+      #table-1 td.hwcell { text-align: center; white-space: nowrap; }
+      #table-1 .hw {
+        display: inline-block; font-size: 0.8em; font-weight: 600; letter-spacing: 0.02em;
+        padding: 1px 5px; margin: 0 1px; border-radius: 3px; border: 1px solid;
+      }
+      #table-1 .hw.arm  { color: #155F8F; background: #E4F0F9; border-color: #1F77B4; }
+      #table-1 .hw.risc { color: #8F4A06; background: #FBEBDA; border-color: #D9760C; }
+      #table-1 .hw.hyb  { color: #64408C; background: #EEE7F7; border-color: #9467BD; }
+      .t1-legend {
+        display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 0.6rem;
+        padding-top: 0.55rem; border-top: 1px dashed #d5dbe2;
+        font-size: 0.72rem; color: #6c757d;
+      }
+      .t1-legend span { display: inline-flex; align-items: center; gap: 6px; }
+      .t1-legend .sw {
+        display: inline-block; width: 16px; height: 11px; border-radius: 2px;
+        border: 1px solid #c8cfd8;
+      }
+      .t1-legend .sw-full { background: #2698BA; border-color: #2698BA; }
+      .t1-legend .sw-part { background: #D8EBF2; border-color: #b9d7e2; }
+      .t1-legend .sw-none { background: transparent; }
+      .t1-legend .t1-legend-note { color: #8a94a0; font-style: italic; }
       /* ---- Table 3: clause lists inside cells ---- */
       table.ptable ul.cell-list { margin: 0; padding-left: 1.05em; }
       table.ptable ul.cell-list li { margin: 0 0 0.28rem; padding-left: 0.1em; }
@@ -447,7 +478,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 <!-- Table 1 (tab:survey-scope) -->
 <div class="ptable-wrap l-page t1-wide" id="table-1">
 <table class="ptable" data-sortable>
-<caption><b>Table 1:</b> Scope comparison of surveys on quantization, TinyML, and edge AI. Ticks indicate <span class="tk">&#10003;</span>&#8201;surveyed and <span class="tkp">&#10003;</span>&#8201;partially surveyed. Hardware ticks indicate <span class="tka">&#10003;</span>&#8201;ARM, <span class="tkr">&#10003;</span>&#8201;RISC, and <span class="tkh">&#10003;</span>&#8201;hybrid architectures.</caption>
+<caption><b>Table 1:</b> Scope comparison of surveys on quantization, TinyML, and edge AI.</caption>
 <thead><tr>
   <th>Paper</th><th>Year</th>
   <th class="ctr">Primary Quantization</th>
@@ -458,24 +489,25 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <th class="ctr">Applications</th>
 </tr></thead>
 <tbody>
-<tr><td>Gholami et al. <d-cite key="gholami2022survey"></d-cite></td><td>2022</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td></tr>
-<tr><td>Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite></td><td>2022</td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tka">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>Giordano et al. <d-cite key="giordano2022survey"></d-cite></td><td>2022</td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span> <span class="tkh">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td></tr>
-<tr><td>Saha et al. <d-cite key="saha2022"></d-cite></td><td>2022</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>Ray <d-cite key="ray2022review"></d-cite></td><td>2022</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite></td><td>2023</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td></tr>
-<tr><td>Akkad et al. <d-cite key="akkad2023embedded"></d-cite></td><td>2023</td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tkr">&#10003;</span></td><td class="ctr"></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>Liu et al. <d-cite key="liu2024lightweight"></d-cite></td><td>2024</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td></tr>
-<tr><td>Liu et al. <d-cite key="liu2024exploring"></d-cite></td><td>2024</td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tkr">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td></tr>
-<tr><td>Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite></td><td>2024</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td></tr>
-<tr><td>Liu et al. <d-cite key="liu2025low"></d-cite></td><td>2025</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td></tr>
-<tr><td>Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite></td><td>2025</td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>Wang and Jia <d-cite key="wang2025optimizing"></d-cite></td><td>2025</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"></td><td class="ctr"></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite></td><td>2025</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span> <span class="tkh">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
-<tr><td>L&#234; et al. <d-cite key="tri2026efficient"></d-cite></td><td>2026</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tkp">&#10003;</span></td></tr>
-<tr class="ours"><td><strong>Ours</strong></td><td>2026</td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tka">&#10003;</span> <span class="tkr">&#10003;</span> <span class="tkh">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td><td class="ctr"><span class="tk">&#10003;</span></td></tr>
+<tr><td>Gholami et al. <d-cite key="gholami2022survey"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Giordano et al. <d-cite key="giordano2022survey"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span> <span class="hw hyb">Hybrid</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Saha et al. <d-cite key="saha2022"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Ray <d-cite key="ray2022review"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite></td><td>2023</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Akkad et al. <d-cite key="akkad2023embedded"></d-cite></td><td>2023</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw risc">RISC</span></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Liu et al. <d-cite key="liu2024lightweight"></d-cite></td><td>2024</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td></tr>
+<tr><td>Liu et al. <d-cite key="liu2024exploring"></d-cite></td><td>2024</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw risc">RISC</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite></td><td>2024</td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td></tr>
+<tr><td>Liu et al. <d-cite key="liu2025low"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite></td><td>2025</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Wang and Jia <d-cite key="wang2025optimizing"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span> <span class="hw hyb">Hybrid</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>L&#234; et al. <d-cite key="tri2026efficient"></d-cite></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td></tr>
+<tr class="ours"><td><strong>Ours</strong></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC</span> <span class="hw hyb">Hybrid</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
 </tbody>
 </table>
+<div class="t1-legend"><span><i class="sw sw-full"></i>surveyed</span><span><i class="sw sw-part"></i>partially surveyed</span><span><i class="sw sw-none"></i>not covered</span><span class="t1-legend-note">Hardware Landscape lists the architectures each survey covers</span></div>
 </div>
 
 <h3 id="contributions">1.2&ensp;Contributions</h3>
