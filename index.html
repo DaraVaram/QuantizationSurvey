@@ -22,7 +22,7 @@
     // getting stuff directly from Jekyll
     let publishedWhen = "2026";
     let title = "Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications";
-    let description = "This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices.";
+    let description = "The deployment of quantized neural networks on resource-constrained edge devices, such as microcontrollers (MCUs), introduces fundamental challenges in balancing model performance, computational complexity, and memory constraints. Tiny Machine Learning (TinyML) addresses these issues by jointly advancing machine learning algorithms, hardware architectures, and software optimization techniques to enable deep neural network inference on embedded systems. This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices. Particular emphasis is placed on the critical trade-offs between model performance and the capabilities of MCU-class hardware, including memory hierarchies, numerical representations, and accelerator support. The survey further reviews contemporary MCU hardware platforms, including ARM-based and RISC-V-based designs, as well as MCUs integrating neural processing units (NPUs) for low-precision inference, together with the supporting software stacks. In addition, we analyze real-world deployments of quantized models on MCUs and consolidate the application domains in which such systems are used. Finally, we discuss open challenges and outline promising future directions toward scalable, energy-efficient, and sustainable AI deployment on edge devices.";
 
     {
       let authorsBibtex = authors.length ? authors.map(e => `${e[0]}, ${e[1]}`).join(" and ") : "Anonymous";
@@ -73,7 +73,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications | TMLR Beyond PDF</title>
     <meta name="author" content="  " />
-    <meta name="description" content="This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices." />
+    <meta name="description" content="The deployment of quantized neural networks on resource-constrained edge devices, such as microcontrollers (MCUs), introduces fundamental challenges in balancing model performance, computational complexity, and memory constraints. Tiny Machine Learning (TinyML) addresses these issues by jointly advancing machine learning algorithms, hardware architectures, and software optimization techniques to enable deep neural network inference on embedded systems. This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices. Particular emphasis is placed on the critical trade-offs between model performance and the capabilities of MCU-class hardware, including memory hierarchies, numerical representations, and accelerator support. The survey further reviews contemporary MCU hardware platforms, including ARM-based and RISC-V-based designs, as well as MCUs integrating neural processing units (NPUs) for low-precision inference, together with the supporting software stacks. In addition, we analyze real-world deployments of quantized models on MCUs and consolidate the application domains in which such systems are used. Finally, we discuss open challenges and outline promising future directions toward scalable, energy-efficient, and sustainable AI deployment on edge devices." />
     <meta name="keywords" content="machine-learning, ml, deep-learning, TinyML, quantization, microcontrollers, TMLR, Transactions-on-Machine-Learning" />
 
     <!-- Bootstrap & MDB -->
@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260826d">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js"></script>
-    <script src="assets/js/distillpub/transforms.v2.js"></script>
-    <script src="assets/js/distillpub/overrides.js"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260826d"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260826d"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260826d"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -137,6 +137,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       table.ptable th.sortable { cursor: pointer; }
       table.ptable th.sortable:hover { color: #2698BA; }
       table.ptable th .sort-ind { opacity: 0.4; font-size: 0.6rem; }
+      table.ptable th.sortable { cursor: default; }
       /* ticks (paper legend colors) */
       .tk  { color: #000; font-weight: 700; }
       .tkp { color: #cccccc; font-weight: 700; }
@@ -326,9 +327,35 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .ptable-wrap.t-studies tbody td:first-child { cursor: pointer; }
       /* ---- Table 2 platforms carry a deployment-count hint ---- */
       table.ptable td.t2-plat { cursor: help; }
+      /* ---- Keyboard focus: every interactive control shows where it is ---- */
+      .tbl-toolbar .chip, .tbl-toolbar .treset {
+        font: inherit; font-size: 0.7rem; line-height: 1.4; color: inherit;
+      }
+      .tbl-toolbar .treset { border: none; background: none; padding: 0; }
+      table.ptable th .th-sort {
+        font: inherit; color: inherit; background: none; border: 0; padding: 0;
+        cursor: pointer; text-align: inherit;
+      }
+      table.ptable th .th-sort:hover { color: #2698BA; }
+      :focus-visible { outline: 2px solid #2698BA; outline-offset: 2px; border-radius: 3px; }
+      .f6-cell:focus-visible rect, .f9-node:focus-visible rect, .f9-node:focus-visible path,
+      #figure-2 g[id]:focus-visible, #f6-reset:focus-visible {
+        outline: 2px solid #2698BA; outline-offset: 2px;
+      }
+      #scatter:focus-visible { outline: 2px solid #2698BA; outline-offset: 3px; }
+      .ptable-wrap d-cite:focus-visible { outline: 2px solid #2698BA; outline-offset: 1px; }
+      .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+      /* ---- Narrow screens: keep the title from owning the first viewport ---- */
+      @media (max-width: 600px) {
+        body d-title h1 { font-size: 27px; line-height: 1.2em; }
+        body d-title p { font-size: 0.92rem; line-height: 1.5; }
+        body d-title { padding-bottom: 1rem; }
+      }
+      .toc-nav .toc-sub2 { padding-left: 2.6em; }
       /* ---- Print: the manuscript, exactly ---- */
       @media print {
-        header, d-contents, .supplement, #bibtex-container, #mmv-tracker, #toTop, .no-print,
+        header, d-contents, .supplement, #bibtex-container, #toTop, .no-print,
         .fig-hint, .tbl-toolbar, #f6-reset, #f4-dot, .viz-tip, .cite-card { display: none !important; }
         .f4-active, .f8-on { filter: none !important; }
         .f4-fwd, .f4-bwd { opacity: 1 !important; }
@@ -349,7 +376,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <d-front-matter>
     <script async type="text/json">{
       "title": "Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications",
-      "description": "This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices.",
+      "description": "The deployment of quantized neural networks on resource-constrained edge devices, such as microcontrollers (MCUs), introduces fundamental challenges in balancing model performance, computational complexity, and memory constraints. Tiny Machine Learning (TinyML) addresses these issues by jointly advancing machine learning algorithms, hardware architectures, and software optimization techniques to enable deep neural network inference on embedded systems. This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices. Particular emphasis is placed on the critical trade-offs between model performance and the capabilities of MCU-class hardware, including memory hierarchies, numerical representations, and accelerator support. The survey further reviews contemporary MCU hardware platforms, including ARM-based and RISC-V-based designs, as well as MCUs integrating neural processing units (NPUs) for low-precision inference, together with the supporting software stacks. In addition, we analyze real-world deployments of quantized models on MCUs and consolidate the application domains in which such systems are used. Finally, we discuss open challenges and outline promising future directions toward scalable, energy-efficient, and sustainable AI deployment on edge devices.",
       "submitted": "",
       "published": "",
       "authors": [
@@ -444,8 +471,14 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
             <div class="toc-sub"><a href="#int-training">3.1&ensp;Integer and Quantized Training</a></div>
             <div class="toc-sub"><a href="#extreme-low-bit">3.2&ensp;Extreme Low-Bit Quantization</a></div>
             <div class="toc-sub"><a href="#mixed-precision">3.3&ensp;Mixed Precision Quantization</a></div>
+            <div class="toc-sub2"><a href="#rough-allocation">3.3.1&ensp;Rough Allocation</a></div>
+            <div class="toc-sub2"><a href="#adaptive-allocation">3.3.2&ensp;Adaptive Allocation</a></div>
             <div class="toc-sub"><a href="#hw-aware">3.4&ensp;Hardware-Aware Quantization</a></div>
             <div class="toc-sub"><a href="#redistribution">3.5&ensp;Redistribution</a></div>
+            <div class="toc-sub2"><a href="#uniformization">3.5.1&ensp;Distribution Uniformization</a></div>
+            <div class="toc-sub2"><a href="#reshaping">3.5.2&ensp;Distribution Reshaping</a></div>
+            <div class="toc-sub2"><a href="#outlier">3.5.3&ensp;Outlier Redistribution</a></div>
+            <div class="toc-sub2"><a href="#bias">3.5.4&ensp;Bias Redistribution</a></div>
             <div class="toc-sub"><a href="#data-agnostic">3.6&ensp;Data-Agnostic Quantization</a></div>
             <div><a href="#alt-formats">4&ensp;Alternative Numerical Representations</a></div>
             <div class="toc-sub"><a href="#reduced-fp">4.1&ensp;Reduced Floating-Point Formats</a></div>
@@ -453,6 +486,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
             <div class="toc-sub"><a href="#tapered">4.3&ensp;Tapered-Accuracy Formats</a></div>
             <div><a href="#deployment-stack">5&ensp;Hardware and Software Deployment Stack</a></div>
             <div class="toc-sub"><a href="#hardware-platforms">5.1&ensp;Hardware Platforms</a></div>
+            <div class="toc-sub2"><a href="#arm-mcus">5.1.1&ensp;ARM Cortex-M MCUs</a></div>
+            <div class="toc-sub2"><a href="#riscv-mcus">5.1.2&ensp;RISC-V-based MCUs</a></div>
+            <div class="toc-sub2"><a href="#npu-mcus">5.1.3&ensp;NPU-Integrated MCUs</a></div>
             <div class="toc-sub"><a href="#software-frameworks">5.2&ensp;Software Frameworks and Deployment Tools</a></div>
             <div><a href="#applications">6&ensp;Applications</a></div>
             <div class="toc-sub"><a href="#apps-arm">6.1&ensp;ARM-based MCUs</a></div>
@@ -460,6 +496,14 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
             <div class="toc-sub"><a href="#apps-npu">6.3&ensp;NPU-Integrated MCUs</a></div>
             <div class="toc-sub"><a href="#cross-case">6.4&ensp;Cross-Case Recommendations</a></div>
             <div><a href="#challenges">7&ensp;Challenges and Future Directions</a></div>
+            <div class="toc-sub"><a href="#ch-sub8">7.1&ensp;Limited Sub-8-Bit and QAT Support</a></div>
+            <div class="toc-sub"><a href="#ch-operator">7.2&ensp;Operator Support in Quantization Toolchains</a></div>
+            <div class="toc-sub"><a href="#ch-memory">7.3&ensp;Static Memory Allocation Constraints and Mixed Precision</a></div>
+            <div class="toc-sub"><a href="#ch-arch">7.4&ensp;Extended Support for Emerging Architectures</a></div>
+            <div class="toc-sub"><a href="#ch-training">7.5&ensp;On-Device Training</a></div>
+            <div class="toc-sub"><a href="#ch-formats">7.6&ensp;Support for Alternative Numerical Formats</a></div>
+            <div class="toc-sub"><a href="#ch-codesign">7.7&ensp;Hardware-Aware Quantization Co-Design</a></div>
+            <div class="toc-sub"><a href="#ch-sustain">7.8&ensp;Sustainability and Environmental Impact</a></div>
             <div><a href="#conclusion">8&ensp;Conclusion</a></div>
           </nav>
         </d-contents>
@@ -478,28 +522,6 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>Deploying complex DNNs on MCUs poses considerable challenges. Unlike graphics processing units (GPUs) or application-specific integrated circuit (ASIC) accelerators, MCUs typically operate within strict constraints: limited on-chip memory (often just hundreds of kilobytes), minimal computational resources, low clock speeds (typically 40 to 400 MHz), and stringent power budgets (in the order of milliwatts) <d-cite key="capogrosso2024machine"></d-cite>. Furthermore, real-time responses are often required <d-cite key="lin2020mcunet"></d-cite>, particularly in safety-critical applications such as healthcare devices <d-cite key="alshehri2020comprehensive"></d-cite>, autonomous vehicles <d-cite key="yurtsever2020survey"></d-cite>, and industrial robotics <d-cite key="soori2023artificial"></d-cite>. In such scenarios, inference latency is critical, as delayed decisions can lead to severe consequences such as compromised safety, system failures, or worse.</p>
 
-
-<p>This has led to the emergence of the tiny machine learning (TinyML) paradigm, which enables machine learning (ML) models to run on edge devices with extremely limited compute and memory resources, typically consuming only a few milliwatts or less <d-cite key="warden2019tinyml"></d-cite>. TinyML systems usually have memory footprints below 1 MB, often in the 64&#8211;256 KB range <d-cite key="capogrosso2024machine"></d-cite>.</p>
-
-<p>To meet the stringent resource constraints of MCUs, model compression has become essential for deploying DNNs on such platforms. These techniques reduce parameter size, computational cost, and memory usage, but often introduce accuracy&#8211;efficiency trade-offs. Common strategies include network pruning <d-cite key="han2016deep"></d-cite>, low-rank decomposition <d-cite key="phan2020stable"></d-cite>, lightweight architecture design <d-cite key="liu2024lightweight"></d-cite>, neural architecture search (NAS) <d-cite key="ren2021comprehensive"></d-cite>, and knowledge distillation <d-cite key="gou2021knowledge"></d-cite>. Among these, this survey focuses on network quantization, which preserves the model architecture while representing weights and/or activations using lower-precision formats.</p>
-
-<p>Quantization exploits the inherent redundancy in neural networks, allowing models to retain high accuracy under reduced precision <d-cite key="zhou2023towards"></d-cite>. It has therefore become a key enabler of TinyML and a widely adopted approach for efficiently accelerating inference, with potential benefits in energy and carbon footprint at scale. However, practical MCU deployment depends not only on reducing bit-width, but also on compatibility with the target platform&#8217;s numerical formats, operator coverage, memory organization and access constraints, software stack, and hardware execution path. This survey adopts this deployment-centered perspective by connecting quantization methods to MCU hardware, software stacks, and evidence from real-world deployments.</p>
-
-<h3 id="existing-surveys">1.1&ensp;Existing Surveys</h3>
-
-<p>Recent surveys have addressed quantization, model compression, and TinyML deployment from different angles, yet these topics are often treated independently and remain limited in scope. The existing literature can be broadly grouped into three main lines: algorithm-centered quantization surveys <d-cite key="liu2025low,gholami2022survey,rokh2023comprehensive,liu2024lightweight"></d-cite>, hardware-centered deployment surveys <d-cite key="lucan2022brief,liu2024exploring,akkad2023embedded,giordano2022survey"></d-cite>, and broader TinyML and edge-AI surveys <d-cite key="saha2022,heydari2025tiny,ray2022review,somvanshi2025tiny,capogrosso2024machine,tri2026efficient,wang2025optimizing"></d-cite>.</p>
-
-<p>Algorithm-centered surveys, such as those by Liu et al. <d-cite key="liu2025low"></d-cite> and Gholami et al. <d-cite key="gholami2022survey"></d-cite>, focus primarily on software-level advances in quantization, including low-bit quantization algorithms and training techniques across different applications and domains. Related works include Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite>, who evaluate quantization methods for image classification, and Liu et al. <d-cite key="liu2024lightweight"></d-cite>, who discuss lightweight model design and hardware acceleration. Although extensive, these surveys give limited attention to hardware constraints and practical deployment concerns, particularly for MCUs and comparable edge-class devices.</p>
-
-<p>Conversely, hardware-centered deployment surveys tend to emphasize platforms and architectures while giving less attention to quantization as a deployment methodology. For instance, Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite> examine ARM Cortex-M-based MCUs with DNN deployment examples, but do not substantially explore quantization. Similarly, Liu et al. <d-cite key="liu2024exploring"></d-cite>, Akkad et al. <d-cite key="akkad2023embedded"></d-cite>, and Giordano et al. <d-cite key="giordano2022survey"></d-cite> analyze RISC-V, hybrid, and low-power MCU platforms, but provide limited discussion of compression and quantization methods.</p>
-
-<p>Broader TinyML and edge-AI surveys provide ecosystem-level overviews, but often lack depth on quantization as a deployment methodology. For example, Saha et al. <d-cite key="saha2022"></d-cite> cover MCU hardware and deployments, while Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite>, Ray <d-cite key="ray2022review"></d-cite>, and Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite> focus more broadly on TinyML/TinyDL systems, applications, toolchains, and deployment challenges rather than quantization methodology as the central organizing theme.</p>
-
-<p>Some studies partially bridge hardware and software aspects. For example, Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite> survey model optimization and deployment frameworks, yet provide limited discussion of advanced quantization techniques. L&#234; et al. <d-cite key="tri2026efficient"></d-cite> review efficient neural networks for TinyML on ultra-low-power MCUs, covering compression, deployment tools, and hardware constraints. Wang and Jia <d-cite key="wang2025optimizing"></d-cite> examine the broader edge-AI workflow, from data collection to hardware deployment. However, these works do not focus specifically on modern quantization strategies for MCU-class implementation.</p>
-
-<p>Overall, existing surveys tend to emphasize algorithmic quantization, TinyML hardware, or application domains as separate topics. What remains missing is a deployment-centered synthesis that connects quantization methods with MCU hardware support, software toolchains, numerical representations, and evidence from real-world deployments.</p>
-
-<p>Motivated by this gap, our survey bridges quantization techniques, MCU hardware platforms, and software stacks to enable optimized low-precision inference, with particular attention to ARM- and RISC-V-based devices and NPU-integrated devices. It also addresses a critical yet often overlooked hardware dimension: <em>numerical representations</em>. Furthermore, we provide a consolidated review of diverse application domains in which different quantization methods and hardware platforms have been deployed. This integrated perspective fills a key gap in the existing literature by offering practical, deployment-oriented insights for implementing quantized neural networks (QNNs) on embedded platforms. <a class="xref" href="#table-1">Table 1</a> compares our survey with the most relevant prior work across quantization approaches, numerical representations, hardware platforms, software frameworks, and applications.</p>
 
 <!-- Table 1 (tab:survey-scope) -->
 <div class="ptable-wrap l-page t1-wide" id="table-1">
@@ -535,6 +557,28 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 </table>
 <div class="t1-legend"><span><i class="sw sw-full"></i>surveyed</span><span><i class="sw sw-part"></i>partially surveyed</span><span><i class="sw sw-none"></i>not covered</span><span class="t1-legend-note">Hardware Landscape lists the architectures each survey covers</span></div>
 </div>
+
+<p>This has led to the emergence of the tiny machine learning (TinyML) paradigm, which enables machine learning (ML) models to run on edge devices with extremely limited compute and memory resources, typically consuming only a few milliwatts or less <d-cite key="warden2019tinyml"></d-cite>. TinyML systems usually have memory footprints below 1 MB, often in the 64&#8211;256 KB range <d-cite key="capogrosso2024machine"></d-cite>.</p>
+
+<p>To meet the stringent resource constraints of MCUs, model compression has become essential for deploying DNNs on such platforms. These techniques reduce parameter size, computational cost, and memory usage, but often introduce accuracy&#8211;efficiency trade-offs. Common strategies include network pruning <d-cite key="han2016deep"></d-cite>, low-rank decomposition <d-cite key="phan2020stable"></d-cite>, lightweight architecture design <d-cite key="liu2024lightweight"></d-cite>, neural architecture search (NAS) <d-cite key="ren2021comprehensive"></d-cite>, and knowledge distillation <d-cite key="gou2021knowledge"></d-cite>. Among these, this survey focuses on network quantization, which preserves the model architecture while representing weights and/or activations using lower-precision formats.</p>
+
+<p>Quantization exploits the inherent redundancy in neural networks, allowing models to retain high accuracy under reduced precision <d-cite key="zhou2023towards"></d-cite>. It has therefore become a key enabler of TinyML and a widely adopted approach for efficiently accelerating inference, with potential benefits in energy and carbon footprint at scale. However, practical MCU deployment depends not only on reducing bit-width, but also on compatibility with the target platform&#8217;s numerical formats, operator coverage, memory organization and access constraints, software stack, and hardware execution path. This survey adopts this deployment-centered perspective by connecting quantization methods to MCU hardware, software stacks, and evidence from real-world deployments.</p>
+
+<h3 id="existing-surveys">1.1&ensp;Existing Surveys</h3>
+
+<p>Recent surveys have addressed quantization, model compression, and TinyML deployment from different angles, yet these topics are often treated independently and remain limited in scope. The existing literature can be broadly grouped into three main lines: algorithm-centered quantization surveys <d-cite key="liu2025low,gholami2022survey,rokh2023comprehensive,liu2024lightweight"></d-cite>, hardware-centered deployment surveys <d-cite key="lucan2022brief,liu2024exploring,akkad2023embedded,giordano2022survey"></d-cite>, and broader TinyML and edge-AI surveys <d-cite key="saha2022,heydari2025tiny,ray2022review,somvanshi2025tiny,capogrosso2024machine,tri2026efficient,wang2025optimizing"></d-cite>.</p>
+
+<p>Algorithm-centered surveys, such as those by Liu et al. <d-cite key="liu2025low"></d-cite> and Gholami et al. <d-cite key="gholami2022survey"></d-cite>, focus primarily on software-level advances in quantization, including low-bit quantization algorithms and training techniques across different applications and domains. Related works include Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite>, who evaluate quantization methods for image classification, and Liu et al. <d-cite key="liu2024lightweight"></d-cite>, who discuss lightweight model design and hardware acceleration. Although extensive, these surveys give limited attention to hardware constraints and practical deployment concerns, particularly for MCUs and comparable edge-class devices.</p>
+
+<p>Conversely, hardware-centered deployment surveys tend to emphasize platforms and architectures while giving less attention to quantization as a deployment methodology. For instance, Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite> examine ARM Cortex-M-based MCUs with DNN deployment examples, but do not substantially explore quantization. Similarly, Liu et al. <d-cite key="liu2024exploring"></d-cite>, Akkad et al. <d-cite key="akkad2023embedded"></d-cite>, and Giordano et al. <d-cite key="giordano2022survey"></d-cite> analyze RISC-V, hybrid, and low-power MCU platforms, but provide limited discussion of compression and quantization methods.</p>
+
+<p>Broader TinyML and edge-AI surveys provide ecosystem-level overviews, but often lack depth on quantization as a deployment methodology. For example, Saha et al. <d-cite key="saha2022"></d-cite> cover MCU hardware and deployments, while Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite>, Ray <d-cite key="ray2022review"></d-cite>, and Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite> focus more broadly on TinyML/TinyDL systems, applications, toolchains, and deployment challenges rather than quantization methodology as the central organizing theme.</p>
+
+<p>Some studies partially bridge hardware and software aspects. For example, Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite> survey model optimization and deployment frameworks, yet provide limited discussion of advanced quantization techniques. L&#234; et al. <d-cite key="tri2026efficient"></d-cite> review efficient neural networks for TinyML on ultra-low-power MCUs, covering compression, deployment tools, and hardware constraints. Wang and Jia <d-cite key="wang2025optimizing"></d-cite> examine the broader edge-AI workflow, from data collection to hardware deployment. However, these works do not focus specifically on modern quantization strategies for MCU-class implementation.</p>
+
+<p>Overall, existing surveys tend to emphasize algorithmic quantization, TinyML hardware, or application domains as separate topics. What remains missing is a deployment-centered synthesis that connects quantization methods with MCU hardware support, software toolchains, numerical representations, and evidence from real-world deployments.</p>
+
+<p>Motivated by this gap, our survey bridges quantization techniques, MCU hardware platforms, and software stacks to enable optimized low-precision inference, with particular attention to ARM- and RISC-V-based devices and NPU-integrated devices. It also addresses a critical yet often overlooked hardware dimension: <em>numerical representations</em>. Furthermore, we provide a consolidated review of diverse application domains in which different quantization methods and hardware platforms have been deployed. This integrated perspective fills a key gap in the existing literature by offering practical, deployment-oriented insights for implementing quantized neural networks (QNNs) on embedded platforms. <a class="xref" href="#table-1">Table 1</a> compares our survey with the most relevant prior work across quantization approaches, numerical representations, hardware platforms, software frameworks, and applications.</p>
 
 <h3 id="contributions">1.2&ensp;Contributions</h3>
 
@@ -1047,10 +1091,13 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
     <span style="margin-left:auto;font-size:0.72rem;color:#666">
       X <select id="viz-x"><option value="mem" selected>Model size (KB)</option><option value="lat">Latency (ms)</option><option value="perf">Performance (%)</option></select>
       Y <select id="viz-y"><option value="mem">Model size (KB)</option><option value="lat" selected>Latency (ms)</option><option value="perf">Performance (%)</option></select>
+      <span id="viz-metric-wrap" style="display:none">&ensp;Metric <select id="viz-metric" aria-label="Task metric for the performance axis"></select></span>
     </span>
   </div>
+  <div id="viz-metric-note" style="display:none;font-size:0.7rem;color:#8a5a00;background:#fff8e6;border:1px solid #f0dfb0;border-radius:5px;padding:5px 9px;margin:2px 0 7px"></div>
   <div id="scatter"></div>
-  <div style="font-size:0.68rem;color:#888;margin-top:4px">Each point is one study from Tables 4&#8211;6 (range midpoints used where a range is reported; the tables are the source of truth). Hover for details; click a point to open that study in the reference list.</div>
+  <div id="viz-count" class="visually-hidden" aria-live="polite"></div>
+  <div style="font-size:0.68rem;color:#888;margin-top:4px">Each point is one deployment from Tables 4&#8211;6. Every value is parsed from the table cell itself: the marker sits at the midpoint of the full reported range and the whisker spans that range end to end, so the tables remain the source of truth. Hover or focus a point for details; click it to open that study in the reference list.</div>
 </div>
 
 <p>Although these platforms explicitly support extreme low-bit and mixed-precision arithmetic, the great majority of the works we surveyed still default to INT8. The few exceptions, such as the INT16 vision model of Zemlyanikin et al. <d-cite key="zemlyanikin2019512kib"></d-cite> and the mixed-precision pipelines of Itani et al. <d-cite key="itani2025wireless"></d-cite> and Crupi et al. <d-cite key="crupi2025efficient"></d-cite>, remain uncommon. We therefore focus on their most distinctive and emerging uses rather than on precision choices alone.</p>
@@ -1146,7 +1193,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260826d"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1167,14 +1214,10 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/supplements.js"></script>
-  <script src="assets/js/figs.js"></script>
+  <script src="assets/js/data.js?v=20260826d"></script>
+  <script src="assets/js/supplements.js?v=20260826d"></script>
+  <script src="assets/js/figs.js?v=20260826d"></script>
 
-<!-- Visitor map (hidden 1px tracker) -->
-<div id="mmv-tracker" aria-hidden="true" style="position:fixed;right:0;bottom:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1">
-  <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=5SaQm5REydV7zfCccA9DyB1UyvRPpWH7V0TfOo7EvBI&cl=ffffff&w=a"></script>
-</div>
   </body>
 
 </html>

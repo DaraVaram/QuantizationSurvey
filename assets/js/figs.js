@@ -34,6 +34,31 @@
     t.style.top = (y + 14 + tipH > window.innerHeight - 8 ? Math.max(8, y - tipH - 12) : y + 14) + "px";
   }
   function tipTarget(e) { return e.target && e.target.closest ? e.target.closest("[data-tip]") : null; }
+  function showTipOn(el) {                   // centre the hint on the element itself
+    var b = el.getBoundingClientRect();
+    tipTxt = null;
+    showTip(el, b.left + b.width / 2, b.top + b.height / 2);
+  }
+  function hideTip() { showTip(null); }
+  // Anything that explains itself on hover must do the same on keyboard focus.
+  // Delegated, so it keeps working after a table reset rebuilds its rows.
+  document.addEventListener("focusin", function (e) {
+    var el = e.target && e.target.closest ? e.target.closest("[data-tip]") : null;
+    if (el) showTipOn(el);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target && e.target.closest && e.target.closest("[data-tip]")) hideTip();
+  });
+  function focusable(el, label, role) {
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("role", role || "button");
+    if (label) el.setAttribute("aria-label", label);
+  }
+  function plain(html) {
+    var d = document.createElement("div");
+    d.innerHTML = html || "";
+    return d.textContent.replace(/\s+/g, " ").trim();
+  }
   document.addEventListener("mousemove", function (e) {
     showTip(tipTarget(e), e.clientX, e.clientY);
   }, { passive: true });
@@ -85,6 +110,42 @@
     svg.addEventListener("mouseover", function (e) { enter(e.target); });
     svg.addEventListener("mouseout", function (e) { if (regionOf(e.target)) clear(); });
     svg.addEventListener("click", function (e) { enter(e.target); });
+
+    /* Keyboard: each cube is one tab stop and the arrow keys step through its
+       regions, rather than putting a hundred individual cells in the tab order. */
+    var NAME = { "f2-tensor": "Per-tensor quantization", "f2-channel": "Per-channel quantization",
+                 "f2-group": "Per-group quantization" };
+    $$("g[id]", svg).forEach(function (cube) {
+      var regions = [];
+      $$(".f2c", cube).forEach(function (el) {
+        var c = regionOf(el);
+        if (c && regions.indexOf(c) === -1) regions.push(c);
+      });
+      if (!regions.length) return;
+      var at = 0;
+      function show() {
+        var cls = regions[at];
+        clear();
+        cube.setAttribute("data-tip", textFor(cls));
+        $$(".f2c", cube).forEach(function (el) {
+          el.classList.toggle("f2-hi", el.classList.contains(cls));
+          el.classList.toggle("f2-dim", !el.classList.contains(cls));
+        });
+        showTipOn(cube);
+      }
+      cube.setAttribute("tabindex", "0");
+      cube.setAttribute("role", "button");
+      cube.setAttribute("aria-label", (NAME[cube.id] || "Quantization granularity") +
+        (regions.length > 1 ? ", " + regions.length + " regions; use the arrow keys" : ""));
+      cube.addEventListener("focus", function () { at = 0; show(); });
+      cube.addEventListener("blur", function () { clear(); hideTip(); });
+      cube.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowDown" || e.key === "ArrowRight") { at = (at + 1) % regions.length; show(); e.preventDefault(); }
+        else if (e.key === "ArrowUp" || e.key === "ArrowLeft") { at = (at - 1 + regions.length) % regions.length; show(); e.preventDefault(); }
+        else if (e.key === "Enter" || e.key === " ") { show(); e.preventDefault(); }
+        else if (e.key === "Escape") { clear(); hideTip(); }
+      });
+    });
   })();
 
   /* ---------- Figure 4: traveling marker + forward/backward isolation ---------- */
@@ -245,15 +306,61 @@
       tint(".f6-nodeL2", state["2"]);
       tint(".f6-nodeLn", state.n);
     }
+    function select(col, row) { state[col] = row; render(); }
     svg.addEventListener("click", function (e) {
       var g = e.target.closest ? e.target.closest(".f6-cell") : null;
-      if (g) {
-        state[g.getAttribute("data-col")] = g.getAttribute("data-row");
-        render();
-        return;
-      }
+      if (g) { select(g.getAttribute("data-col"), g.getAttribute("data-row")); return; }
       if (e.target.id === "f6-reset") { state = { "1": DEFAULT["1"], "2": DEFAULT["2"], "n": DEFAULT.n }; render(); }
     });
+
+    /* Keyboard: each layer column is a radio group. One tab stop per column
+       lands on its current bit-width; the arrow keys move the selection. */
+    var LABEL = { "1": "Layer 1", "2": "Layer 2", "n": "Layer n" };
+    var ROWNAME = { "2": "2-bit", "3": "3-bit", "b": "b-bit" };
+    var columns = {};
+    cells.forEach(function (c) { (columns[c.getAttribute("data-col")] = columns[c.getAttribute("data-col")] || []).push(c); });
+    Object.keys(columns).forEach(function (col) {
+      var group = columns[col];
+      var wrap = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      wrap.setAttribute("role", "radiogroup");
+      wrap.setAttribute("aria-label", LABEL[col] + " bit-width");
+      group[0].parentNode.insertBefore(wrap, group[0]);
+      group.forEach(function (c) {
+        wrap.appendChild(c);
+        c.setAttribute("role", "radio");
+        c.setAttribute("aria-label", LABEL[col] + ", " + ROWNAME[c.getAttribute("data-row")]);
+        c.addEventListener("keydown", function (e) {
+          var i = group.indexOf(c), k = e.key, j = null;
+          if (k === "ArrowDown" || k === "ArrowRight") j = (i + 1) % group.length;
+          else if (k === "ArrowUp" || k === "ArrowLeft") j = (i - 1 + group.length) % group.length;
+          else if (k === "Enter" || k === " ") { select(col, c.getAttribute("data-row")); e.preventDefault(); return; }
+          if (j === null) return;
+          e.preventDefault();
+          select(col, group[j].getAttribute("data-row"));
+          group[j].focus();
+        });
+      });
+    });
+    function syncA11y() {
+      cells.forEach(function (c) {
+        var on = state[c.getAttribute("data-col")] === c.getAttribute("data-row");
+        c.setAttribute("aria-checked", on ? "true" : "false");
+        c.setAttribute("tabindex", on ? "0" : "-1");     // roving tab stop per column
+      });
+    }
+    var reset = $("#f6-reset", svg);
+    if (reset) {
+      reset.setAttribute("tabindex", "0");
+      reset.setAttribute("role", "button");
+      reset.setAttribute("aria-label", "Reset the bit-width selection");
+      reset.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          state = { "1": DEFAULT["1"], "2": DEFAULT["2"], "n": DEFAULT.n }; render(); e.preventDefault();
+        }
+      });
+    }
+    var baseRender = render;
+    render = function () { baseRender(); syncA11y(); };
     window.addEventListener("beforeprint", function () { state = { "1": DEFAULT["1"], "2": DEFAULT["2"], "n": DEFAULT.n }; render(); });
     render();
   })();
@@ -311,7 +418,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260826d").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
@@ -450,6 +557,16 @@
         show(c, e.clientX, e.clientY);
       }, { passive: true });
       w.addEventListener("mouseleave", hide);
+      // focus parity: the card must also appear for a keyboard reader
+      w.addEventListener("focusin", function (e) {
+        var c = e.target.closest ? e.target.closest("d-cite") : null;
+        if (!c) return;
+        suppressNative(c);
+        cardFor = null;
+        var b = c.getBoundingClientRect();
+        show(c, b.left + b.width / 2, b.bottom - b.height / 2);
+      });
+      w.addEventListener("focusout", hide);
     });
 
     // A study row is about one paper, so clicking anywhere in it opens that
@@ -466,6 +583,44 @@
         if (!tr) return;
         var c = tr.querySelector("d-cite");
         if (c && window.QSRefs) window.QSRefs.jump((c.getAttribute("key") || "").split(",")[0].trim());
+      });
+    });
+  })();
+
+  /* ---------- Keyboard and focus parity for the remaining controls ----------
+     Figure 9's stages, Figure 5's method chips, Table 2's platforms and the
+     citations inside the tables all explained themselves on hover only. Each
+     now takes focus and reveals the same thing there. */
+  (function () {
+    // Figure 9: every pipeline stage, including the inspection icon
+    $$("#figure-9 .f9-node").forEach(function (n) {
+      focusable(n, plain(n.getAttribute("data-tip")), "button");
+    });
+    // Figure 5 / supplement method chips navigate into the prose. They contain
+    // <d-cite> children, so they stay spans with button semantics rather than
+    // nesting one interactive element inside another.
+    $$(".mchip[data-nav]").forEach(function (chip) {
+      chip.setAttribute("tabindex", "0");
+      chip.setAttribute("role", "button");
+      chip.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        if (e.target.closest && e.target.closest("d-cite")) return;
+        e.preventDefault();
+        chip.click();
+      });
+    });
+    // Citations inside tables: Enter/Space opens the reference. Delegated,
+    // because a table reset rebuilds every row from its original markup.
+    // (The focusable attributes are written in supplements.js before that
+    // markup is captured, so they survive the rebuild.)
+    $$(".ptable-wrap").forEach(function (w) {
+      w.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        var c = e.target.closest ? e.target.closest("d-cite") : null;
+        if (!c) return;
+        e.preventDefault();
+        var k = (c.getAttribute("key") || "").split(",")[0].trim();
+        if (k && window.QSRefs) window.QSRefs.jump(k);
       });
     });
   })();

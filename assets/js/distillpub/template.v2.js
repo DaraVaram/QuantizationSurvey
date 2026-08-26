@@ -915,6 +915,12 @@ ${math}
     var names = ent.author.split(" and ");
     let name_strings = names.map(name => {
       name = name.trim();
+      /* LOCAL MODIFICATION (quantization survey): a brace-wrapped whole name is a
+         corporate author, e.g. {{Espressif Systems}}. It has no given/family split,
+         so render it literally instead of turning it into "Systems, E.". */
+      if (name.charAt(0) === "{" && name.charAt(name.length - 1) === "}") {
+        return name.slice(1, -1).replace(/[{}]/g, "").trim();
+      }
       if (name.indexOf(",") != -1) {
         var last = name.split(",")[0].trim();
         var firsts = name.split(",")[1];
@@ -2025,11 +2031,37 @@ d-appendix > distill-appendix {
 
   // Copyright 2018 The Distill Template Authors
 
-  function normalizeTag(string) {
-    return string
+  /* LOCAL MODIFICATION (quantization survey): BibTeX protections have to survive
+     in the .bib file but must not leak into the rendered reference. TeX-escaped
+     punctuation is unescaped, ~ becomes a non-breaking space, and capitalisation
+     braces are dropped for display. The author field keeps its braces, because a
+     whole-name brace marks a corporate author and author_string needs that signal. */
+  const TEX_ACCENT = {
+    "'": "́", "`": "̀", '"': "̈", "^": "̂", "~": "̃",
+    ".": "̇", "=": "̄", "u": "̆", "v": "̌", "H": "̋",
+    "c": "̧", "k": "̨", "r": "̊"
+  };
+  const TEX_MATH = {
+    "\\alpha": "α", "\\beta": "β", "\\gamma": "γ", "\\delta": "δ",
+    "\\lambda": "λ", "\\mu": "μ", "\\sigma": "σ", "\\times": "×",
+    "^2": "²", "^3": "³"
+  };
+  function normalizeTag(string, key) {
+    let out = string
       .replace(/[\t\n ]+/g, ' ')
+      // TeX accents become the real character, for both {\v{c}} and {\"u} spellings
+      .replace(/\{\\(['`"^~.=uvHckr])\s*\{?([a-zA-Z])\}?\}/g, (full, acc, char) =>
+        TEX_ACCENT[acc] ? (char + TEX_ACCENT[acc]).normalize('NFC') : char)
       .replace(/{\\["^`.'acu~Hvs]( )?([a-zA-Z])}/g, (full, x, char) => char)
-      .replace(/{\\([a-zA-Z])}/g, (full, char) => char);
+      .replace(/{\\([a-zA-Z])}/g, (full, char) => char)
+      // inline math in a title: map the symbols this bibliography uses, otherwise
+      // just drop the $ pair rather than printing it
+      .replace(/\$([^$]*)\$/g, (full, inner) =>
+        TEX_MATH[inner] !== undefined ? TEX_MATH[inner] : inner)
+      .replace(/\\([%&$#_{}])/g, (full, char) => char)
+      .replace(/~/g, ' ');
+    if (key !== 'author') out = out.replace(/[{}]/g, '');
+    return out;
   }
 
   function parseBibtex(bibtex) {
@@ -2038,7 +2070,7 @@ d-appendix > distill-appendix {
     for (const entry of parsedEntries) {
       // normalize tags; note entryTags is an object, not Map
       for (const [key, value] of Object.entries(entry.entryTags)) {
-        entry.entryTags[key.toLowerCase()] = normalizeTag(value);
+        entry.entryTags[key.toLowerCase()] = normalizeTag(value, key.toLowerCase());
       }
       entry.entryTags.type = entry.entryType;
       // add to bibliography
