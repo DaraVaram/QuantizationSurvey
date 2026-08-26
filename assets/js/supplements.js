@@ -23,9 +23,15 @@
     uj: 1e-3, mj: 1, j: 1000,
     us: 1e-3, ms: 1, s: 1000
   };
+  var SUP = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5",
+             "⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁻":"-"};
   function cellVal(td) {
     var raw = cellText(td);
     if (!raw) return "";
+    raw = raw.replace(/[⁰¹²³⁴-⁹⁻]/g, function (c) { return SUP[c]; });
+    // scientific notation, e.g. "2x10-8 mJ" -> 2e-8
+    var sci = raw.match(/(-?\d+(?:\.\d+)?)\s*[×x*]\s*10\s*([−–-]?)\s*(\d+)/);
+    if (sci) return parseFloat(sci[1]) * Math.pow(10, parseInt(sci[3], 10) * (sci[2] ? -1 : 1));
     // strip leading comparators and take the first numeric token with its unit
     var m = raw.match(/(-?\d+(?:\.\d+)?)\s*(KB|MB|GB|kHz|MHz|GHz|mW|uW|W|mJ|uJ|J|ms|us|s)?/i);
     if (!m) return raw.toLowerCase();
@@ -45,7 +51,8 @@
     var flattened = !table.querySelector("td[rowspan]");
     var state = { q: "", chip: "all", sorted: false };
 
-    // ---- toolbar ----
+    // ---- toolbar (only if this table actually has controls) ----
+    if (!opts.chips && opts.noSearch && !(opts.sortable || []).length) return;
     var bar = document.createElement("div");
     bar.className = "tbl-toolbar";
     var chipsHtml = "";
@@ -130,9 +137,14 @@
       });
     }
 
-    // ---- sorting ----
+    // ---- sorting: numeric columns only ----
+    // Qualitative columns (names, devices, frameworks, coverage marks) are left
+    // alone -- ordering them alphabetically told the reader nothing useful.
+    var sortCols = opts.sortable || [];
     var ths = $$("thead th", table);
-    ths.forEach(function (th, ci) {
+    sortCols.forEach(function (ci) {
+      var th = ths[ci];
+      if (!th) return;
       th.classList.add("sortable");
       th.title = "Click to sort by this column";
       var ind = document.createElement("span");
@@ -150,9 +162,11 @@
         var rows = $$("tr", tbody);
         rows.sort(function (a, b) {
           var x = cellVal(a.cells[ci]), y = cellVal(b.cells[ci]);
-          if (typeof x === "number" && typeof y === "number") return (x - y) * dir;
-          x = String(x); y = String(y);
-          return x < y ? -dir : x > y ? dir : 0;
+          var xn = typeof x === "number", yn = typeof y === "number";
+          if (xn && yn) return (x - y) * dir;
+          if (xn) return -1;                 // rows with a value sort above "--"
+          if (yn) return 1;
+          return 0;
         });
         rows.forEach(function (r) { r.classList.remove("rule"); tbody.appendChild(r); });
       });
@@ -169,7 +183,8 @@
     match: function (tr, key) {
       var td = tr.cells[+key];
       return td && td.querySelector("span") !== null;
-    }
+    },
+    sortable: [1]                      // Year
   });
   // Table 2 — platforms: family filter (rowspan flattening on demand)
   enhanceTable("table-2", {
@@ -177,18 +192,21 @@
       { key: "ARM-based", label: "ARM" }, { key: "RISC-V-based", label: "RISC-V" },
       { key: "NPU-Integrated", label: "NPU" }
     ],
-    match: function (tr, key) { return cellText(tr.cells[0]) === key; }
+    match: function (tr, key) { return cellText(tr.cells[0]) === key; },
+    sortable: [4, 5, 6]                // Clock, Flash, RAM
   });
   // Tables 4 and 6 — deployments: quantization-path filter
   ["table-4", "table-6"].forEach(function (tid) {
     enhanceTable(tid, {
       chips: [{ key: "PTQ", label: "PTQ" }, { key: "QAT", label: "QAT" }],
-      match: function (tr, key) { return cellText(tr.cells[2]).indexOf(key) !== -1; }
+      match: function (tr, key) { return cellText(tr.cells[2]).indexOf(key) !== -1; },
+      sortable: [5, 6, 7, 8]           // Performance, Power/Energy, Latency, Memory
     });
   });
   // Table 5 — all three rows are INT8 PTQ: search and sorting only, no chips
-  enhanceTable("table-5", {});
+  enhanceTable("table-5", { sortable: [5, 6, 7, 8] });
   // Table 3 — three descriptive rows: sorting/reset only, no search
+  // Table 3 — three descriptive prose rows: nothing numeric, so no controls at all
   enhanceTable("table-3", { noSearch: true });
 
   /* =======================================================================
