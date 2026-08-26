@@ -9,66 +9,90 @@
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- shared tooltip for [data-tip] ---------- */
-  var tip = null;
+  /* ---------- shared tooltip for [data-tip] ----------
+     One mechanism for every hint on the page. An element carries [data-tip] —
+     written into the markup, or set by a figure's own handler — and this block
+     positions and shows it, for pointer hover and for tap alike. */
+  var tip = null, tipTxt = null, tipH = 0;
   function ensureTip() {
     if (!tip) { tip = document.createElement("div"); tip.className = "viz-tip"; document.body.appendChild(tip); }
     return tip;
   }
-  document.addEventListener("mousemove", function (e) {
-    var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+  function showTip(el, x, y) {
     var t = ensureTip();
-    if (el) {
-      t.innerHTML = el.getAttribute("data-tip");
-      t.style.left = Math.min(e.clientX + 14, window.innerWidth - 270) + "px";
-      t.style.top = (e.clientY + 14) + "px";
+    if (!el) { tipTxt = null; t.style.opacity = "0"; return; }
+    // keyed on the text, not the element: Figure 2 reuses one cube group and
+    // rewrites its [data-tip] per region, so caching the element goes stale
+    var txt = el.getAttribute("data-tip");
+    if (txt !== tipTxt) {                    // only re-render and re-measure when the hint changes
+      t.innerHTML = txt;
       t.style.opacity = "1";
-    } else {
-      t.style.opacity = "0";
+      tipH = t.offsetHeight;
+      tipTxt = txt;
     }
+    t.style.left = Math.min(x + 14, window.innerWidth - 270) + "px";
+    t.style.top = (y + 14 + tipH > window.innerHeight - 8 ? Math.max(8, y - tipH - 12) : y + 14) + "px";
+  }
+  function tipTarget(e) { return e.target && e.target.closest ? e.target.closest("[data-tip]") : null; }
+  document.addEventListener("mousemove", function (e) {
+    showTip(tipTarget(e), e.clientX, e.clientY);
   }, { passive: true });
+  // tap equivalent, so a hover-only hint is still reachable on a touch screen
+  document.addEventListener("click", function (e) {
+    var el = tipTarget(e);
+    if (el) { tipTxt = null; showTip(el, e.clientX, e.clientY); }
+  });
 
-  /* ---------- Figure 2: granularity hover ---------- */
+  /* ---------- Figure 2: granularity hints ----------
+     Per-tensor, per-channel and per-group behave identically: the hovered cube
+     receives [data-tip], so the shared tooltip above shows and positions the
+     hint the same way for every granularity, on hover and on tap. */
   (function () {
     var svg = $("#figure-2 svg");
     if (!svg) return;
-    var tips = {
-      t: "Per-tensor: a single scale (s, z) is shared by every value in the tensor.",
+    var TIP = {
+      t: function () { return "Per-tensor: a single scale (s, z) is shared by every value in the tensor."; },
       pc: function (r) { return "Per-channel: channel " + (r + 1) + " has its own scale s<sub>" + (r + 1) + "</sub>."; },
       pg: function (r) { return "Per-group: this block within channel " + (r + 1) + " has its own scale."; }
     };
-    svg.addEventListener("mouseover", function (e) {
-      var c = e.target;
-      if (!c.classList || !c.classList.contains("f2c")) return;
+    function regionOf(el) {
+      if (!el || !el.classList || !el.classList.contains("f2c")) return null;
       var cls = null;
-      c.classList.forEach(function (k) { if (/^(t-all|pc-r\d|pg[lr]-g\d[LR])$/.test(k)) cls = k; });
+      el.classList.forEach(function (k) { if (/^(t-all|pc-r\d|pg[lr]-g\d[LR])$/.test(k)) cls = k; });
+      return cls;
+    }
+    function textFor(cls) {
+      if (cls === "t-all") return TIP.t();
+      if (cls.indexOf("pc-r") === 0) return TIP.pc(+cls.charAt(4));
+      return TIP.pg(+cls.charAt(5));
+    }
+    function clear() {
+      $$(".f2c", svg).forEach(function (el) { el.classList.remove("f2-hi", "f2-dim"); });
+      $$("g[id]", svg).forEach(function (g) { g.removeAttribute("data-tip"); });
+    }
+    function enter(target) {
+      var cls = regionOf(target);
       if (!cls) return;
-      var cube = c.closest("g[id]");
+      var cube = target.closest("g[id]");
+      if (!cube) return;
+      clear();
+      cube.setAttribute("data-tip", textFor(cls));
       $$(".f2c", cube).forEach(function (el) {
         el.classList.toggle("f2-hi", el.classList.contains(cls));
         el.classList.toggle("f2-dim", !el.classList.contains(cls));
       });
-      var t = ensureTip();
-      var txt;
-      if (cls === "t-all") txt = tips.t;
-      else if (cls.indexOf("pc-r") === 0) txt = tips.pc(+cls.charAt(4));
-      else txt = tips.pg(+cls.charAt(5));
-      t.innerHTML = txt; t.style.opacity = "1";
-    });
-    svg.addEventListener("mouseout", function (e) {
-      var c = e.target;
-      if (!c.classList || !c.classList.contains("f2c")) return;
-      $$(".f2c", svg).forEach(function (el) { el.classList.remove("f2-hi", "f2-dim"); });
-    });
+    }
+    svg.addEventListener("mouseover", function (e) { enter(e.target); });
+    svg.addEventListener("mouseout", function (e) { if (regionOf(e.target)) clear(); });
+    svg.addEventListener("click", function (e) { enter(e.target); });
   })();
 
-  /* ---------- Figure 4: traveling marker around the QAT loop ---------- */
+  /* ---------- Figure 4: traveling marker + forward/backward isolation ---------- */
   (function () {
     var svg = $("#figure-4 svg");
-    if (!svg || reduced) return;
+    if (!svg) return;
     var path = $("#f4-loop", svg), dot = $("#f4-dot", svg);
-    if (!path || !dot) return;
-    var L = path.getTotalLength();          // segment lengths: 677|1972|1477|1972|665
+    var L = path ? path.getTotalLength() : 0;   // segment lengths: 677|1972|1477|1972|665
     var GREEN = "#00CC00", BLUE = "#3E8EF7";
     // cumulative breakpoints along the loop
     var B = { upLeft: 677, topMid: 1709, topEnd: 2649, rightBlue: 3358, rightEnd: 4126, botMid: 5066, botEnd: 6098 };
@@ -83,6 +107,7 @@
       { until: 1e9,         ids: ["f4-dW", "f4-plus"], color: BLUE }
     ];
     var DUR = 16000, running = false, start = null, raf = null;
+    var isolated = null, locked = null;
     function frame(ts) {
       if (!running) return;
       if (start === null) start = ts;
@@ -97,14 +122,51 @@
       });
       raf = requestAnimationFrame(frame);
     }
-    function play() { if (running) return; running = true; start = null; dot.style.display = ""; raf = requestAnimationFrame(frame); }
-    function stop() { running = false; if (raf) cancelAnimationFrame(raf); dot.style.display = "none";
-      $$(".f4-quad, .f4-mid", svg).forEach(function (g) { g.classList.remove("f4-active"); }); }
+    function play() {
+      if (running || reduced || isolated || !path || !dot) return;
+      running = true; start = null; dot.style.display = ""; raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      running = false; if (raf) cancelAnimationFrame(raf);
+      if (dot) dot.style.display = "none";
+      $$(".f4-quad, .f4-mid", svg).forEach(function (g) { g.classList.remove("f4-active"); });
+    }
     function checkVis() {
       var r = svg.getBoundingClientRect();
       var vis = r.bottom > 0 && r.top < window.innerHeight && r.width > 0;
       vis ? play() : stop();
     }
+
+    /* Pointing at the upper half emphasises the forward pass and fades the
+       backward pass; the lower half does the reverse. Both passes meet at the
+       "+" junction on y=820, so the band around it isolates nothing. Tapping
+       locks a half, which is how this works on a touch screen. */
+    var VB_H = 1640, UPPER = 780, LOWER = 862;
+    function sideAt(clientY) {
+      var r = svg.getBoundingClientRect();
+      if (!r.height) return null;
+      var y = (clientY - r.top) / r.height * VB_H;
+      return y < UPPER ? "fwd" : (y > LOWER ? "bwd" : null);
+    }
+    function isolate(side) {
+      side = side || null;
+      if (side === isolated) return;
+      isolated = side;
+      svg.classList.toggle("f4-iso-fwd", isolated === "fwd");
+      svg.classList.toggle("f4-iso-bwd", isolated === "bwd");
+      if (isolated) stop(); else checkVis();     // the loop resumes once nothing is isolated
+    }
+    svg.addEventListener("mousemove", function (e) { if (!locked) isolate(sideAt(e.clientY)); }, { passive: true });
+    svg.addEventListener("mouseleave", function () { locked = null; isolate(null); });
+    svg.addEventListener("click", function (e) {
+      var s = sideAt(e.clientY);
+      locked = (locked && locked === s) ? null : s;   // tap the same half again to release
+      isolate(locked);
+    });
+    document.addEventListener("click", function (e) {
+      if (locked && !(e.target.closest && e.target.closest("#figure-4"))) { locked = null; isolate(null); }
+    });
+
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (es) {
         es.forEach(function (en) { en.isIntersecting ? play() : stop(); });
@@ -116,7 +178,7 @@
       scrollTick = true;
       setTimeout(function () { scrollTick = false; checkVis(); }, 300);
     }, { passive: true });
-    window.addEventListener("beforeprint", stop);
+    window.addEventListener("beforeprint", function () { locked = null; isolate(null); stop(); });
     window.addEventListener("afterprint", checkVis);
   })();
 
@@ -132,6 +194,16 @@
       var g = cells.filter(function (c) { return c.getAttribute("data-col") === col && c.getAttribute("data-row") === row; })[0];
       return g ? { x: +g.getAttribute("data-x"), y: +g.getAttribute("data-y") } : null;
     }
+    /* Layer 2 -> Layer n routing. Continuation ellipses sit at x=676 on every
+       row, so the connector must never approach a cell edge-on from the left,
+       and the layer captions sit below y=800, so it must never dip past the
+       grid either. Every route therefore leaves Layer 2 through its right
+       edge, drops into the empty corridor at x=624, runs along a clear band
+       between two rows, and enters Layer n vertically through its nearest free
+       edge. No combination crosses a cell, an ellipsis or a caption. */
+    var CORRIDOR = 624, ENTRY = 724;
+    var LANE = { "2": 604, "3": 690, "b": 690 };   // clear horizontal bands between the rows
+    var EDGE = { "2": 594, "3": 669, "b": 734 };   // stop just outside the target's edge
     function render() {
       cells.forEach(function (g) {
         var col = g.getAttribute("data-col"), row = g.getAttribute("data-row");
@@ -151,18 +223,17 @@
       });
       // selection arrows
       var arr = $("#f6-arrows", svg);
-      var p1 = cellPos("1", state["1"]), p2 = cellPos("2", state["2"]), pn = cellPos("n", state.n);
+      var p1 = cellPos("1", state["1"]), p2 = cellPos("2", state["2"]);
       var h = '<path d="M224,436 L302,436 L302,' + (p1.y + 25) + " L324," + (p1.y + 25) +
               '" fill="none" stroke="#000" stroke-width="2" marker-end="url(#f6a)"/>';
       h += '<path d="M' + (p1.x + 104) + "," + (p1.y + 25) + " L457," + (p1.y + 25) + " L457," + (p2.y + 25) +
            " L" + (p2.x - 6) + "," + (p2.y + 25) + '" fill="none" stroke="#000" stroke-width="2" marker-end="url(#f6a)"/>';
-      // layer 2 -> layer n: leave the box from below, run in a clear lane, enter
-      // the target box from the top (or from below when it sits higher up), so the
-      // connector never crosses the continuation ellipses.
-      var exitX = p2.x + 80, entryX = pn.x + 30, laneY = p2.y + 74;
-      var endY = (pn.y > laneY) ? pn.y - 4 : pn.y + 54;
-      h += '<path d="M' + exitX + "," + (p2.y + 50) + " L" + exitX + "," + laneY +
-           " L" + entryX + "," + laneY + " L" + entryX + "," + endY +
+      var laneY = LANE[state.n], edgeY = EDGE[state.n];
+      h += '<path d="M' + (p2.x + 104) + "," + (p2.y + 25) +
+           " L" + CORRIDOR + "," + (p2.y + 25) +
+           " L" + CORRIDOR + "," + laneY +
+           " L" + ENTRY + "," + laneY +
+           " L" + ENTRY + "," + edgeY +
            '" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#f6a)"/>';
       arr.innerHTML = h;
       // network node tint
@@ -297,20 +368,105 @@
     }
     enhanceSoon();
 
+    function entryLi(key) {
+      var num = nums[key];
+      if (!num) return null;
+      var cl = document.querySelector("d-citation-list");
+      if (!cl) return null;
+      return (cl.shadowRoot || cl).querySelectorAll("li")[num - 1] || null;
+    }
+    function jump(key) {
+      var li = entryLi(key);
+      if (!li) return false;
+      li.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+      li.classList.add("ref-flash");
+      setTimeout(function () { li.classList.remove("ref-flash"); }, 2200);
+      return true;
+    }
+    // Rendered text of a reference entry, for hover cards elsewhere on the page.
+    // The outbound "[link]" is stripped so the card stays self-contained.
+    function entryHTML(key) {
+      var li = entryLi(key);
+      if (!li) return null;
+      var c = li.cloneNode(true);
+      $$(".ref-out", c).forEach(function (a) { a.parentNode.removeChild(a); });
+      return c.innerHTML;
+    }
+    window.QSRefs = { number: function (k) { return nums[k] || null; }, jump: jump, entryHTML: entryHTML };
+
     // clicking an inline citation jumps to its entry in the reference list
     document.addEventListener("click", function (e) {
       var c = e.target.closest ? e.target.closest("d-cite") : null;
       if (!c) return;
-      var key = (c.getAttribute("key") || "").split(",")[0].trim();
-      var num = nums[key];
-      if (!num) return;
-      var cl = document.querySelector("d-citation-list");
-      if (!cl) return;
-      var li = (cl.shadowRoot || cl).querySelectorAll("li")[num - 1];
-      if (!li) return;
-      li.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
-      li.classList.add("ref-flash");
-      setTimeout(function () { li.classList.remove("ref-flash"); }, 2200);
+      jump((c.getAttribute("key") || "").split(",")[0].trim());
+    });
+  })();
+
+  /* ---------- Tables: reference cards on the study citations ----------
+     Citations inside a table use the same <d-cite> element as the prose, but
+     distill lays its hover box out inside the table wrapper, which is a
+     horizontal scroll container and therefore clips it. Suppress that box and
+     draw the same reference entry in a fixed-position card instead, so the
+     first column of Tables 4-6 behaves like a citation anywhere else. */
+  (function () {
+    var wraps = $$(".ptable-wrap");
+    if (!wraps.length) return;
+    var card = null, cardFor = null;
+    function ensureCard() {
+      if (!card) { card = document.createElement("div"); card.className = "cite-card"; document.body.appendChild(card); }
+      return card;
+    }
+    function hide() { cardFor = null; if (card) card.style.opacity = "0"; }
+    function suppressNative(c) {
+      if (c.__qsPlain || !c.shadowRoot) return;
+      var st = document.createElement("style");
+      st.textContent = "d-hover-box{display:none !important}";
+      c.shadowRoot.appendChild(st);
+      c.__qsPlain = true;
+    }
+    function show(c, x, y) {
+      var el = ensureCard();
+      if (c !== cardFor) {
+        var html = (c.getAttribute("key") || "").split(",").map(function (k) {
+          k = k.trim();
+          var body = k && window.QSRefs && window.QSRefs.entryHTML(k);
+          if (!body) return "";
+          return '<div class="cc-entry"><span class="cc-num">[' + window.QSRefs.number(k) + "]</span>" + body + "</div>";
+        }).join("");
+        if (!html) { hide(); return; }
+        el.innerHTML = html;
+        el.style.opacity = "1";
+        cardFor = c;
+      }
+      var w = el.offsetWidth, h = el.offsetHeight;
+      el.style.left = Math.max(8, Math.min(x + 14, window.innerWidth - w - 12)) + "px";
+      el.style.top = (y + 16 + h > window.innerHeight - 8 ? Math.max(8, y - h - 14) : y + 16) + "px";
+    }
+    wraps.forEach(function (w) {
+      w.addEventListener("mousemove", function (e) {
+        var c = e.target.closest ? e.target.closest("d-cite") : null;
+        if (!c) { hide(); return; }
+        suppressNative(c);
+        show(c, e.clientX, e.clientY);
+      }, { passive: true });
+      w.addEventListener("mouseleave", hide);
+    });
+
+    // A study row is about one paper, so clicking anywhere in it opens that
+    // reference — without hijacking text selection or the citation itself.
+    ["table-4", "table-5", "table-6"].forEach(function (id) {
+      var w = $("#" + id);
+      if (!w) return;
+      w.classList.add("t-studies");
+      w.addEventListener("click", function (e) {
+        if (e.target.closest && e.target.closest("d-cite")) return;
+        var sel = window.getSelection();
+        if (sel && !sel.isCollapsed) return;
+        var tr = e.target.closest ? e.target.closest("tbody tr") : null;
+        if (!tr) return;
+        var c = tr.querySelector("d-cite");
+        if (c && window.QSRefs) window.QSRefs.jump((c.getAttribute("key") || "").split(",")[0].trim());
+      });
     });
   })();
 

@@ -174,6 +174,41 @@
     apply();
   }
 
+  /* =======================================================================
+     Table 2 — how many of the surveyed deployments use each platform.
+     A study counts for a platform only when its Device(s) cell names that
+     platform; accelerator names are deliberately not mapped onto boards, and
+     the count is scoped to the studies selected for Tables 4-6 rather than to
+     the literature at large. Runs before enhanceTable so the hints survive a
+     table reset.
+     ======================================================================= */
+  (function () {
+    var D = window.DATA;
+    if (!D || !D.apps) return;
+    var rows = [].concat(D.apps.arm, D.apps.riscv, D.apps.npu);
+    var NAMES = ["Arduino Nano 33 BLE Sense", "SparkFun Edge", "Sony Spresense", "OpenMV Cam H7",
+                 "ESP32-C3", "ESP32-C6", "ESP32-P4", "MSPM0G5187", "MAX78002",
+                 "GAP8", "GAP9", "HX6538-WE2", "STM32N6"];
+    var everyKey = {};
+    rows.forEach(function (r) { everyKey[r.key] = 1; });
+    var total = Object.keys(everyKey).length;
+    $$("#table-2 td.t2-plat").forEach(function (td) {
+      var name = cellText(td);
+      if (NAMES.indexOf(name) === -1) return;
+      var seen = {}, cats = [];
+      rows.forEach(function (r) {
+        if ((r.devices || "").indexOf(name) === -1 || seen[r.key]) return;
+        seen[r.key] = 1;
+        if (cats.indexOf(r.cat) === -1) cats.push(r.cat);
+      });
+      var n = Object.keys(seen).length;
+      td.setAttribute("data-tip", "<b>" + name + "</b><br>" + (n
+        ? n + (n === 1 ? " study" : " studies") + " of the " + total + " surveyed in Tables 4&#8211;6 " +
+          (n === 1 ? "reports" : "report") + " a deployment on this platform.<br>" + cats.join(" &#183; ")
+        : "None of the " + total + " studies surveyed in Tables 4&#8211;6 reports a deployment on this platform."));
+    });
+  })();
+
   // Table 1 — scope matrix: filter by surveyed dimension (✓ present in column)
   enhanceTable("table-1", {
     chips: [
@@ -265,8 +300,29 @@
       host._pts = pts;
     };
     var xs = $("#viz-x"), ys = $("#viz-y");
-    if (xs) xs.addEventListener("change", function (e) { xKey = e.target.value; draw(); });
-    if (ys) ys.addEventListener("change", function (e) { yKey = e.target.value; draw(); });
+    // Plotting a variable against itself only ever draws the diagonal, so
+    // choosing the other axis's variable swaps the two rather than allowing it.
+    var setAxes = function (nx, ny) {
+      xKey = nx; yKey = ny;
+      if (xs) xs.value = xKey;
+      if (ys) ys.value = yKey;
+      draw();
+    };
+    if (xs) xs.addEventListener("change", function (e) {
+      var v = e.target.value;
+      setAxes(v, v === yKey ? xKey : yKey);
+    });
+    if (ys) ys.addEventListener("change", function (e) {
+      var v = e.target.value;
+      setAxes(v === xKey ? yKey : xKey, v);
+    });
+    // each point stands for one study, so it leads to that study's reference
+    host.addEventListener("click", function (e) {
+      var c = e.target.closest ? e.target.closest("circle[data-i]") : null;
+      if (!c) return;
+      var r = host._pts[+c.getAttribute("data-i")];
+      if (r && window.QSRefs) window.QSRefs.jump(r.key);
+    });
     $$("#scatter-supp .chip").forEach(function (c) {
       c.addEventListener("click", function () {
         $$("#scatter-supp .chip").forEach(function (o) { o.classList.remove("active"); });
@@ -279,7 +335,8 @@
       if (c) {
         var r = host._pts[+c.getAttribute("data-i")];
         t.innerHTML = "<b>" + r.cat + "</b> (" + famName[r.fam] + ")<br>" + r.devices + "<br>" + r.quant + " · " + r.perf +
-          "<br>Lat " + r.lat + " ms · Mem " + r.mem + " KB";
+          "<br>Lat " + r.lat + " ms · Mem " + r.mem + " KB" +
+          '<br><span style="opacity:.7">Click to open this study in the reference list.</span>';
         t.style.left = Math.min(e.clientX + 12, window.innerWidth - 260) + "px";
         t.style.top = (e.clientY + 12) + "px";
         t.style.opacity = "1";
