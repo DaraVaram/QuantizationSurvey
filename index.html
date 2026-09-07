@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260907r">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260907s">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260907r"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260907r"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260907r"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260907s"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260907s"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260907s"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -707,7 +707,7 @@ n = \text{integer value} \times S,
 <p>To enable quantization, we define a quantization function \(q(\cdot)\) that maps a real-valued input to a quantized integer. This can be generally written as:</p>
 
 \begin{equation}
-    \mathbf{x}_{\text{int}} = q(\mathbf{x}; s, z) = \text{clamp} \left(\Big \lfloor \frac{\mathbf{x}}{s} \Big \rceil+ z~; q_{min}, q_{max} \right),
+    \mathbf{x}_{\text{int}} = q(\mathbf{x}; s, z) = \text{clamp} \left(\Big \lfloor \frac{\mathbf{x}}{s} \Big \rceil+ z~; q_{\text{min}}, q_{\text{max}} \right),
     \label{eq:quant}
 \end{equation}
 
@@ -832,7 +832,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h4 id="static-dynamic">2.3.3&ensp;Static And Dynamic Quantization</h4>
 
-<p>Another important aspect of quantization design is <em>when</em> the clipping range \((q_{\text{min}}, q_{\text{max}})\) is determined. For weights, which remain fixed after training, this range is typically computed once and reused during inference. In contrast, activations vary with each input sample \(\mathbf{x}\), making the choice between <em>static</em> and <em>dynamic</em> quantization particularly relevant <d-cite key="nagel2021white"></d-cite>.</p>
+<p>Another important aspect of quantization design is <em>when</em> the clipping range \([q_{\text{min}}, q_{\text{max}}]\) is determined. For weights, which remain fixed after training, this range is typically computed once and reused during inference. In contrast, activations vary with each input sample \(\mathbf{x}\), making the choice between <em>static</em> and <em>dynamic</em> quantization particularly relevant <d-cite key="nagel2021white"></d-cite>.</p>
 
 <p><strong>Static Quantization.</strong> Static quantization uses a fixed clipping range that is pre-computed, typically during a calibration phase, on a representative dataset. This approach avoids runtime overhead and is well-suited for deployment in latency-critical or resource-constrained environments. While it lacks adaptability to input variations, static quantization is widely adopted in practice due to its simplicity and efficiency.</p>
 
@@ -1437,7 +1437,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260907r"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260907s"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1458,9 +1458,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260907r"></script>
-  <script src="assets/js/supplements.js?v=20260907r"></script>
-  <script src="assets/js/figs.js?v=20260907r"></script>
+  <script src="assets/js/data.js?v=20260907s"></script>
+  <script src="assets/js/supplements.js?v=20260907s"></script>
+  <script src="assets/js/figs.js?v=20260907s"></script>
 
   </body>
 
