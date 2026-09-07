@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260908x">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260908y">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260908x"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260908x"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260908x"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260908y"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260908y"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260908y"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -584,7 +584,14 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>Algorithm-centered surveys, such as those by Liu et al. <d-cite key="liu2025low"></d-cite> and Gholami et al. <d-cite key="gholami2022survey"></d-cite>, focus primarily on software-level advances in quantization, including low-bit quantization algorithms and training techniques across different applications and domains. Related works include Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite>, who evaluate quantization methods for image classification, and Liu et al. <d-cite key="liu2024lightweight"></d-cite>, who discuss lightweight model design and hardware acceleration. Although extensive, these surveys give limited attention to hardware constraints and practical deployment concerns, particularly for MCUs and comparable edge-class devices.</p>
 
-<!-- Table 1 (tab:survey-scope) -->
+<!-- Table 1 (tab:survey-scope) --><p>Conversely, hardware-centered deployment surveys tend to emphasize platforms and architectures while giving less attention to quantization as a deployment methodology. For instance, Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite> examine ARM Cortex-M-based MCUs with DNN deployment examples, but do not substantially explore quantization. Similarly, Liu et al. <d-cite key="liu2024exploring"></d-cite>, Akkad et al. <d-cite key="akkad2023embedded"></d-cite>, and Giordano et al. <d-cite key="giordano2022survey"></d-cite> analyze RISC-V, hybrid, and low-power MCU platforms, but provide limited discussion of compression and quantization methods.</p>
+
+<p>Broader TinyML and edge-AI surveys provide ecosystem-level overviews, but often lack depth on quantization as a deployment methodology. For example, Saha et al. <d-cite key="saha2022"></d-cite> cover MCU hardware and deployments, while Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite>, Ray <d-cite key="ray2022review"></d-cite>, and Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite> focus more broadly on TinyML/TinyDL systems, applications, toolchains, and deployment challenges rather than quantization methodology as the central organizing theme.</p>
+
+<p>Some studies partially bridge hardware and software aspects. For example, Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite> survey model optimization and deployment frameworks, yet provide limited discussion of advanced quantization techniques. L&#234; et al. <d-cite key="tri2026efficient"></d-cite> review efficient neural networks for TinyML on ultra-low-power MCUs, covering compression, deployment tools, and hardware constraints. Wang and Jia <d-cite key="wang2025optimizing"></d-cite> examine the broader edge-AI workflow, from data collection to hardware deployment. However, these works do not focus specifically on modern quantization strategies for MCU-class implementation.</p>
+
+<p>Overall, existing surveys tend to emphasize algorithmic quantization, TinyML hardware, or application domains as separate topics. What remains missing is a deployment-centered synthesis that connects quantization methods with MCU hardware support, software toolchains, numerical representations, and evidence from real-world deployments.</p>
+
 <div class="ptable-wrap l-page t1-wide" id="table-1">
 <table class="ptable" data-sortable>
 <caption><b>Table 1:</b> Scope comparison of surveys on quantization, TinyML, and edge AI.</caption>
@@ -618,14 +625,6 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 </table>
 <div class="t1-legend"><span><i class="sw sw-full"></i>surveyed</span><span><i class="sw sw-part"></i>partially surveyed</span><span><i class="sw sw-none"></i>not covered</span><span class="t1-legend-note">Hardware Landscape lists the architectures each survey covers</span></div>
 </div>
-
-<p>Conversely, hardware-centered deployment surveys tend to emphasize platforms and architectures while giving less attention to quantization as a deployment methodology. For instance, Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite> examine ARM Cortex-M-based MCUs with DNN deployment examples, but do not substantially explore quantization. Similarly, Liu et al. <d-cite key="liu2024exploring"></d-cite>, Akkad et al. <d-cite key="akkad2023embedded"></d-cite>, and Giordano et al. <d-cite key="giordano2022survey"></d-cite> analyze RISC-V, hybrid, and low-power MCU platforms, but provide limited discussion of compression and quantization methods.</p>
-
-<p>Broader TinyML and edge-AI surveys provide ecosystem-level overviews, but often lack depth on quantization as a deployment methodology. For example, Saha et al. <d-cite key="saha2022"></d-cite> cover MCU hardware and deployments, while Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite>, Ray <d-cite key="ray2022review"></d-cite>, and Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite> focus more broadly on TinyML/TinyDL systems, applications, toolchains, and deployment challenges rather than quantization methodology as the central organizing theme.</p>
-
-<p>Some studies partially bridge hardware and software aspects. For example, Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite> survey model optimization and deployment frameworks, yet provide limited discussion of advanced quantization techniques. L&#234; et al. <d-cite key="tri2026efficient"></d-cite> review efficient neural networks for TinyML on ultra-low-power MCUs, covering compression, deployment tools, and hardware constraints. Wang and Jia <d-cite key="wang2025optimizing"></d-cite> examine the broader edge-AI workflow, from data collection to hardware deployment. However, these works do not focus specifically on modern quantization strategies for MCU-class implementation.</p>
-
-<p>Overall, existing surveys tend to emphasize algorithmic quantization, TinyML hardware, or application domains as separate topics. What remains missing is a deployment-centered synthesis that connects quantization methods with MCU hardware support, software toolchains, numerical representations, and evidence from real-world deployments.</p>
 
 <p>Motivated by this gap, our survey bridges quantization techniques, MCU hardware platforms, and software stacks to enable optimized low-precision inference, with particular attention to ARM- and RISC-V-based devices and NPU-integrated devices. It also addresses a critical yet often overlooked hardware dimension: <em>numerical representations</em>. Furthermore, we provide a consolidated review of diverse application domains in which different quantization methods and hardware platforms have been deployed. This integrated perspective fills a key gap in the existing literature by offering practical, deployment-oriented insights for implementing quantized neural networks (QNNs) on embedded platforms. <a class="xref" href="#table-1">Table 1</a> compares our survey with the most relevant prior work across quantization approaches, numerical representations, hardware platforms, software frameworks, and applications.</p>
 
@@ -1511,7 +1510,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260908x"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260908y"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1532,9 +1531,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260908x"></script>
-  <script src="assets/js/supplements.js?v=20260908x"></script>
-  <script src="assets/js/figs.js?v=20260908x"></script>
+  <script src="assets/js/data.js?v=20260908y"></script>
+  <script src="assets/js/supplements.js?v=20260908y"></script>
+  <script src="assets/js/figs.js?v=20260908y"></script>
 
   </body>
 
