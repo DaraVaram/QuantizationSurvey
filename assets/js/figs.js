@@ -128,6 +128,46 @@
     });
   })();
 
+
+  /* ---------- Figure 12: the bit controller picks a policy per input ----------
+     Adaptive allocation means the bit-widths are not fixed offline: a controller
+     reads the input and chooses a precision for each layer. Activating one of the
+     four inputs shows the policy that input would get, which is the whole point
+     of content-aware allocation and is hard to convey in a static drawing. */
+  (function () {
+    var fig = $("#figure-12");
+    if (!fig) return;
+    var ins = $$(".f12-in", fig), cells = $$(".f12-cell", fig), read = $(".f12-read", fig);
+    if (!ins.length || !cells.length) return;
+    var LAYERS = ["1", "2", "n"], NAME = { "2": "2-bit", "3": "3-bit", "b": "b-bit" };
+    function clear() {
+      fig.classList.remove("f12-live");
+      cells.forEach(function (c) { c.classList.remove("f12-on"); });
+      ins.forEach(function (i) { i.classList.remove("f12-sel"); });
+      if (read) read.textContent = "";
+    }
+    function pick(el) {
+      var pol = (el.getAttribute("data-policy") || "").split(",");
+      if (pol.length !== LAYERS.length) return;
+      clear();
+      fig.classList.add("f12-live");
+      el.classList.add("f12-sel");
+      cells.forEach(function (c) {
+        var li = LAYERS.indexOf(c.getAttribute("data-layer"));
+        if (li >= 0 && c.getAttribute("data-bit") === pol[li]) c.classList.add("f12-on");
+      });
+      if (read) read.textContent = "input “" + el.getAttribute("data-digit") + "” → " +
+        pol.map(function (b, i) { return "layer " + LAYERS[i] + ": " + NAME[b]; }).join(",  ");
+    }
+    ins.forEach(function (el) {
+      el.addEventListener("pointerenter", function () { pick(el); });
+      el.addEventListener("click", function () { pick(el); });
+      el.addEventListener("focus", function () { pick(el); });
+      el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(el); } });
+    });
+    fig.addEventListener("pointerleave", clear);
+  })();
+
   /* ---------- Figure 6: granularity hints ----------
      Per-tensor, per-channel and per-group behave identically: the hovered cube
      receives [data-tip], so the shared tooltip above shows and positions the
@@ -425,9 +465,9 @@
     render();
   })();
 
-  /* ---------- Figure 13: continuously looping step-through (gif-style) ---------- */
+  /* ---------- Figure 14: continuously looping step-through (gif-style) ---------- */
   (function () {
-    var fig = $("#figure-13");
+    var fig = $("#figure-14");
     if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
@@ -478,7 +518,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260908r").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260908t").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
@@ -648,12 +688,12 @@
   })();
 
   /* ---------- Keyboard and focus parity for the remaining controls ----------
-     Figure 14's stages, Figure 10's method chips, Table 3's platforms and the
+     Figure 15's stages, Figure 10's method chips, Table 3's platforms and the
      citations inside the tables all explained themselves on hover only. Each
      now takes focus and reveals the same thing there. */
   (function () {
-    // Figure 14: every pipeline stage, including the inspection icon
-    $$("#figure-14 .f9-node").forEach(function (n) {
+    // Figure 15: every pipeline stage, including the inspection icon
+    $$("#figure-15 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
     // Figure 10 / supplement method chips navigate into the prose. They contain
