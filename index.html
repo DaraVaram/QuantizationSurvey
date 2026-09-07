@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260907g">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260907h">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260907g"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260907g"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260907g"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260907h"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260907h"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260907h"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -642,7 +642,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <h3 id="numerical-representations">2.1&ensp;Numerical Representations</h3>
 
-<p>In digital hardware systems, numerical values must be represented using a finite set of bits. Since real numbers have infinite precision, their representation in hardware is necessarily an approximation. The process of encoding real numbers into a finite binary format is referred to as <em>numerical representation</em> <d-cite key="gohil2021fixed,alsuhli2023number"></d-cite>, and it directly impacts the precision, memory requirements, and computational efficiency of DNNs.</p>
+<p>Because MCU inference is executed by digital hardware with limited memory and fixed arithmetic resources, every weight, activation, and bias must ultimately be stored and processed using a finite number of bits. Since real numbers have infinite precision, their representation in hardware is necessarily an approximation. The process of encoding real numbers into a finite binary format is referred to as <em>numerical representation</em> <d-cite key="gohil2021fixed,alsuhli2023number"></d-cite>, and it directly impacts the precision, memory requirements, and computational efficiency of DNNs.</p>
 
 <p>Neural networks are essentially a set of parameters, such as weights, biases, and activations, which are stored in computer memory and used in arithmetic operations. Hence, the numerical representation chosen for these values affects not only the model&#8217;s precision and storage footprint, but also the speed and hardware cost of computation. From a hardware perspective, it influences both the silicon area required for arithmetic units and the energy consumed during computation.</p>
 
@@ -698,7 +698,7 @@ n = \text{integer value} \times S,
 </table>
 </div>
 
-<p>Because MCU inference is executed by digital hardware with limited memory and fixed arithmetic resources, the choice of numerical representation is a deployment decision as much as a numerical one. In practical MCU deployment, it also determines whether computation can be expressed using simple integer MAC operations, whether tensors fit into limited on-chip memory, and whether the model can be mapped to optimized libraries or NPU backends discussed later in <a class="xref" href="#deployment-stack">Section 5</a>. The same nominal bit-width can therefore have varying practical value depending on the target hardware and runtime.</p>
+<p>In practical MCU deployment, the choice of numerical representation also determines whether computation can be expressed using simple integer MAC operations, whether tensors fit into limited on-chip memory, and whether the model can be mapped to optimized libraries or NPU backends discussed later in <a class="xref" href="#deployment-stack">Section 5</a>. The same nominal bit-width can therefore have varying practical value depending on the target hardware and runtime.</p>
 
 <p>Although other formats such as Posits <d-cite key="gustafson2017beating"></d-cite> and zero-skewed quantization <d-cite key="jacob2018quantization"></d-cite> have been explored to strike a better trade-off between range and efficiency, these alternatives are not widely adopted in real-world DNN applications. This survey focuses primarily on integer quantization because it remains the dominant path for MCU inference; the alternatives are useful to review because they clarify what standard INT8 quantization trades away, but they are less central to practical MCU deployment than uniform integer arithmetic. A more detailed discussion is provided in <a class="xref" href="#alt-formats">Section 4</a>.</p>
 
@@ -1455,7 +1455,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260907g"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260907h"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1476,9 +1476,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260907g"></script>
-  <script src="assets/js/supplements.js?v=20260907g"></script>
-  <script src="assets/js/figs.js?v=20260907g"></script>
+  <script src="assets/js/data.js?v=20260907h"></script>
+  <script src="assets/js/supplements.js?v=20260907h"></script>
+  <script src="assets/js/figs.js?v=20260907h"></script>
 
   </body>
 
