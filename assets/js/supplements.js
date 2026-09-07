@@ -284,8 +284,15 @@
   });
   // Table 5 — all three rows are INT8 PTQ: search and sorting only, no chips
   enhanceTable("table-5", { sortable: [5, 6, 7, 8] });
-  // Table 7 — three descriptive prose rows: nothing numeric, so no controls at all
-  enhanceTable("table-7", { noSearch: true });
+  // Table 7 — the synthesis: one row per MCU family, so filter by family and search
+  // the prose. Nothing here is numeric, so no sortable columns.
+  enhanceTable("table-7", {
+    chips: [
+      { key: "ARM-Based", label: "ARM" }, { key: "RISC-V-Based", label: "RISC-V" },
+      { key: "NPU-Integrated", label: "NPU" }
+    ],
+    match: function (tr, key) { return cellText(tr.cells[0]).indexOf(key) !== -1; }
+  });
 
   /* =======================================================================
      Deployment landscape scatter (Tables 4–6)

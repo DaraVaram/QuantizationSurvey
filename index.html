@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260909c">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260909e">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260909c"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260909c"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260909c"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260909e"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260909e"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260909e"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1411,20 +1411,20 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 </tr></thead>
 <tbody>
 <tr><td><a class="xref" href="#arm-mcus">ARM-Based</a></td>
-<td><ul class="cell-list"><li>Inference on the Cortex-M cores themselves, without a dedicated accelerator,</li><li>using integer and DSP-optimized kernels under tight on-chip SRAM and flash limits <d-cite key="cmsis"></d-cite>.</li></ul></td>
-<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">TFLM and LiteRT for Microcontrollers</a> with CMSIS-NN kernels <d-cite key="tensorflow,cmsis"></d-cite>,</li><li>with STM32Cube.AI or Edge Impulse for vendor-integrated, end-to-end code generation <d-cite key="xcube_ai,edgeImpulse"></d-cite>.</li></ul></td>
-<td><ul class="cell-list"><li>Uniform full-integer INT8 via <a class="xref" href="#ptq-qat">PTQ</a> is the dominant reported path <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>,</li><li>with <a class="xref" href="#ptq-qat">QAT</a> where always-on accuracy must survive compression,</li><li>and sub-8-bit or <a class="xref" href="#mixed-precision">mixed precision</a> only through custom kernels and ISA-level work such as CMIX-NN <d-cite key="capotondi2020cmix,rusci2020"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>Inference on the Cortex-M cores themselves, without a dedicated accelerator.</li><li>Integer and DSP-optimized kernels under tight on-chip SRAM and flash limits <d-cite key="cmsis"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">TFLM and LiteRT for Microcontrollers</a> with CMSIS-NN kernels <d-cite key="tensorflow,cmsis"></d-cite>.</li><li>STM32Cube.AI or Edge Impulse for vendor-integrated, end-to-end code generation <d-cite key="xcube_ai,edgeImpulse"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>Uniform full-integer INT8 via <a class="xref" href="#ptq-qat">PTQ</a> is the dominant reported path <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>,</li><li><a class="xref" href="#ptq-qat">QAT</a> where always-on accuracy must survive compression.</li><li>Sub-8-bit or <a class="xref" href="#mixed-precision">mixed precision</a> only through custom kernels and ISA-level work such as CMIX-NN <d-cite key="capotondi2020cmix,rusci2020"></d-cite>.</li></ul></td>
 <td><ul class="cell-list"><li>Most reproducible baseline for modest-depth sensing workloads: HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare (<a class="xref" href="#apps-arm">Section 6.1</a>, <a class="xref" href="#table-4">Table 4</a>).</li><li><strong>Choose when</strong> mature tooling, portability, and low-friction integration matter more than peak efficiency.</li></ul></td></tr>
 <tr class="rule"><td><a class="xref" href="#riscv-mcus">RISC-V-Based</a></td>
-<td><ul class="cell-list"><li>Inference on commercial MCUs such as the ESP32-C and ESP32-P families,</li><li>using packed integer arithmetic, SIMD, and ISA extensions on the programmable CPU path, without a dedicated neural accelerator.</li></ul></td>
-<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">TFLM with ESP-NN kernels</a> on commercial ESP32 devices <d-cite key="rattanasak2025lightweight,roy2026tinynav"></d-cite>,</li><li>through vendor and community toolchains that remain less standardized than the Cortex-M ecosystem.</li></ul></td>
-<td><ul class="cell-list"><li>Uniform INT8 <a class="xref" href="#ptq-qat">PTQ</a> in every commercial deployment reported to date <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>,</li><li>while aggressive low-bit and mixed precision remain confined to research-class PULP systems <d-cite key="rusci2020,bruschi2020"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>Inference on commercial MCUs such as the ESP32-C and ESP32-P families.</li><li>Packed integer arithmetic, SIMD, and ISA extensions on the programmable CPU path, without a dedicated neural accelerator.</li></ul></td>
+<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">TFLM with ESP-NN kernels</a> on commercial ESP32 devices <d-cite key="rattanasak2025lightweight,roy2026tinynav"></d-cite>,</li><li>Vendor and community toolchains that remain less standardized than the Cortex-M ecosystem.</li></ul></td>
+<td><ul class="cell-list"><li>Uniform INT8 <a class="xref" href="#ptq-qat">PTQ</a> in every commercial deployment reported to date <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>,</li><li>Aggressive low-bit and mixed precision remain confined to research-class PULP systems <d-cite key="rusci2020,bruschi2020"></d-cite>.</li></ul></td>
 <td><ul class="cell-list"><li>Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (<a class="xref" href="#apps-riscv">Section 6.2</a>, <a class="xref" href="#table-5">Table 5</a>).</li><li><strong>Choose when</strong> an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable.</li></ul></td></tr>
 <tr class="rule"><td><a class="xref" href="#npu-mcus">NPU-Integrated</a></td>
-<td><ul class="cell-list"><li>Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration,</li><li>spanning tightly coupled CNN engines (MAX78x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9) <d-cite key="flamand2018gap,gap9"></d-cite>,</li><li>under device-specific on-chip memory partitioning.</li></ul></td>
-<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">ai8x training and synthesis</a> <d-cite key="balbi2025embedded"></d-cite>, GAPFlow with nntool and Autotiler <d-cite key="gapflow"></d-cite>, Ethos-U tooling <d-cite key="ethosu"></d-cite>, and Neural-ART runtimes,</li><li>each mapping compatible graphs onto its own accelerator.</li></ul></td>
-<td><ul class="cell-list"><li>INT8 remains the default even where the accelerator advertises lower precision <d-cite key="gong2024dex,jeon2025tinymem"></d-cite>,</li><li>with genuine sub-8-bit and layer-wise <a class="xref" href="#mixed-precision">mixed precision</a> where the toolchain exploits it: QAT down to INT1&#8211;INT4 with ai8x on MAX78x <d-cite key="balbi2025embedded"></d-cite> and INT2&#8211;INT8 on GAP9&#8217;s NE16 <d-cite key="gap9,itani2025wireless"></d-cite>,</li><li>always bounded by the accelerator&#8217;s supported operators and formats <d-cite key="moosmann2023tinyissimoyolo,tran2025facets"></d-cite>.</li></ul></td>
-<td><ul class="cell-list"><li>State of the art for latency- and energy-critical workloads <d-cite key="millar2025benchmarking"></d-cite>: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (<a class="xref" href="#apps-npu">Section 6.3</a>, <a class="xref" href="#table-6">Table 6</a>).</li><li><strong>Choose when</strong> hard latency or energy budgets dominate and the model can be matched to the accelerator&#8217;s operators, precision formats, and memory limits.</li></ul></td></tr>
+<td><ul class="cell-list"><li>Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration.</li><li>Tightly coupled CNN engines (MAX78x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9) <d-cite key="flamand2018gap,gap9"></d-cite>,</li><li>Device-specific on-chip memory partitioning.</li></ul></td>
+<td><ul class="cell-list"><li>Vendor toolchains: <a class="xref" href="#software-frameworks">ai8x training and synthesis</a> <d-cite key="balbi2025embedded"></d-cite>, GAPFlow with nntool and Autotiler <d-cite key="gapflow"></d-cite>, Ethos-U tooling <d-cite key="ethosu"></d-cite>, and Neural-ART runtimes,</li><li>Each maps compatible graphs onto its own accelerator.</li></ul></td>
+<td><ul class="cell-list"><li>INT8 remains the default even where the accelerator advertises lower precision <d-cite key="gong2024dex,jeon2025tinymem"></d-cite>.</li><li>Genuine sub-8-bit and layer-wise <a class="xref" href="#mixed-precision">mixed precision</a> where the toolchain exploits it: QAT down to INT1&#8211;INT4 with ai8x on MAX78x <d-cite key="balbi2025embedded"></d-cite> and INT2&#8211;INT8 on GAP9&#8217;s NE16 <d-cite key="gap9,itani2025wireless"></d-cite>,</li><li>Always bounded by the accelerator&#8217;s supported operators and formats <d-cite key="moosmann2023tinyissimoyolo,tran2025facets"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>State of the art for latency- and energy-critical workloads <d-cite key="millar2025benchmarking"></d-cite>: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (<a class="xref" href="#apps-npu">Section 6.3</a>, <a class="xref" href="#table-6">Table 6</a>).</li><li><strong>Choose when</strong> hard latency or energy budgets dominate, when mixed precision or sub-8-bit widths are wanted, and when the model can be matched to the accelerator&#8217;s operators, precision formats, and memory limits.</li></ul></td></tr>
 </tbody>
 </table>
 </div>
@@ -1510,7 +1510,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260909c"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260909e"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1531,9 +1531,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260909c"></script>
-  <script src="assets/js/supplements.js?v=20260909c"></script>
-  <script src="assets/js/figs.js?v=20260909c"></script>
+  <script src="assets/js/data.js?v=20260909e"></script>
+  <script src="assets/js/supplements.js?v=20260909e"></script>
+  <script src="assets/js/figs.js?v=20260909e"></script>
 
   </body>
 
