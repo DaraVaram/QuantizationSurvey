@@ -21,7 +21,7 @@
   function showTip(el, x, y) {
     var t = ensureTip();
     if (!el) { tipTxt = null; t.style.opacity = "0"; return; }
-    // keyed on the text, not the element: Figure 2 reuses one cube group and
+    // keyed on the text, not the element: Figure 5 reuses one cube group and
     // rewrites its [data-tip] per region, so caching the element goes stale
     var txt = el.getAttribute("data-tip");
     if (txt !== tipTxt) {                    // only re-render and re-measure when the hint changes
@@ -68,12 +68,12 @@
     if (el) { tipTxt = null; showTip(el, e.clientX, e.clientY); }
   });
 
-  /* ---------- Figure 2: granularity hints ----------
+  /* ---------- Figure 5: granularity hints ----------
      Per-tensor, per-channel and per-group behave identically: the hovered cube
      receives [data-tip], so the shared tooltip above shows and positions the
      hint the same way for every granularity, on hover and on tap. */
   (function () {
-    var svg = $("#figure-2 svg");
+    var svg = $("#figure-5 svg");
     if (!svg) return;
     var TIP = {
       t: function () { return "Per-tensor: a single scale (s, z) is shared by every value in the tensor."; },
@@ -148,9 +148,9 @@
     });
   })();
 
-  /* ---------- Figure 4: traveling marker + forward/backward isolation ---------- */
+  /* ---------- Figure 7: traveling marker + forward/backward isolation ---------- */
   (function () {
-    var svg = $("#figure-4 svg");
+    var svg = $("#figure-7 svg");
     if (!svg) return;
     var path = $("#f4-loop", svg), dot = $("#f4-dot", svg);
     var L = path ? path.getTotalLength() : 0;   // segment lengths: 677|1972|1477|1972|665
@@ -225,7 +225,7 @@
       isolate(locked);
     });
     document.addEventListener("click", function (e) {
-      if (locked && !(e.target.closest && e.target.closest("#figure-4"))) { locked = null; isolate(null); }
+      if (locked && !(e.target.closest && e.target.closest("#figure-7"))) { locked = null; isolate(null); }
     });
 
     if ("IntersectionObserver" in window) {
@@ -243,9 +243,9 @@
     window.addEventListener("afterprint", checkVis);
   })();
 
-  /* ---------- Figure 6: clickable bit selector ---------- */
+  /* ---------- Figure 9: clickable bit selector ---------- */
   (function () {
-    var svg = $("#figure-6 svg");
+    var svg = $("#figure-9 svg");
     if (!svg) return;
     var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
     var DEFAULT = { "1": "2", "2": "3", "n": "b" };
@@ -365,9 +365,9 @@
     render();
   })();
 
-  /* ---------- Figure 8: continuously looping step-through (gif-style) ---------- */
+  /* ---------- Figure 11: continuously looping step-through (gif-style) ---------- */
   (function () {
-    var fig = $("#figure-8");
+    var fig = $("#figure-11");
     if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
@@ -418,7 +418,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260907b").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260907c").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
@@ -514,7 +514,7 @@
      distill lays its hover box out inside the table wrapper, which is a
      horizontal scroll container and therefore clips it. Suppress that box and
      draw the same reference entry in a fixed-position card instead, so the
-     first column of Tables 3-5 behaves like a citation anywhere else. */
+     first column of Tables 4-6 behaves like a citation anywhere else. */
   (function () {
     var wraps = $$(".ptable-wrap");
     if (!wraps.length) return;
@@ -571,7 +571,7 @@
 
     // A study row is about one paper, so clicking anywhere in it opens that
     // reference — without hijacking text selection or the citation itself.
-    ["table-3", "table-4", "table-5"].forEach(function (id) {
+    ["table-4", "table-5", "table-6"].forEach(function (id) {
       var w = $("#" + id);
       if (!w) return;
       w.classList.add("t-studies");
@@ -588,15 +588,15 @@
   })();
 
   /* ---------- Keyboard and focus parity for the remaining controls ----------
-     Figure 9's stages, Figure 5's method chips, Table 2's platforms and the
+     Figure 12's stages, Figure 8's method chips, Table 3's platforms and the
      citations inside the tables all explained themselves on hover only. Each
      now takes focus and reveals the same thing there. */
   (function () {
-    // Figure 9: every pipeline stage, including the inspection icon
-    $$("#figure-9 .f9-node").forEach(function (n) {
+    // Figure 12: every pipeline stage, including the inspection icon
+    $$("#figure-12 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
-    // Figure 5 / supplement method chips navigate into the prose. They contain
+    // Figure 8 / supplement method chips navigate into the prose. They contain
     // <d-cite> children, so they stay spans with button semantics rather than
     // nesting one interactive element inside another.
     $$(".mchip[data-nav]").forEach(function (chip) {
@@ -625,7 +625,7 @@
     });
   })();
 
-  /* ---------- Figure 5 taxonomy + generic chip navigation ---------- */
+  /* ---------- Figure 8 taxonomy + generic chip navigation ---------- */
   (function () {
     document.addEventListener("click", function (e) {
       if (e.target.closest && e.target.closest("d-cite")) return; // let citations be citations
