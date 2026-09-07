@@ -68,6 +68,55 @@
     if (el) { tipTxt = null; showTip(el, e.clientX, e.clientY); }
   });
 
+
+  /* ---------- Figure 9: sweep the loss landscape ----------
+     The static figure already makes the point: after PTQ the converged weight
+     sits in a narrow minimum and rounding to the integer grid costs a lot of
+     loss, while after QAT it sits in a flat one and rounding costs almost
+     nothing. Sweeping a probe across either panel lets the reader check that
+     for any w, not just the one the figure happens to draw. */
+  (function () {
+    var panels = $$("#figure-9 .fl-panel");
+    if (!panels.length) return;
+    // the same landscape the figure was drawn from
+    function loss(w) {
+      return 0.92 - (0.62 * Math.exp(-Math.pow(w + 1.5, 2) / 0.10)
+                   + 0.30 * Math.exp(-Math.pow(w - 1.4, 2) / 1.05)
+                   + 0.020 * w * w);
+    }
+    panels.forEach(function (p) {
+      var d = p.dataset, probe = $(".fl-probe", p), stat = $(".fl-static", p), hit = $(".fl-hit", p);
+      if (!probe || !hit) return;
+      var ox = +d.ox, X0 = +d.x0, PW = +d.pw, Y0 = +d.y0, PH = +d.ph;
+      var WMIN = +d.wmin, WMAX = +d.wmax, LMIN = +d.lmin, LMAX = +d.lmax;
+      var px = function (w) { return ox + X0 + (w - WMIN) / (WMAX - WMIN) * PW; };
+      var py = function (v) { return Y0 + (LMAX - v) / (LMAX - LMIN) * PH; };
+      var pv = $(".fl-pv", p), pd = $(".fl-pd", p), po = $(".fl-po", p),
+          pq = $(".fl-pq", p), read = $(".fl-read", p);
+      var svg = p.ownerSVGElement, pt = svg.createSVGPoint();
+      function move(e) {
+        pt.x = e.clientX; pt.y = e.clientY;
+        var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+        var w = WMIN + (loc.x - ox - X0) / PW * (WMAX - WMIN);
+        w = Math.max(WMIN, Math.min(WMAX, w));
+        var wq = Math.round(w), dl = loss(wq) - loss(w);
+        pv.setAttribute("x1", px(w)); pv.setAttribute("x2", px(w));
+        po.setAttribute("cx", px(w)); po.setAttribute("cy", py(loss(w)));
+        pq.setAttribute("cx", px(wq)); pq.setAttribute("cy", py(loss(wq)));
+        pd.setAttribute("x1", px(wq)); pd.setAttribute("y1", py(loss(w)));
+        pd.setAttribute("x2", px(wq)); pd.setAttribute("y2", py(loss(wq)));
+        read.textContent = "w = " + w.toFixed(2) + "  \u2192  w_q = " + wq +
+                           "   \u0394loss = " + (dl >= 0 ? "+" : "") + dl.toFixed(3);
+        p.classList.add("fl-live");
+      }
+      function leave() { p.classList.remove("fl-live"); }
+      hit.addEventListener("pointermove", move);
+      hit.addEventListener("pointerdown", move);
+      hit.addEventListener("pointerleave", leave);
+      if (stat) stat.setAttribute("aria-hidden", "false");
+    });
+  })();
+
   /* ---------- Figure 6: granularity hints ----------
      Per-tensor, per-channel and per-group behave identically: the hovered cube
      receives [data-tip], so the shared tooltip above shows and positions the
@@ -243,9 +292,9 @@
     window.addEventListener("afterprint", checkVis);
   })();
 
-  /* ---------- Figure 10: clickable bit selector ---------- */
+  /* ---------- Figure 11: clickable bit selector ---------- */
   (function () {
-    var svg = $("#figure-10 svg");
+    var svg = $("#figure-11 svg");
     if (!svg) return;
     var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
     var DEFAULT = { "1": "2", "2": "3", "n": "b" };
@@ -365,9 +414,9 @@
     render();
   })();
 
-  /* ---------- Figure 12: continuously looping step-through (gif-style) ---------- */
+  /* ---------- Figure 13: continuously looping step-through (gif-style) ---------- */
   (function () {
-    var fig = $("#figure-12");
+    var fig = $("#figure-13");
     if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
@@ -418,7 +467,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260907u").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260908a").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
@@ -588,15 +637,15 @@
   })();
 
   /* ---------- Keyboard and focus parity for the remaining controls ----------
-     Figure 13's stages, Figure 9's method chips, Table 3's platforms and the
+     Figure 14's stages, Figure 10's method chips, Table 3's platforms and the
      citations inside the tables all explained themselves on hover only. Each
      now takes focus and reveals the same thing there. */
   (function () {
-    // Figure 13: every pipeline stage, including the inspection icon
-    $$("#figure-13 .f9-node").forEach(function (n) {
+    // Figure 14: every pipeline stage, including the inspection icon
+    $$("#figure-14 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
-    // Figure 9 / supplement method chips navigate into the prose. They contain
+    // Figure 10 / supplement method chips navigate into the prose. They contain
     // <d-cite> children, so they stay spans with button semantics rather than
     // nesting one interactive element inside another.
     $$(".mchip[data-nav]").forEach(function (chip) {
@@ -625,7 +674,7 @@
     });
   })();
 
-  /* ---------- Figure 9 taxonomy + generic chip navigation ---------- */
+  /* ---------- Figure 10 taxonomy + generic chip navigation ---------- */
   (function () {
     document.addEventListener("click", function (e) {
       if (e.target.closest && e.target.closest("d-cite")) return; // let citations be citations
