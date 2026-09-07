@@ -418,7 +418,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260826d").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260907a").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
@@ -443,9 +443,9 @@
       try {
         var st = sr.querySelector("style");
         if (st && st.sheet) {
-          st.sheet.insertRule("ol{list-style:none;counter-reset:refnum;padding-left:2.6em}", 0);
-          st.sheet.insertRule("ol>li{counter-increment:refnum;position:relative}", 0);
-          st.sheet.insertRule("ol>li::before{content:\"[\" counter(refnum) \"]\";position:absolute;left:-2.6em;color:#2698BA;font-weight:700}", 0);
+          // Reference markers are left to distill's default decimal list, matching
+          // the official TMLR Beyond PDF template. (We used to override them with
+          // blue bracketed [n] counters here.)
           st.sheet.insertRule("li.ref-flash{background:#fff3c4 !important}", 0);
           st.sheet.insertRule("a.ref-out{color:#2698BA;text-decoration:none;margin-left:5px;font-size:0.85em}", 0);
         }
