@@ -78,9 +78,20 @@
   (function () {
     var panels = $$("#figure-9 .fl-panel");
     if (!panels.length) return;
-    // the same landscape the figure is drawn from: one smooth polynomial, highest power first
-    var C = [-0.00940050796471, 0.218244220741, -0.701103842957, 0.0473197276538, 2.04279111688, -1.40927753231, -1.37424070865, 0.857289042834, 0.525633655522];
-    function loss(w) { var v = 0; for (var i = 0; i < C.length; i++) v = v * w + C[i]; return v; }
+    // the same landscape the figure is drawn from: an exact parabolic basin,
+    // joined C1 to a cubic-Hermite left structure with slope 0 at the extrema
+    var A = 0.172, WC = 1.5, LC = 0.26, WS = 2.05, SS = 0.55, JW = 0.95;
+    var KX = [-1.25, -0.58, 0.25, JW],
+        KY = [1.00, 0.16, 0.69, A * Math.pow(JW - WC, 2) + LC],
+        KM = [-2.40, 0.0, 0.0, 2 * A * (JW - WC)];
+    function loss(w) {
+      if (w >= JW) { var d = w - WS; return A * Math.pow(w - WC, 2) + LC + (d > 0 ? SS * d * d * d : 0); }
+      if (w <= KX[0]) return KY[0] + KM[0] * (w - KX[0]);
+      var i = 0; while (KX[i + 1] < w) i++;
+      var h = KX[i + 1] - KX[i], u = (w - KX[i]) / h, u2 = u * u, u3 = u2 * u;
+      return (2*u3 - 3*u2 + 1) * KY[i] + (u3 - 2*u2 + u) * h * KM[i]
+           + (-2*u3 + 3*u2) * KY[i + 1] + (u3 - u2) * h * KM[i + 1];
+    }
     panels.forEach(function (p) {
       var d = p.dataset, probe = $(".fl-probe", p), stat = $(".fl-static", p), hit = $(".fl-hit", p);
       if (!probe || !hit) return;
@@ -464,7 +475,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260908c").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260908k").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
