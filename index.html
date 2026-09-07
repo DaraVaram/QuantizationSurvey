@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260907h">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260907i">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260907h"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260907h"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260907h"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260907i"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260907i"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260907i"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -642,9 +642,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <h3 id="numerical-representations">2.1&ensp;Numerical Representations</h3>
 
-<p>Because MCU inference is executed by digital hardware with limited memory and fixed arithmetic resources, every weight, activation, and bias must ultimately be stored and processed using a finite number of bits. Since real numbers have infinite precision, their representation in hardware is necessarily an approximation. The process of encoding real numbers into a finite binary format is referred to as <em>numerical representation</em> <d-cite key="gohil2021fixed,alsuhli2023number"></d-cite>, and it directly impacts the precision, memory requirements, and computational efficiency of DNNs.</p>
-
-<p>Neural networks are essentially a set of parameters, such as weights, biases, and activations, which are stored in computer memory and used in arithmetic operations. Hence, the numerical representation chosen for these values affects not only the model&#8217;s precision and storage footprint, but also the speed and hardware cost of computation. From a hardware perspective, it influences both the silicon area required for arithmetic units and the energy consumed during computation.</p>
+<p>Because MCU inference is executed by digital hardware with limited memory and fixed arithmetic resources, every weight, activation, and bias must ultimately be stored and processed using a finite number of bits. Since real numbers have infinite precision, their representation in hardware is necessarily an approximation. The process of encoding real numbers into a finite binary format is referred to as <em>numerical representation</em> <d-cite key="gohil2021fixed,alsuhli2023number"></d-cite>. The choice of representation therefore directly affects precision, memory requirements, and computational efficiency; from a hardware perspective, it influences both the silicon area required for arithmetic units and the energy consumed during computation.</p>
 
 <p>In broad terms, there exist two classes of numerical representations that are commonly used in DNN systems: (1) floating-point formats and (2) fixed-point formats. Floating-point formats are standard in general-purpose computing platforms like CPUs and GPUs, especially during training, where higher precision is needed. Fixed-point formats, on the other hand, are typically used in embedded systems such as MCUs and digital signal processors, where energy efficiency, silicon area, and memory constraints are critical.</p>
 
@@ -1455,7 +1453,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260907h"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260907i"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1476,9 +1474,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260907h"></script>
-  <script src="assets/js/supplements.js?v=20260907h"></script>
-  <script src="assets/js/figs.js?v=20260907h"></script>
+  <script src="assets/js/data.js?v=20260907i"></script>
+  <script src="assets/js/supplements.js?v=20260907i"></script>
+  <script src="assets/js/figs.js?v=20260907i"></script>
 
   </body>
 
