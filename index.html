@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260907j">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260907k">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260907j"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260907j"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260907j"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260907k"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260907k"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260907k"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -706,17 +706,7 @@ n = \text{integer value} \times S,
 
 <p>Consider a deep neural network (DNN) with \(L\) layers and learnable parameters \(\theta = \{W_1, W_2, ..., W_L\}\), applied to a supervised learning task. Each \(W_i\) denotes the weight matrix of the \(i^\text{th}\) layer. Given an input \(\mathbf{x} \in \mathbb{R}^{d}\), where \(d\) is the input dimensionality, the network computes predictions \(\hat{y} = f(\mathbf{x}; \theta)\) through a sequence of transformations. Assume that the model has been trained and the parameters \(\theta\) are stored in FP32 precision.</p>
 
-<p>Quantization aims to reduce the numerical precision of both the model parameters and the intermediate activations, replacing floating-point values with low bit-width representations (e.g., INT8), while minimizing the loss in model performance (e.g., accuracy). This reduction is critical in scenarios constrained by memory, compute, or energy resources <d-cite key="liu2025low"></d-cite>. The quantization task can be formulated as a constrained optimization problem:</p>
-
-\begin{equation}
-\begin{aligned}
-\min_{\hat{M}} \quad & \frac{1}{|D_{\text{test}}|} \sum_{(x, y) \in D_{\text{test}}} \mathcal{L}\left( \hat{M}(x), y \right), \\
-\text{s.t.} \quad & \text{Storage}(\hat{M}) \leq C,
-\end{aligned}
-\label{eq:quant_objective}
-\end{equation}
-
-<p>where \(M\) is the original floating-point model and \(\hat{M}\) is its quantized counterpart. The dataset \(D_{\text{test}}\) is the test set with input-output pairs \((x, y)\), and \(\mathcal{L}(\cdot, \cdot)\) denotes the task-specific loss function (e.g., cross-entropy). The constraint \(\text{Storage}(\hat{M}) \leq C\) enforces a limit on the memory footprint of the quantized model. In practical deployments, additional constraints&#8212;such as inference latency, throughput, or energy consumption&#8212;may also guide the quantization process depending on the target hardware or application.</p>
+<p>Quantization aims to reduce the numerical precision of both the model parameters and the intermediate activations, replacing floating-point values with low bit-width representations (e.g., INT8), while minimizing the loss in model performance (e.g., accuracy). This reduction is critical in scenarios constrained by memory, compute, or energy resources <d-cite key="liu2025low"></d-cite>.</p>
 
 <p>To enable quantization, we define a quantization function \(q(\cdot)\) that maps a real-valued input to a quantized integer. This can be generally written as:</p>
 
@@ -1451,7 +1441,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260907j"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260907k"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1472,9 +1462,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260907j"></script>
-  <script src="assets/js/supplements.js?v=20260907j"></script>
-  <script src="assets/js/figs.js?v=20260907j"></script>
+  <script src="assets/js/data.js?v=20260907k"></script>
+  <script src="assets/js/supplements.js?v=20260907k"></script>
+  <script src="assets/js/figs.js?v=20260907k"></script>
 
   </body>
 
