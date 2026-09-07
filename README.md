@@ -5,13 +5,15 @@ Interactive **TMLR Beyond-PDF** edition of the survey:
 > **Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications**
 > *Anonymous authors — paper under double-blind review.*
 
-This is a word-exact, web-native rendition of the manuscript in the
+A web-native rendition of the manuscript in the
 [TMLR Beyond PDF](https://tmlr-beyond-pdf.org) format (distill template):
-every section, figure, table, equation, and all 297 references are reproduced
-exactly. Figures are the original LaTeX-compiled artifacts converted to vector
-SVG. Interactive features (citation hover cards, sortable tables, a browsable
-taxonomy, a deployment-landscape explorer) are progressive enhancements —
-the static page and its printed form are complete without them.
+every section, figure, table, equation and reference is present, with the
+preliminaries expanded beyond the IEEE Access version by restoring material
+from the earlier arXiv one. Figures are hand-authored inline SVG rather than
+converted LaTeX artifacts, so they can carry interaction. Interactive features
+(citation hover cards, sortable tables, a browsable taxonomy, a
+deployment-landscape explorer, and per-figure hover detail) are progressive
+enhancements — the static page and its printed form are complete without them.
 
 ## Running locally
 

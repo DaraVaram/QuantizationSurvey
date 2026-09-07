@@ -418,7 +418,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260907t").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260907u").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
