@@ -78,16 +78,13 @@
   (function () {
     var panels = $$("#figure-9 .fl-panel");
     if (!panels.length) return;
-    // the same landscape the figure was drawn from
-    function loss(w) {
-      return 0.92 - (0.62 * Math.exp(-Math.pow(w + 1.5, 2) / 0.10)
-                   + 0.30 * Math.exp(-Math.pow(w - 1.4, 2) / 1.05)
-                   + 0.020 * w * w);
-    }
+    // the same landscape the figure is drawn from: one smooth polynomial, highest power first
+    var C = [-0.00940050796471, 0.218244220741, -0.701103842957, 0.0473197276538, 2.04279111688, -1.40927753231, -1.37424070865, 0.857289042834, 0.525633655522];
+    function loss(w) { var v = 0; for (var i = 0; i < C.length; i++) v = v * w + C[i]; return v; }
     panels.forEach(function (p) {
       var d = p.dataset, probe = $(".fl-probe", p), stat = $(".fl-static", p), hit = $(".fl-hit", p);
       if (!probe || !hit) return;
-      var ox = +d.ox, X0 = +d.x0, PW = +d.pw, Y0 = +d.y0, PH = +d.ph;
+      var ox = 0, X0 = +d.x0, PW = +d.pw, Y0 = +d.y0, PH = +d.ph;
       var WMIN = +d.wmin, WMAX = +d.wmax, LMIN = +d.lmin, LMAX = +d.lmax;
       var px = function (w) { return ox + X0 + (w - WMIN) / (WMAX - WMIN) * PW; };
       var py = function (v) { return Y0 + (LMAX - v) / (LMAX - LMIN) * PH; };
@@ -467,7 +464,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260908a").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260908c").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
