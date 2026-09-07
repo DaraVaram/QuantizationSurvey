@@ -81,7 +81,7 @@
     // the same landscape the figure is drawn from: an exact parabolic basin,
     // joined C1 to a cubic-Hermite left structure with slope 0 at the extrema
     var A = 0.172, WC = 1.5, LC = 0.26, WS = 2.05, SS = 0.55, JW = 0.95;
-    var KX = [-1.25, -0.58, 0.25, JW],
+    var KX = [-1.25, -0.55, 0.25, JW],
         KY = [1.00, 0.16, 0.69, A * Math.pow(JW - WC, 2) + LC],
         KM = [-2.40, 0.0, 0.0, 2 * A * (JW - WC)];
     function loss(w) {
@@ -97,6 +97,7 @@
       if (!probe || !hit) return;
       var ox = 0, X0 = +d.x0, PW = +d.pw, Y0 = +d.y0, PH = +d.ph;
       var WMIN = +d.wmin, WMAX = +d.wmax, LMIN = +d.lmin, LMAX = +d.lmax;
+      var WLO = d.wlo !== undefined ? +d.wlo : WMIN, WHI = d.whi !== undefined ? +d.whi : WMAX;
       var px = function (w) { return ox + X0 + (w - WMIN) / (WMAX - WMIN) * PW; };
       var py = function (v) { return Y0 + (LMAX - v) / (LMAX - LMIN) * PH; };
       var pv = $(".fl-pv", p), pd = $(".fl-pd", p), po = $(".fl-po", p),
@@ -106,7 +107,9 @@
         pt.x = e.clientX; pt.y = e.clientY;
         var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
         var w = WMIN + (loc.x - ox - X0) / PW * (WMAX - WMIN);
-        w = Math.max(WMIN, Math.min(WMAX, w));
+        // stay where the nearest integer level is one the panel actually draws,
+        // otherwise the rounded marker lands off the plot
+        w = Math.max(WLO, Math.min(WHI, w));
         var wq = Math.round(w), dl = loss(wq) - loss(w);
         pv.setAttribute("x1", px(w)); pv.setAttribute("x2", px(w));
         po.setAttribute("cx", px(w)); po.setAttribute("cy", py(loss(w)));
@@ -475,7 +478,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260908k").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260908n").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
