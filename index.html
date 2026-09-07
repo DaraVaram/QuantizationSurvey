@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260907a">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260907b">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260907a"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260907a"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260907a"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260907b"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260907b"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260907b"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -188,7 +188,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .t1-legend .sw-part { background: #D8EBF2; border-color: #b9d7e2; }
       .t1-legend .sw-none { background: transparent; }
       .t1-legend .t1-legend-note { color: #8a94a0; font-style: italic; }
-      /* ---- Table 3: clause lists inside cells ---- */
+      /* ---- Table 6: clause lists inside cells ---- */
       table.ptable ul.cell-list { margin: 0; padding-left: 1.05em; }
       table.ptable ul.cell-list li { margin: 0 0 0.28rem; padding-left: 0.1em; }
       table.ptable ul.cell-list li:last-child { margin-bottom: 0; }
@@ -321,7 +321,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .cite-card .cc-entry { padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
       .cite-card .cc-entry:last-child { border-bottom: none; }
       .cite-card .cc-num { color: #2698BA; font-weight: 700; margin-right: 5px; }
-      /* ---- Study rows in Tables 4-6 lead to their reference ---- */
+      /* ---- Study rows in Tables 3-5 lead to their reference ---- */
       .ptable-wrap.t-studies tbody tr { transition: background 0.12s; }
       .ptable-wrap.t-studies tbody tr:hover { background: #f3fafc; }
       .ptable-wrap.t-studies tbody td:first-child { cursor: pointer; }
@@ -941,33 +941,6 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>For quantized deployment at the extreme edge, the common advantage of these platforms is that they move the main neural-network workload beyond CPU-only execution while remaining within tight power budgets. Dedicated accelerators can exploit low-precision arithmetic to speed up convolution, matrix multiplication, or other supported neural operators. However, this shifts the deployment challenge from general CPU-level optimization to accelerator-aware mapping, where the model must fit the device&#8217;s supported operators, precision formats, memory layout, SRAM limits, and scheduling constraints. Overall, NPU-integrated MCUs mark a shift from CPU-bound inference toward low-power, low-latency neural deployment on severely constrained devices. For a broader overview of micro-NPU architectures and benchmarks, see Millar et al. <d-cite key="millar2025benchmarking"></d-cite>.</p>
 
-<!-- Table 3 (tab:deployment_stack_summary) — at its source position, before Section 5.2 -->
-<div class="ptable-wrap l-page" id="table-3">
-<table class="ptable">
-<caption><b>Table 3:</b> Synthesis of hardware&#8211;software deployment stacks and application-level implications across the MCU deployment studies reviewed in <a class="xref" href="#applications">Section 6</a>.</caption>
-<thead><tr>
-  <th style="min-width:6.5rem">MCU Family</th>
-  <th style="min-width:14rem">Hardware execution path</th>
-  <th style="min-width:12rem">Software mapping path</th>
-  <th>Application-level implication</th>
-</tr></thead>
-<tbody>
-<tr><td>ARM-Based</td>
-<td><ul class="cell-list"><li>Inference on the Cortex-M cores, without a dedicated accelerator,</li><li>using integer and DSP-optimized kernels under tight on-chip SRAM and flash limits.</li></ul></td>
-<td><ul class="cell-list"><li>TFLM and LiteRT for Microcontrollers with CMSIS-NN kernels,</li><li>together with STM32Cube.AI or Edge Impulse for vendor-integrated and end-to-end code generation.</li></ul></td>
-<td><ul class="cell-list"><li>Most reproducible baseline for modest-depth sensing workloads,</li><li>including HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare tasks,</li><li>where mature tooling and portability matter more than aggressive precision flexibility.</li></ul></td></tr>
-<tr class="rule"><td>RISC-V-Based</td>
-<td><ul class="cell-list"><li>Inference on commercial MCUs such as the ESP32-C and ESP32-P families,</li><li>using packed integer arithmetic, SIMD, and ISA extensions on the programmable CPU path,</li><li>without a dedicated neural accelerator.</li></ul></td>
-<td><ul class="cell-list"><li>TFLM and ESP-NN on commercial ESP32 devices,</li><li>with vendor and community toolchains that remain less standardized than the Cortex-M ecosystem.</li></ul></td>
-<td><ul class="cell-list"><li>Demonstrates feasible healthcare, industrial monitoring, and robotics deployment,</li><li>but with a smaller and more recent application base and less mature tooling than ARM.</li></ul></td></tr>
-<tr class="rule"><td>NPU-integrated</td>
-<td><ul class="cell-list"><li>Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration,</li><li>spanning tightly coupled CNN engines and clustered RISC-V with dedicated convolution acceleration (the GAP family, using the HWCE on GAP8 and the NE16 on GAP9),</li><li>under device-specific on-chip memory partitioning.</li></ul></td>
-<td><ul class="cell-list"><li>ai8x training and synthesis,</li><li>GAPFlow with nntool and Autotiler,</li><li>Ethos-U tooling,</li><li>and Neural-ART runtimes that map compatible graphs to the accelerator.</li></ul></td>
-<td><ul class="cell-list"><li>State-of-the-art family for latency- and energy-critical workloads,</li><li>including object detection, drone navigation, audio and speech, healthcare, human activity recognition, anomaly detection, environmental sensing, and compact vision or DSP pipelines,</li><li>provided the model fits the accelerator&#8217;s supported operators, tensor layouts, precision formats, and memory limits.</li></ul></td></tr>
-</tbody>
-</table>
-</div>
-
 <h3 id="software-frameworks">5.2&ensp;Software Frameworks and Deployment Tools</h3>
 
 <p>The software side of MCU deployment can be understood through three main layers. The first is the model-development front end, where frameworks such as TensorFlow/LiteRT <d-cite key="tensorflow"></d-cite>, PyTorch <d-cite key="pytorch"></d-cite>, and ONNX <d-cite key="onnxruntime"></d-cite> are commonly used for training, conversion, or model exchange. The second is the MCU inference runtime, where the model is executed under strict memory and operator constraints. The third is the hardware-specific code-generation flow, which determines how the network is mapped to kernels, memory regions, and accelerator-specific execution units.</p>
@@ -1005,14 +978,14 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>As discussed in <a class="xref" href="#arm-mcus">Section 5.1.1</a>, MCUs based on the ARM processor family are among the most widely used platforms across embedded computing, supporting a vast array of applications. Prior work has explored ARM-based MCU deployments in diverse domains such as object detection <d-cite key="moosmann2024flexible,moosmann2023tinyissimoyolo,dabbous2024benchmarking,deutel2023mu"></d-cite>, speech processing <d-cite key="ulkar2021ultra,vsljubura2024deep,abbas2023keyword,zeng2022sub"></d-cite>, human activity recognition (HAR) <d-cite key="rafee2025decision,kang2024device,zhou2025efficient,mach2024uwb,mishra2025use"></d-cite>, environmental monitoring <d-cite key="flores2025enhanced,cerioli2025efficient,dabbous2024benchmarking,chen2024efficient,mellit2025tinyml"></d-cite>, agriculture <d-cite key="rakib2024lightweight,sathyanarayanan2024quantized,krayden2025tinyml,crupi2024deep"></d-cite>, healthcare <d-cite key="benoit2024analyzing,rostami2024real,yang2025real,gambhir2024microcontroller,kasnesis2025replacing,krasteva2025implementing,mazinani2024deep,zanetti2020robust,borah2024blockchain"></d-cite>, education <d-cite key="abushahla2025real"></d-cite>, and network security <d-cite key="chehade2025energy,panopio2026sensor"></d-cite>.</p>
 
-<p>Several works focus on privacy-preserving vision applications at the edge, including the egocentric privacy-preserving intelligent camera (EPIC) <d-cite key="li2025extra"></d-cite> and XimSwap <d-cite key="ancilotto2024ximswap"></d-cite>, which perform real-time video anonymization on smart cameras and edge-based vision sensors. These studies apply quantization techniques to reduce computational load and inference latency, achieving performance comparable to larger models while maintaining efficiency on constrained devices. Abushahla et al. <d-cite key="abushahla2025cognitive"></d-cite> explored low-latency wideband spectrum sensing for cognitive radio using the Sony Spresense MCU, adapting state-of-the-art models with QAT to significantly reduce hardware requirements. Related efforts, such as <d-cite key="hu2025tin"></d-cite>, also address edge-based spectrum sensing. In the area of model architectures, Burrello et al. <d-cite key="burrello2021microcontroller"></d-cite> introduced the TinyTransformer library, providing optimized execution kernels for transformer-based models on low-power MCUs, showing that even complex models can be efficiently deployed at the edge. <a class="xref" href="#table-4">Table 4</a> lists selected examples from ARM-based MCUs.</p>
+<p>Several works focus on privacy-preserving vision applications at the edge, including the egocentric privacy-preserving intelligent camera (EPIC) <d-cite key="li2025extra"></d-cite> and XimSwap <d-cite key="ancilotto2024ximswap"></d-cite>, which perform real-time video anonymization on smart cameras and edge-based vision sensors. These studies apply quantization techniques to reduce computational load and inference latency, achieving performance comparable to larger models while maintaining efficiency on constrained devices. Abushahla et al. <d-cite key="abushahla2025cognitive"></d-cite> explored low-latency wideband spectrum sensing for cognitive radio using the Sony Spresense MCU, adapting state-of-the-art models with QAT to significantly reduce hardware requirements. Related efforts, such as <d-cite key="hu2025tin"></d-cite>, also address edge-based spectrum sensing. In the area of model architectures, Burrello et al. <d-cite key="burrello2021microcontroller"></d-cite> introduced the TinyTransformer library, providing optimized execution kernels for transformer-based models on low-power MCUs, showing that even complex models can be efficiently deployed at the edge. <a class="xref" href="#table-3">Table 3</a> lists selected examples from ARM-based MCUs.</p>
 
 <p>Beyond these standard approaches, a number of studies have pushed the limits by exploring advanced or extreme quantization methods (as presented in <a class="xref" href="#advanced">Section 3</a>). Sakr et al. <d-cite key="sakr2022memory"></d-cite> and Borah et al. <d-cite key="borah2024blockchain"></d-cite>, for example, implemented ultra-low-bit models, including binarized neural networks, by applying software-level and ISA-level optimizations that enable efficient deployment on microcontrollers. Zeng et al. <d-cite key="zeng2022sub"></d-cite> employed a two-stage QAT pipeline, where the first stage used squashed quantization <d-cite key="strom2022squashed"></d-cite> to transform the weight distribution toward a uniform distribution (in the statistical sense), reducing skewness and extreme values, followed by mixed precision quantization (8-, 5-, and 4-bit) for efficient compression and deployment. Cassimon et al. <d-cite key="cassimon2025designing"></d-cite> applied kurtosis regularization from the KURE framework <d-cite key="chmiel2020robust"></d-cite> to actively reduce the peakedness and tails of the weight distribution, promoting a near-uniform weight distribution in a model trained for active fire detection using multispectral satellite imagery, and subsequently applied INT8 PTQ for deployment on the Google Coral Micro. Misra et al. <d-cite key="misra2025latency"></d-cite> extended this idea by combining kurtosis regularization from EQ-Net <d-cite key="xu2023eq"></d-cite> with adaptive mixed precision QAT, where the quantization bit-width was dynamically selected based on input complexity. Their models were deployed on the Raspberry Pi Pico, demonstrating low-latency, energy-efficient inference across multiple precisions.</p>
 
-<!-- Table 4 (tab:quantized_arm_apps) -->
-<div class="ptable-wrap l-page" id="table-4">
+<!-- Table 3 (tab:quantized_arm_apps) -->
+<div class="ptable-wrap l-page" id="table-3">
 <table class="ptable" data-sortable>
-<caption><b>Table 4:</b> Selected works using quantization for deployment on ARM-based MCUs.</caption>
+<caption><b>Table 3:</b> Selected works using quantization for deployment on ARM-based MCUs.</caption>
 <thead><tr>
   <th>Study</th><th>Category</th><th>Quantization</th><th>Device(s)</th><th>Framework(s)</th><th>Performance</th><th>Power / Energy</th><th>Latency (ms)</th><th>Memory (KB)</th>
 </tr></thead>
@@ -1037,14 +1010,14 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>Similar to ARM-based systems, RISC-V-based MCUs are being considered across a growing range of application domains. As outlined in <a class="xref" href="#riscv-mcus">Section 5.1.2</a>, the openness of RISC-V, which allows low-bit arithmetic, packed-SIMD instructions, dot-product units, and mixed-precision support to be introduced at the ISA and microarchitecture level, makes it well suited to quantized inference. To date, however, most of this potential has been realized in research platforms such as PULP <d-cite key="pulp"></d-cite> and PULPissimo <d-cite key="daghero2022human"></d-cite>, in mixed-precision cores such as MPIC <d-cite key="ottavi2020mixed"></d-cite>, and in NPU-augmented commercial SoCs such as GAP8 and GAP9, rather than in general-purpose silicon. The latter family, owing to its on-chip neural engines, accounts for the large majority of RISC-V application deployments and therefore belongs to the NPU-integrated category discussed in <a class="xref" href="#apps-npu">Section 6.3</a>. This subsection instead focuses on commercial, general-purpose RISC-V MCUs such as the ESP32-C3, ESP32-C6, and ESP32-P4, which are inexpensive, widely available, and programmable with standard toolchains, making them the most likely targets for real-world quantized deployment outside research settings. These devices are positioned primarily as wireless IoT controllers rather than as dedicated inference platforms, and their software stack for quantized deployment remains less mature than the established ARM Cortex-M ecosystem.</p>
 
-<p>As a result, only a few application deployments have so far been reported, covering healthcare <d-cite key="rattanasak2025lightweight"></d-cite> and autonomous robotics <d-cite key="roy2026tinynav"></d-cite>. Rattanasak et al. <d-cite key="rattanasak2025lightweight"></d-cite> combined knowledge distillation with INT8 post-training quantization to deploy a fetal-movement classifier on an ESP32-C6, compressing the model to 310 KB while retaining an 88.64% F1-score, and additionally reported on-device power, peaking at 179.8 mW. Industrial condition monitoring has been addressed with INT8 vibration-based fault classifiers by Banerjee et al. <d-cite key="banerjee2026device"></d-cite> on an ESP32-C3 (a 0.95 macro-F1, an 80 KB model, and roughly 82 ms latency while consuming 6.77 mJ of energy per inference). The more capable dual-core ESP32-P4 has been used for heavier, vision-based workloads, as shown by TinyNav <d-cite key="roy2026tinynav"></d-cite>, which deploys an INT8 2D CNN for real-time ground-robot navigation, reaching 30 ms per inference and completing 40 collision-free laps in controlled track tests. Beyond these end applications, a parallel body of work targets the enabling toolchains and kernels. It includes benchmarking and on-device profiling frameworks <d-cite key="vankempen2023mlonmcu,huang2023utoe,huang2024riotml"></d-cite> together with memory-reduction and parallelization methods <d-cite key="huang2025msfcnn,huang2026ariel"></d-cite>, evaluated on commercial RISC-V parts such as the ESP32-C3 and the SiFive FE310. <a class="xref" href="#table-5">Table 5</a> summarizes these commercial RISC-V deployments.</p>
+<p>As a result, only a few application deployments have so far been reported, covering healthcare <d-cite key="rattanasak2025lightweight"></d-cite> and autonomous robotics <d-cite key="roy2026tinynav"></d-cite>. Rattanasak et al. <d-cite key="rattanasak2025lightweight"></d-cite> combined knowledge distillation with INT8 post-training quantization to deploy a fetal-movement classifier on an ESP32-C6, compressing the model to 310 KB while retaining an 88.64% F1-score, and additionally reported on-device power, peaking at 179.8 mW. Industrial condition monitoring has been addressed with INT8 vibration-based fault classifiers by Banerjee et al. <d-cite key="banerjee2026device"></d-cite> on an ESP32-C3 (a 0.95 macro-F1, an 80 KB model, and roughly 82 ms latency while consuming 6.77 mJ of energy per inference). The more capable dual-core ESP32-P4 has been used for heavier, vision-based workloads, as shown by TinyNav <d-cite key="roy2026tinynav"></d-cite>, which deploys an INT8 2D CNN for real-time ground-robot navigation, reaching 30 ms per inference and completing 40 collision-free laps in controlled track tests. Beyond these end applications, a parallel body of work targets the enabling toolchains and kernels. It includes benchmarking and on-device profiling frameworks <d-cite key="vankempen2023mlonmcu,huang2023utoe,huang2024riotml"></d-cite> together with memory-reduction and parallelization methods <d-cite key="huang2025msfcnn,huang2026ariel"></d-cite>, evaluated on commercial RISC-V parts such as the ESP32-C3 and the SiFive FE310. <a class="xref" href="#table-4">Table 4</a> summarizes these commercial RISC-V deployments.</p>
 
 <p>Taken together, these deployments indicate that quantized inference on commercial RISC-V MCUs is feasible but still confined to the lower-to-middle tier of edge workloads. Compact one-dimensional and feature-based models, such as those for physiological-signal and vibration analysis, run comfortably on the single-core ESP32-C parts, whereas heavier two-dimensional perception becomes practical only on the dual-core ESP32-P4. The contrast with accelerator-integrated platforms is pronounced, since the small number of deployments collected here stands against the far more numerous GAP8 and GAP9 deployments surveyed in the following subsection, which their dedicated neural engines make possible. Echoing the assessment in <a class="xref" href="#riscv-mcus">Section 5.1.2</a>, RISC-V is thus best regarded as a promising but still-maturing foundation for quantized inference, one whose application-level adoption currently rests on NPU-augmented designs rather than on general-purpose commercial MCUs.</p>
 
-<!-- Table 5 (tab:quantized_riscv_apps) -->
-<div class="ptable-wrap l-page" id="table-5">
+<!-- Table 4 (tab:quantized_riscv_apps) -->
+<div class="ptable-wrap l-page" id="table-4">
 <table class="ptable" data-sortable>
-<caption><b>Table 5:</b> Selected works using quantization for deployment on RISC-V MCUs. A dash indicates that the study did not report the corresponding value.</caption>
+<caption><b>Table 4:</b> Selected works using quantization for deployment on RISC-V MCUs. A dash indicates that the study did not report the corresponding value.</caption>
 <thead><tr>
   <th>Study</th><th>Category</th><th>Quantization</th><th>Device(s)</th><th>Framework(s)</th><th>Performance</th><th>Power / Energy</th><th>Latency (ms)</th><th>Memory (KB)</th>
 </tr></thead>
@@ -1058,12 +1031,12 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <h3 id="apps-npu">6.3&ensp;NPU-Integrated MCUs</h3>
 
-<p>More recently, NPU-integrated MCUs have become a leading target for quantized edge deployment, with a rapidly growing body of application work spanning both commercial products and academic research. As with the ARM- and RISC-V-based systems discussed above, they have been applied across a broad range of domains, including object detection <d-cite key="fiala2023tpdnet,moosmann2024flexible,moosmann2023tinyissimoyolo,wang2022bed,tran2025facets,testa2025real,moosmann2024ultra"></d-cite>, image classification, segmentation, and face recognition <d-cite key="gong2024dex,dabbous2024benchmarking,okman20223u,zemlyanikin2019512kib"></d-cite>, visual question answering <d-cite key="rashid2024tinyvqa"></d-cite>, surveillance <d-cite key="scherer2022widevision"></d-cite>, healthcare <d-cite key="van2023real,nguyen2024low,ibrahim2024end,kasnesis2025replacing,busia2025endoscopy,mai2024end,itani2025wireless"></d-cite>, human activity recognition <d-cite key="mahmud2024actsonic,mnif2024ultra,kang2024device"></d-cite>, drone navigation and obstacle avoidance <d-cite key="chacun2024dronebandit,zhou2023solving,scarciglia2025map,lamberti2023bio,navardi2022e2edgeai,zheng2024monocular,hulens2022autonomous,crupi2024deep,crupi2025efficient,palossi2021fully,zimmerman2024fully"></d-cite>, audio <d-cite key="plozza2022real"></d-cite>, keyword spotting <d-cite key="jakuvs2025implementing,ulkar2021ultra,cioflan2024device"></d-cite>, networking <d-cite key="balbi2024ultra"></d-cite>, wearable devices <d-cite key="gong2023collaborative,gong2025synergy"></d-cite>, environmental sensing <d-cite key="ingaleshwar2024wildlife,abushahla2026submillisecond"></d-cite>, anomaly detection <d-cite key="lightbody2022host"></d-cite>, agriculture <d-cite key="rashid2025hac"></d-cite>, and DSP <d-cite key="liu2025research"></d-cite>. <a class="xref" href="#table-6">Table 6</a> lists selected works that span this range across a variety of NPU-integrated platforms.</p>
+<p>More recently, NPU-integrated MCUs have become a leading target for quantized edge deployment, with a rapidly growing body of application work spanning both commercial products and academic research. As with the ARM- and RISC-V-based systems discussed above, they have been applied across a broad range of domains, including object detection <d-cite key="fiala2023tpdnet,moosmann2024flexible,moosmann2023tinyissimoyolo,wang2022bed,tran2025facets,testa2025real,moosmann2024ultra"></d-cite>, image classification, segmentation, and face recognition <d-cite key="gong2024dex,dabbous2024benchmarking,okman20223u,zemlyanikin2019512kib"></d-cite>, visual question answering <d-cite key="rashid2024tinyvqa"></d-cite>, surveillance <d-cite key="scherer2022widevision"></d-cite>, healthcare <d-cite key="van2023real,nguyen2024low,ibrahim2024end,kasnesis2025replacing,busia2025endoscopy,mai2024end,itani2025wireless"></d-cite>, human activity recognition <d-cite key="mahmud2024actsonic,mnif2024ultra,kang2024device"></d-cite>, drone navigation and obstacle avoidance <d-cite key="chacun2024dronebandit,zhou2023solving,scarciglia2025map,lamberti2023bio,navardi2022e2edgeai,zheng2024monocular,hulens2022autonomous,crupi2024deep,crupi2025efficient,palossi2021fully,zimmerman2024fully"></d-cite>, audio <d-cite key="plozza2022real"></d-cite>, keyword spotting <d-cite key="jakuvs2025implementing,ulkar2021ultra,cioflan2024device"></d-cite>, networking <d-cite key="balbi2024ultra"></d-cite>, wearable devices <d-cite key="gong2023collaborative,gong2025synergy"></d-cite>, environmental sensing <d-cite key="ingaleshwar2024wildlife,abushahla2026submillisecond"></d-cite>, anomaly detection <d-cite key="lightbody2022host"></d-cite>, agriculture <d-cite key="rashid2025hac"></d-cite>, and DSP <d-cite key="liu2025research"></d-cite>. <a class="xref" href="#table-5">Table 5</a> lists selected works that span this range across a variety of NPU-integrated platforms.</p>
 
-<!-- Table 6 (tab:quantized_npu_apps) -->
-<div class="ptable-wrap l-page" id="table-6">
+<!-- Table 5 (tab:quantized_npu_apps) -->
+<div class="ptable-wrap l-page" id="table-5">
 <table class="ptable" data-sortable>
-<caption><b>Table 6:</b> Selected papers using quantization for deployment on NPU-integrated MCUs.</caption>
+<caption><b>Table 5:</b> Selected papers using quantization for deployment on NPU-integrated MCUs.</caption>
 <thead><tr>
   <th>Study</th><th>Category</th><th>Quantization</th><th>Device(s)</th><th>Framework(s)</th><th>Performance</th><th>Power / Energy</th><th>Latency (ms)</th><th>Memory (KB)</th>
 </tr></thead>
@@ -1089,7 +1062,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <!-- Interactive supplement: deployment landscape explorer -->
 <div class="supplement" id="scatter-supp">
-  <div class="supp-label">Interactive supplement &#8212; deployment landscape across Tables 4&#8211;6 (not part of the manuscript)</div>
+  <div class="supp-label">Interactive supplement &#8212; deployment landscape across Tables 3&#8211;5 (not part of the manuscript)</div>
   <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:6px">
     <span>
       <span class="chip active" data-f="all">All</span>
@@ -1106,7 +1079,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <div id="viz-metric-note" style="display:none;font-size:0.7rem;color:#8a5a00;background:#fff8e6;border:1px solid #f0dfb0;border-radius:5px;padding:5px 9px;margin:2px 0 7px"></div>
   <div id="scatter"></div>
   <div id="viz-count" class="visually-hidden" aria-live="polite"></div>
-  <div style="font-size:0.68rem;color:#888;margin-top:4px">Each point is one deployment from Tables 4&#8211;6. Every value is parsed from the table cell itself: the marker sits at the midpoint of the full reported range and the whisker spans that range end to end, so the tables remain the source of truth. Hover or focus a point for details; click it to open that study in the reference list.</div>
+  <div style="font-size:0.68rem;color:#888;margin-top:4px">Each point is one deployment from Tables 3&#8211;5. Every value is parsed from the table cell itself: the marker sits at the midpoint of the full reported range and the whisker spans that range end to end, so the tables remain the source of truth. Hover or focus a point for details; click it to open that study in the reference list.</div>
 </div>
 
 <p>Although these platforms explicitly support extreme low-bit and mixed-precision arithmetic, the great majority of the works we surveyed still default to INT8. The few exceptions, such as the INT16 vision model of Zemlyanikin et al. <d-cite key="zemlyanikin2019512kib"></d-cite> and the mixed-precision pipelines of Itani et al. <d-cite key="itani2025wireless"></d-cite> and Crupi et al. <d-cite key="crupi2025efficient"></d-cite>, remain uncommon. We therefore focus on their most distinctive and emerging uses rather than on precision choices alone.</p>
@@ -1119,7 +1092,38 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>The NPU-integrated deployments show the clearest latency and energy advantages of any family considered here <d-cite key="millar2025benchmarking"></d-cite>, but also the strongest dependence on hardware-specific toolchains <d-cite key="gapflow,ethosu"></d-cite>. Most reported systems still use INT8 even when the underlying accelerator advertises lower-precision capability, which suggests that practical adoption is limited by operator support, mapping constraints, memory partitioning, and deployment tooling rather than by arithmetic capability alone <d-cite key="gong2024dex,jeon2025tinymem"></d-cite>. For quantization research, this distinction matters, since accelerator-backed MCUs can make low-precision inference highly predictable, but only when the model architecture and quantization format are compatible with the accelerator&#8217;s supported execution path <d-cite key="moosmann2023tinyissimoyolo,tran2025facets"></d-cite>.</p>
 
-<p>Taken together, these three hardware families reveal a consistent pattern. ARM-based MCUs offer the most established and portable deployment path and dominate when mature tooling and low-friction integration matter most <d-cite key="cmsis,tensorflow,xcube_ai"></d-cite>. Commercial RISC-V MCUs show that quantized inference is feasible on a fully programmable open-ISA CPU, although their application base is smaller and more recent and their software stack less standardized <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>. NPU-integrated MCUs, which include the clustered RISC-V GAP8 and GAP9 <d-cite key="flamand2018gap,gap9"></d-cite> alongside dedicated CNN and operator accelerators, provide the strongest latency and energy predictability and now represent the leading edge of on-device inference, but only when the deployment flow is tightly matched to the accelerator. Across all three families, uniform INT8 remains the practical default <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>, while mixed precision and more aggressive quantization appear only when the surrounding runtime and hardware stack can actually exploit them <d-cite key="rusci2020,bruschi2020,capotondi2020cmix"></d-cite>. <a class="xref" href="#table-3">Table 3</a> summarizes these observations by linking each family to its dominant execution path, software mapping flow, and application-level implications, and motivates the cross-case recommendations that follow.</p>
+<p>Taken together, these three hardware families reveal a consistent pattern. ARM-based MCUs offer the most established and portable deployment path and dominate when mature tooling and low-friction integration matter most <d-cite key="cmsis,tensorflow,xcube_ai"></d-cite>. Commercial RISC-V MCUs show that quantized inference is feasible on a fully programmable open-ISA CPU, although their application base is smaller and more recent and their software stack less standardized <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>. NPU-integrated MCUs, which include the clustered RISC-V GAP8 and GAP9 <d-cite key="flamand2018gap,gap9"></d-cite> alongside dedicated CNN and operator accelerators, provide the strongest latency and energy predictability and now represent the leading edge of on-device inference, but only when the deployment flow is tightly matched to the accelerator. Across all three families, uniform INT8 remains the practical default <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>, while mixed precision and more aggressive quantization appear only when the surrounding runtime and hardware stack can actually exploit them <d-cite key="rusci2020,bruschi2020,capotondi2020cmix"></d-cite>. <a class="xref" href="#table-6">Table 6</a> summarizes these observations by linking each family to its dominant execution path, software mapping flow, and quantization practice, together with their application-level implications, and motivates the cross-case recommendations that follow.</p>
+
+<!-- Table 6 (tab:deployment_stack_summary) — the Section 5/6 synthesis, closing Section 6.3 -->
+<div class="ptable-wrap l-page" id="table-6">
+<table class="ptable">
+<caption><b>Table 6:</b> Synthesis of the MCU deployment studies reviewed in <a class="xref" href="#applications">Section 6</a>, linking each family&#8217;s dominant hardware execution path and software mapping path to the quantization practice observed across studies and its application-level implications. Bold lines carry the cross-case guidance developed in <a class="xref" href="#cross-case">Section 6.4</a>.</caption>
+<thead><tr>
+  <th style="min-width:5.5rem">MCU Family</th>
+  <th style="min-width:10.5rem">Hardware execution path</th>
+  <th style="min-width:10.5rem">Software mapping path</th>
+  <th style="min-width:11.5rem">Quantization in practice</th>
+  <th style="min-width:12.5rem">Application-level implication</th>
+</tr></thead>
+<tbody>
+<tr><td><a class="xref" href="#arm-mcus">ARM-Based</a></td>
+<td><ul class="cell-list"><li>Inference on the Cortex-M cores themselves, without a dedicated accelerator,</li><li>using integer and DSP-optimized kernels under tight on-chip SRAM and flash limits <d-cite key="cmsis"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">TFLM and LiteRT for Microcontrollers</a> with CMSIS-NN kernels <d-cite key="tensorflow,cmsis"></d-cite>,</li><li>with STM32Cube.AI or Edge Impulse for vendor-integrated, end-to-end code generation <d-cite key="xcube_ai,edgeImpulse"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>Uniform full-integer INT8 via <a class="xref" href="#ptq-qat">PTQ</a> is the dominant reported path <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>,</li><li>with <a class="xref" href="#ptq-qat">QAT</a> where always-on accuracy must survive compression,</li><li>and sub-8-bit or <a class="xref" href="#mixed-precision">mixed precision</a> only through custom kernels and ISA-level work such as CMIX-NN <d-cite key="capotondi2020cmix,rusci2020"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>Most reproducible baseline for modest-depth sensing workloads: HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare (<a class="xref" href="#apps-arm">Section 6.1</a>, <a class="xref" href="#table-3">Table 3</a>).</li><li><strong>Choose when</strong> mature tooling, portability, and low-friction integration matter more than peak efficiency.</li></ul></td></tr>
+<tr class="rule"><td><a class="xref" href="#riscv-mcus">RISC-V-Based</a></td>
+<td><ul class="cell-list"><li>Inference on commercial MCUs such as the ESP32-C and ESP32-P families,</li><li>using packed integer arithmetic, SIMD, and ISA extensions on the programmable CPU path, without a dedicated neural accelerator.</li></ul></td>
+<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">TFLM with ESP-NN kernels</a> on commercial ESP32 devices <d-cite key="rattanasak2025lightweight,roy2026tinynav"></d-cite>,</li><li>through vendor and community toolchains that remain less standardized than the Cortex-M ecosystem.</li></ul></td>
+<td><ul class="cell-list"><li>Uniform INT8 <a class="xref" href="#ptq-qat">PTQ</a> in every commercial deployment reported to date <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>,</li><li>while aggressive low-bit and mixed precision remain confined to research-class PULP systems <d-cite key="rusci2020,bruschi2020"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (<a class="xref" href="#apps-riscv">Section 6.2</a>, <a class="xref" href="#table-4">Table 4</a>).</li><li><strong>Choose when</strong> an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable.</li></ul></td></tr>
+<tr class="rule"><td><a class="xref" href="#npu-mcus">NPU-Integrated</a></td>
+<td><ul class="cell-list"><li>Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration,</li><li>spanning tightly coupled CNN engines (MAX78x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9) <d-cite key="flamand2018gap,gap9"></d-cite>,</li><li>under device-specific on-chip memory partitioning.</li></ul></td>
+<td><ul class="cell-list"><li><a class="xref" href="#software-frameworks">ai8x training and synthesis</a> <d-cite key="balbi2025embedded"></d-cite>, GAPFlow with nntool and Autotiler <d-cite key="gapflow"></d-cite>, Ethos-U tooling <d-cite key="ethosu"></d-cite>, and Neural-ART runtimes,</li><li>each mapping compatible graphs onto its own accelerator.</li></ul></td>
+<td><ul class="cell-list"><li>INT8 remains the default even where the accelerator advertises lower precision <d-cite key="gong2024dex,jeon2025tinymem"></d-cite>,</li><li>with genuine sub-8-bit and layer-wise <a class="xref" href="#mixed-precision">mixed precision</a> where the toolchain exploits it: QAT down to INT1&#8211;INT4 with ai8x on MAX78x <d-cite key="balbi2025embedded"></d-cite> and INT2&#8211;INT8 on GAP9&#8217;s NE16 <d-cite key="gap9,itani2025wireless"></d-cite>,</li><li>always bounded by the accelerator&#8217;s supported operators and formats <d-cite key="moosmann2023tinyissimoyolo,tran2025facets"></d-cite>.</li></ul></td>
+<td><ul class="cell-list"><li>State of the art for latency- and energy-critical workloads <d-cite key="millar2025benchmarking"></d-cite>: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (<a class="xref" href="#apps-npu">Section 6.3</a>, <a class="xref" href="#table-5">Table 5</a>).</li><li><strong>Choose when</strong> hard latency or energy budgets dominate and the model can be matched to the accelerator&#8217;s operators, precision formats, and memory limits.</li></ul></td></tr>
+</tbody>
+</table>
+</div>
 
 <h3 id="cross-case">6.4&ensp;Cross-Case Recommendations</h3>
 
@@ -1202,7 +1206,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260907a"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260907b"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1223,9 +1227,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260907a"></script>
-  <script src="assets/js/supplements.js?v=20260907a"></script>
-  <script src="assets/js/figs.js?v=20260907a"></script>
+  <script src="assets/js/data.js?v=20260907b"></script>
+  <script src="assets/js/supplements.js?v=20260907b"></script>
+  <script src="assets/js/figs.js?v=20260907b"></script>
 
   </body>
 

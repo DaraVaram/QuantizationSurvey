@@ -418,7 +418,7 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260907a").then(function (r) { return r.text(); }).then(function (bib) {
+    fetch("assets/bibliography/references.bib?v=20260907b").then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
@@ -514,7 +514,7 @@
      distill lays its hover box out inside the table wrapper, which is a
      horizontal scroll container and therefore clips it. Suppress that box and
      draw the same reference entry in a fixed-position card instead, so the
-     first column of Tables 4-6 behaves like a citation anywhere else. */
+     first column of Tables 3-5 behaves like a citation anywhere else. */
   (function () {
     var wraps = $$(".ptable-wrap");
     if (!wraps.length) return;
@@ -571,7 +571,7 @@
 
     // A study row is about one paper, so clicking anywhere in it opens that
     // reference — without hijacking text selection or the citation itself.
-    ["table-4", "table-5", "table-6"].forEach(function (id) {
+    ["table-3", "table-4", "table-5"].forEach(function (id) {
       var w = $("#" + id);
       if (!w) return;
       w.classList.add("t-studies");

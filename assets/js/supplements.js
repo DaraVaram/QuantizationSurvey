@@ -200,7 +200,7 @@
      Table 2 — how many of the surveyed deployments use each platform.
      A study counts for a platform only when its Device(s) cell names that
      platform; accelerator names are deliberately not mapped onto boards, and
-     the count is scoped to the studies selected for Tables 4-6 rather than to
+     the count is scoped to the studies selected for Tables 3-5 rather than to
      the literature at large. Runs before enhanceTable so the hints survive a
      table reset.
      ======================================================================= */
@@ -225,9 +225,9 @@
       });
       var n = Object.keys(seen).length;
       td.setAttribute("data-tip", "<b>" + name + "</b><br>" + (n
-        ? n + (n === 1 ? " study" : " studies") + " of the " + total + " surveyed in Tables 4&#8211;6 " +
+        ? n + (n === 1 ? " study" : " studies") + " of the " + total + " surveyed in Tables 3&#8211;5 " +
           (n === 1 ? "reports" : "report") + " a deployment on this platform.<br>" + cats.join(" &#183; ")
-        : "None of the " + total + " studies surveyed in Tables 4&#8211;6 reports a deployment on this platform."));
+        : "None of the " + total + " studies surveyed in Tables 3&#8211;5 reports a deployment on this platform."));
     });
   })();
 
@@ -274,22 +274,21 @@
     match: function (tr, key) { return cellText(tr.cells[0]) === key; },
     sortable: [4, 5, 6]                // Clock, Flash, RAM
   });
-  // Tables 4 and 6 — deployments: quantization-path filter
-  ["table-4", "table-6"].forEach(function (tid) {
+  // Tables 3 and 5 — deployments: quantization-path filter
+  ["table-3", "table-5"].forEach(function (tid) {
     enhanceTable(tid, {
       chips: [{ key: "PTQ", label: "PTQ" }, { key: "QAT", label: "QAT" }],
       match: function (tr, key) { return cellText(tr.cells[2]).indexOf(key) !== -1; },
       sortable: [5, 6, 7, 8]           // Performance, Power/Energy, Latency, Memory
     });
   });
-  // Table 5 — all three rows are INT8 PTQ: search and sorting only, no chips
-  enhanceTable("table-5", { sortable: [5, 6, 7, 8] });
-  // Table 3 — three descriptive rows: sorting/reset only, no search
-  // Table 3 — three descriptive prose rows: nothing numeric, so no controls at all
-  enhanceTable("table-3", { noSearch: true });
+  // Table 4 — all three rows are INT8 PTQ: search and sorting only, no chips
+  enhanceTable("table-4", { sortable: [5, 6, 7, 8] });
+  // Table 6 — three descriptive prose rows: nothing numeric, so no controls at all
+  enhanceTable("table-6", { noSearch: true });
 
   /* =======================================================================
-     Deployment landscape scatter (Tables 4–6)
+     Deployment landscape scatter (Tables 3–5)
      ======================================================================= */
   var D = window.DATA;
   var host = $("#scatter");
@@ -405,7 +404,7 @@
       if (mw) mw.style.display = (xKey === "perf" || yKey === "perf") ? "" : "none";
       if (!pts.length) {
         host.innerHTML = '<p style="font-size:0.72rem;color:#8a94a0;padding:1.2rem 0">' +
-          "No deployment in Tables 4&#8211;6 reports both of the selected variables.</p>";
+          "No deployment in Tables 3&#8211;5 reports both of the selected variables.</p>";
         host._pts = [];
         return;
       }
