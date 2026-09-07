@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260907i">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260907j">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260907i"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260907i"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260907i"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260907j"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260907j"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260907j"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -704,8 +704,6 @@ n = \text{integer value} \times S,
 
 <h3 id="formalization">2.2&ensp;Formalization of Quantization</h3>
 
-<p>This hardware reality motivates quantization. Broadly speaking, quantization transforms a model from a higher-precision numerical representation into a lower-precision one, with the goal of reducing memory footprint, arithmetic cost, and energy consumption while preserving acceptable task performance <d-cite key="capra2020hardware,nagel2021white"></d-cite>. In the rest of the paper, this basic operation is treated as a deployment design choice: different quantizers lead to different calibration needs, kernel constraints, memory layouts, and hardware mappings.</p>
-
 <p>Consider a deep neural network (DNN) with \(L\) layers and learnable parameters \(\theta = \{W_1, W_2, ..., W_L\}\), applied to a supervised learning task. Each \(W_i\) denotes the weight matrix of the \(i^\text{th}\) layer. Given an input \(\mathbf{x} \in \mathbb{R}^{d}\), where \(d\) is the input dimensionality, the network computes predictions \(\hat{y} = f(\mathbf{x}; \theta)\) through a sequence of transformations. Assume that the model has been trained and the parameters \(\theta\) are stored in FP32 precision.</p>
 
 <p>Quantization aims to reduce the numerical precision of both the model parameters and the intermediate activations, replacing floating-point values with low bit-width representations (e.g., INT8), while minimizing the loss in model performance (e.g., accuracy). This reduction is critical in scenarios constrained by memory, compute, or energy resources <d-cite key="liu2025low"></d-cite>. The quantization task can be formulated as a constrained optimization problem:</p>
@@ -761,7 +759,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>enabling downstream computation using approximate values that can be efficiently processed in integer arithmetic units.</p>
 
-<p>In sum, quantization seeks to determine the optimal quantization parameters, namely, the bit-width \(b\), scale \(s\), and zero-point \(z\) that balance model accuracy with efficiency gains in memory, computation, and energy. In this form, quantization can be understood as the mechanism that connects numerical representation to efficient embedded execution: it replaces high-precision real-valued computation with lower-precision arithmetic that is better matched to MCU hardware and software stacks. In the following sections, we introduce various quantization techniques that realize this objective.</p>
+<p>In sum, quantization seeks to determine the optimal quantization parameters, namely, the bit-width \(b\), scale \(s\), and zero-point \(z\) that balance model accuracy with efficiency gains in memory, computation, and energy. In this form, quantization can be understood as the mechanism that connects numerical representation to efficient embedded execution: it replaces high-precision real-valued computation with lower-precision arithmetic that is better matched to MCU hardware and software stacks. In the rest of the paper, this basic operation is treated as a deployment design choice: different quantizers lead to different calibration needs, kernel constraints, memory layouts, and hardware mappings.</p>
 
 <h3 id="design-choices">2.3&ensp;Quantization Design Choices for Deployment</h3>
 
@@ -1453,7 +1451,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260907i"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260907j"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1474,9 +1472,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260907i"></script>
-  <script src="assets/js/supplements.js?v=20260907i"></script>
-  <script src="assets/js/figs.js?v=20260907i"></script>
+  <script src="assets/js/data.js?v=20260907j"></script>
+  <script src="assets/js/supplements.js?v=20260907j"></script>
+  <script src="assets/js/figs.js?v=20260907j"></script>
 
   </body>
 
