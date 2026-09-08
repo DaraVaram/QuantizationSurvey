@@ -118,66 +118,198 @@ apps: {
 },
 
 /* ----------------------------------------------------------------------
-   GUIDE — Figure 17. The recommended deployment path of each MCU family,
-   and which families suit which application. This is authored guidance,
-   the survey's own advice drawn from Section 7.4 and Table 7, not a tally
-   of the surveyed papers. Edit freely; figs.js only reads it.
+   GUIDE — Figure 17. The deployment paths a practitioner can actually take,
+   which one we recommend for each application, and the short notes the
+   figure shows. This is authored guidance, our own advice informed by the
+   surveyed literature, not a tally of it. Edit freely; figs.js only reads it.
+
+   A path is one concrete route down the stack. `line` names one chip per
+   step, in order, and is what the figure draws. `options` lists the
+   legitimate swaps at a step, which the figure shows as branches the
+   reader can click to re-trace through. `implies` are the settings the
+   route fixes for you rather than choices you make.
+
    Chip keys: q: path, s: precision strategy, r: refinement, d: design
    choice, n: numerical representation, f: software tool, h: platform.
 ---------------------------------------------------------------------- */
 guide: {
   families: {
-    arm: {
-      name: "ARM-based", color: "#D81B60",
-      story: "<b>The mainstream path.</b> Uniform INT8 by PTQ, or QAT where always-on accuracy must survive, exported through TensorFlow Lite and run by TFLM with CMSIS-NN kernels on any Cortex-M board. Choose it when mature tooling and portability matter more than peak efficiency.",
-      light: { quant: ["q:PTQ", "q:QAT", "s:uniform", "d:asym", "d:sym", "d:pt", "d:pc", "d:static", "d:calib"],
-               repr: ["n:INT8"],
-               sw: ["f:tf", "f:pytorch", "f:ei", "f:onnx", "f:tflite", "f:cubeai", "f:tflm", "f:cmsis"] },
-      route: { quant: ["q:PTQ", "s:uniform"], repr: ["n:INT8"], sw: ["f:tf", "f:tflite", "f:tflm"], hw: "h:stm32" },
-      hw: ["h:stm32", "h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo", "h:cm4f"]
+    arm:   { name: "ARM-based" },
+    riscv: { name: "RISC-V-based" },
+    npu:   { name: "NPU-integrated" }
+  },
+
+  paths: {
+    "arm-tflm": {
+      rank: 1, name: "TFLM on Cortex-M", fam: "arm", color: "#D81B60",
+      story: "The mainstream route. Quantize to INT8, export through TensorFlow Lite, and run under TFLM, which calls CMSIS-NN kernels on any Cortex-M part. Take it when mature tooling and portability matter more than peak efficiency.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:tf", "f:tflite", "f:tflm", "h:stm32"],
+      implies: ["d:uni", "d:sym", "d:asym", "d:pt", "d:pc", "d:static", "d:calib", "f:cmsis"],
+      options: {
+        "q:PTQ": ["q:QAT"],
+        "n:INT8": ["n:INT16"],
+        "f:tf": ["f:pytorch"],
+        "f:tflite": ["f:onnx"],
+        "f:tflm": ["f:onnxrt", "f:minimal"],
+        "h:stm32": ["h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo", "h:cm4f"]
+      }
     },
-    riscv: {
-      name: "RISC-V-based", color: "#F57C00",
-      story: "<b>The open-ISA path.</b> Uniform INT8 by PTQ, exported through TensorFlow Lite and run by TFLM with ESP-NN kernels on an ESP32-C3, C6, or P4. Choose it when a low-cost part suffices for a compact workload and a younger toolchain is acceptable.",
-      light: { quant: ["q:PTQ", "s:uniform", "d:asym", "d:pt", "d:static", "d:calib"],
-               repr: ["n:INT8"],
-               sw: ["f:tf", "f:pytorch", "f:tflite", "f:tflm", "f:espnn", "f:ariel"] },
-      route: { quant: ["q:PTQ", "s:uniform"], repr: ["n:INT8"], sw: ["f:tf", "f:tflite", "f:tflm"], hw: "h:c6" },
-      hw: ["h:c3", "h:c6", "h:p4"]
+    "arm-cube": {
+      rank: 3, name: "STM32Cube.AI", fam: "arm", color: "#AD1457",
+      story: "The vendor route on STM32. Cube.AI converts the trained model straight into embedded C with its own runtime, which trades portability for a shorter path to working firmware.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:tf", "f:cubeai", "h:stm32"],
+      implies: ["d:uni", "d:sym", "d:asym", "d:pc", "d:static", "d:calib"],
+      options: { "q:PTQ": ["q:QAT"], "f:tf": ["f:pytorch"] }
     },
-    npu: {
-      name: "NPU-integrated", color: "#0288D1",
-      story: "<b>The accelerator path.</b> QAT to INT8, or lower where the accelerator accepts it, handed to the vendor toolchain (ai8x, GAPflow, Ethos-U, Neural-ART) whose runtime drives the accelerator. Choose it when hard latency or energy budgets dominate and the model fits the accelerator's operators and memory.",
-      light: { quant: ["q:PTQ", "q:QAT", "s:uniform", "d:static", "d:calib"],
-               repr: ["n:INT8"],
-               sw: ["f:pytorch", "f:tf", "f:ai8xt", "f:tflite", "f:ai8xs", "f:gapflow", "f:ethos", "f:neuralart", "f:accel"] },
-      route: { quant: ["q:QAT", "s:uniform"], repr: ["n:INT8"], sw: ["f:pytorch", "f:gapflow", "f:accel"], hw: "h:gap9" },
-      hw: ["h:max000", "h:max002", "h:gap8", "h:gap9", "h:ethos", "h:n6", "h:mcxn", "h:mspm0"]
+    "arm-ei": {
+      rank: 9, name: "Edge Impulse", fam: "arm", color: "#F06292",
+      story: "The end-to-end route. Data collection, feature extraction, training, quantization, and firmware generation happen in one workflow, which is the fastest way to a working prototype and the least visibility into what it emits.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:ei", "f:tflite", "f:tflm", "h:nano33"],
+      implies: ["d:uni", "d:asym", "d:pt", "d:static", "d:calib", "f:cmsis"],
+      options: { "q:PTQ": ["q:QAT"], "h:nano33": ["h:stm32", "h:spresense", "h:openmv", "h:cm4f"] }
+    },
+
+    "riscv-tflm": {
+      rank: 4, name: "TFLM + ESP-NN on ESP32", fam: "riscv", color: "#EF6C00",
+      story: "The commercial RISC-V route. The same TensorFlow Lite export as on Cortex-M, run by TFLM with ESP-NN kernels. Take it when a low-cost open-ISA part suffices and a younger toolchain is acceptable.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:tf", "f:tflite", "f:tflm", "h:c6"],
+      implies: ["d:uni", "d:asym", "d:pt", "d:static", "d:calib", "f:espnn"],
+      options: { "q:PTQ": ["q:QAT"], "f:tf": ["f:pytorch"], "f:tflm": ["f:ariel"], "h:c6": ["h:c3", "h:p4"] }
+    },
+    "riscv-pulp": {
+      rank: 11, name: "PULP kernels (research)", fam: "riscv", color: "#BF360C",
+      story: "The research route, and the only RISC-V one that reaches below 8 bits. Co-designed kernels and ISA extensions carry mixed and low-bit precision on PULP-class cores, at the cost of leaving commercial silicon behind.",
+      line: ["q:QAT", "s:mixed", "n:INT4", "f:pytorch", "f:pulpnn", "h:pulp"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
+      options: { "s:mixed": ["s:extreme"], "n:INT4": ["n:INT2", "n:INT8", "n:mixed"], "f:pulpnn": ["f:xpulp"] }
+    },
+
+    "npu-gap": {
+      rank: 10, name: "GAPflow on GAP8/GAP9", fam: "npu", color: "#0288D1",
+      caveat: "only if you already have the hardware",
+      story: "The clustered-accelerator route, and the one much of the surveyed literature runs on. GAPflow tiles the graph, orchestrates DMA, and generates code for the convolution engine. Treat it as a reference point rather than a starting point, since the GAP parts are no longer generally available: take it only if you already have the hardware and toolchain.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:pytorch", "f:gapflow", "f:accel", "h:gap9"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib", "r:hwa"],
+      options: {
+        "q:PTQ": ["q:QAT"], "s:uniform": ["s:mixed", "s:extreme"], "n:INT8": ["n:mixed", "n:INT4", "n:INT2", "n:INT16", "n:FP16"],
+        "f:pytorch": ["f:tf"], "h:gap9": ["h:gap8"]
+      }
+    },
+    "npu-max78": {
+      rank: 2, name: "ai8x on MAX78000/78002", fam: "npu", color: "#5E35B1",
+      story: "The tightly coupled CNN-accelerator route, and the accelerator path we would start from today. ai8x trains with the accelerator's constraints in the loop and synthesises the network into it, which is how sub-8-bit and mixed widths actually reach a shipping device.",
+      line: ["q:QAT", "s:uniform", "n:INT8", "f:ai8xt", "f:ai8xs", "f:accel", "h:max000"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
+      options: { "q:QAT": ["q:PTQ"], "s:uniform": ["s:extreme", "s:mixed"], "n:INT8": ["n:INT4", "n:INT2", "n:INT1", "n:mixed"], "h:max000": ["h:max002"] }
+    },
+    "npu-ethos": {
+      rank: 5, name: "Ethos-U toolchain", fam: "npu", color: "#00838F",
+      story: "The microNPU route. The Ethos-U compiler maps whatever of the network it supports onto the accelerator and leaves the rest on the Cortex-M core, so operator coverage decides how much you actually gain.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:tf", "f:ethos", "f:accel", "h:ethos"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
+      options: { "q:PTQ": ["q:QAT"], "n:INT8": ["n:INT16"] }
+    },
+    "npu-n6": {
+      rank: 6, name: "Neural-ART on STM32N6", fam: "npu", color: "#455A64",
+      story: "ST's accelerator route, deployed through the same Cube tooling as the Cortex-M parts, which makes it the shortest move from an existing STM32 product to an accelerated one.",
+      line: ["q:PTQ", "s:uniform", "n:INT8", "f:tf", "f:neuralart", "f:accel", "h:n6"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
+      options: { "q:PTQ": ["q:QAT"], "f:tf": ["f:pytorch"] }
+    },
+    "npu-nxp": {
+      rank: 7, name: "TFLite on NXP MCXN", fam: "npu", color: "#6D4C41",
+      story: "A middle route: a standard TensorFlow Lite export, executed by the vendor runtime on an integrated NPU, so the accelerator arrives without a bespoke toolchain.",
+      line: ["q:QAT", "s:uniform", "n:INT8", "f:tf", "f:tflite", "f:accel", "h:mcxn"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
+      options: { "q:QAT": ["q:PTQ"] }
+    },
+    "npu-ti": {
+      rank: 8, name: "TinyEngine NPU on MSPM0", fam: "npu", color: "#827717",
+      story: "The smallest accelerator route here, on a Cortex-M0+ part with only tens of kilobytes of SRAM. Its NPU carries widths down to INT2, so it suits a model small enough to be co-designed with the memory rather than fitted to it afterwards.",
+      line: ["q:QAT", "s:uniform", "n:INT8", "f:pytorch", "f:accel", "h:mspm0"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
+      options: { "q:QAT": ["q:PTQ"], "s:uniform": ["s:extreme", "s:mixed"], "n:INT8": ["n:INT4", "n:INT2", "n:mixed"] }
     }
   },
-  // Per application: the families to recommend, most suitable first, and one sentence of guidance.
+
+  // Supported widths for the platforms Table 3 does not itemise, so the figure can
+  // check every width it offers against the silicon underneath it.
+  platformWidths: {
+    "h:stm32":     ["n:INT8", "n:INT16"],
+    "h:apollo":    ["n:INT8", "n:INT16"],
+    "h:cm4f":      ["n:INT8", "n:INT16"],
+    "h:max000":    ["n:INT1", "n:INT2", "n:INT4", "n:INT8"],
+    "h:mcxn":      ["n:INT8"],
+    "h:pulp":      ["n:INT2", "n:INT4", "n:INT8", "n:INT16"]
+  },
+
+  // Choices that come as a pair: taking one pulls the other along wherever the route offers it.
+  couples: {
+    "n:mixed": ["s:mixed"], "s:mixed": ["n:mixed"],
+    "n:INT4": ["s:extreme"], "n:INT2": ["s:extreme"], "n:INT1": ["s:extreme"],
+    "s:extreme": ["n:INT2"], "s:inttrain": ["q:QAT"]
+  },
+
+  // Per application: the routes worth considering, best first, and why.
   applications: {
-    "Speech":               { fams: ["arm", "npu"],  note: "Speech models run as always-on INT8 workloads on Cortex-M; move to an NPU-integrated part when the audio front end and the model together must meet a hard latency or energy budget." },
-    "Keyword Spotting":     { fams: ["arm", "npu"],  note: "Keyword spotting is small and always-on, so energy per inference decides. Cortex-M is the low-friction default; accelerators cut energy further when the rest of the pipeline can be duty-cycled around them." },
-    "Object Detection":     { fams: ["npu", "arm"],  note: "Detection is the workload where accelerators pay off most. On Cortex-M it is confined to tiny detectors at low frame rates." },
-    "Image Classification": { fams: ["npu", "arm"],  note: "Compact classifiers fit Cortex-M at modest input resolution; NPU-integrated parts extend resolution and frame rate at lower energy." },
-    "Face Recognition":     { fams: ["npu"],         note: "Face recognition is an accelerator workload: its input resolution and embedding networks exceed what Cortex-M cores handle in real time." },
-    "HAR":                  { fams: ["arm", "npu"],  note: "Inertial activity recognition is the archetypal Cortex-M workload. The GAP family suits fast, multi-sensor loops where reaction time matters." },
-    "Healthcare":           { fams: ["arm", "riscv", "npu"], note: "Physiological-signal models run on all three families. Choose by the signal's dimensionality, by certification and tooling constraints, and only then by raw efficiency." },
-    "Networking":           { fams: ["arm", "npu"],  note: "Packet- and flow-level classifiers are small and latency-tolerant, so Cortex-M is the default; an accelerator brings sub-millisecond, sub-microjoule inference when the whole network fits in it." },
-    "Environment":          { fams: ["arm", "npu"],  note: "Environmental sensing is long-duty-cycle and battery-bound, so the mature Cortex-M stack is the default; accelerators help once acoustic or image inputs are involved." },
-    "Education":            { fams: ["arm"],         note: "Teaching platforms favour the most reproducible path: Cortex-M boards with TFLM, STM32Cube.AI, or Edge Impulse." },
-    "Spectrum Sensing":     { fams: ["arm", "npu"],  note: "Spectrum sensing is a one-dimensional signal pipeline that Cortex-M handles at the sample rates reported; accelerators become relevant for wideband inputs or tightening latency budgets." },
-    "Industrial":           { fams: ["riscv", "arm"], note: "Vibration- and condition-monitoring classifiers are compact one-dimensional models. Low-cost RISC-V parts and Cortex-M both suffice; RISC-V is attractive where unit cost and an open ISA matter." },
-    "Robotics":             { fams: ["npu", "riscv"], note: "Reaction-critical control loops favour the GAP family; the dual-core ESP32-P4 handles lighter steering and throttle models." },
-    "Drones":               { fams: ["npu"],         note: "Drone perception is the canonical GAP8 and GAP9 workload: parallelisable, latency-bound, and power-limited." },
-    "Anomaly Detection":    { fams: ["npu", "arm"],  note: "Anomaly detectors are small but always-on, so energy per inference decides. Accelerators reach milliwatt operation; Cortex-M remains the low-friction alternative." },
-    "Agriculture":          { fams: ["arm", "npu"],  note: "Agricultural sensing spans low-rate environmental inputs, which suit Cortex-M, to camera-based monitoring, which wants an accelerator." },
-    "Segmentation":         { fams: ["npu"],         note: "Dense per-pixel output is an accelerator workload, and one that depends on operator coverage in the vendor toolchain." },
-    "VQA":                  { fams: ["npu"],         note: "Multimodal models need an accelerator and a toolchain that covers attention operators, which is exactly the gap challenges 8.1 and 8.2 describe." },
-    "Surveillance":         { fams: ["npu"],         note: "Always-on camera pipelines pair an accelerator with aggressive duty-cycling of the sensor and radio." },
-    "Wearables":            { fams: ["npu", "arm"],  note: "Wearables trade the accelerator's energy per inference against the simpler Cortex-M stack; hearing aids on the GAP9 show the accelerator side of that trade." },
-    "DSP":                  { fams: ["arm", "npu"],  note: "Classical DSP front ends run on Cortex-M with its DSP kernels; neural DSP pipelines move to the accelerator." }
+    "Speech":               { paths: ["arm-tflm", "npu-max78", "npu-gap"], via: ["q:QAT", "h:cm4f"], note: "Speech models are always-on, so energy per inference decides. Cortex-M is the low-friction default; move to an accelerator when the audio front end and the model together must fit a hard budget." },
+    "Keyword Spotting":     { paths: ["arm-tflm", "npu-max78", "npu-nxp"], note: "Keyword spotting is small and permanently listening. Start on Cortex-M, and move to an accelerator when the duty cycle is high enough that inference energy dominates the power budget." },
+    "Object Detection":     { paths: ["npu-max78", "npu-gap", "arm-tflm"], via: ["q:QAT", "h:max000"], note: "Detection is where accelerators pay off most, and the MAX78x is the one still generally available. On Cortex-M it is confined to tiny detectors at low frame rates." },
+    "Image Classification": { paths: ["npu-max78", "npu-gap", "arm-tflm"], via: ["q:QAT", "h:max002"], note: "Compact classifiers fit Cortex-M at modest input resolution; an accelerator extends resolution and frame rate at lower energy." },
+    "Face Recognition":     { paths: ["npu-max78", "npu-gap"], via: ["q:QAT", "h:max002"], note: "Input resolution and embedding networks put face recognition beyond real-time Cortex-M execution, so plan on an accelerator from the start. The surveyed result used INT16 on a GAP8, which the GAP branch still shows." },
+    "Segmentation":         { paths: ["npu-max78", "npu-gap", "npu-ethos"], note: "Dense per-pixel output needs an accelerator, and needs its toolchain to cover the upsampling operators, which is where these flows most often stop." },
+    "Surveillance":         { paths: ["npu-max78", "npu-gap", "npu-ethos"], note: "Always-on camera pipelines pair an accelerator with aggressive duty-cycling of the sensor and the radio, which usually dominate the energy budget." },
+    "VQA":                  { paths: ["npu-ethos", "npu-gap", "npu-n6"], note: "Multimodal models need an accelerator and a toolchain that covers attention operators. Expect the operator gap of challenge 8.1 and the architecture gap of 8.2 before the arithmetic becomes the problem." },
+    "HAR":                  { paths: ["arm-tflm", "npu-gap", "npu-max78"], via: ["q:PTQ", "h:stm32"], note: "Inertial activity recognition is the archetypal Cortex-M workload. An accelerator suits fast multi-sensor loops where reaction time matters." },
+    "Healthcare":           { paths: ["arm-tflm", "npu-gap", "npu-max78", "riscv-tflm"], via: ["q:QAT", "h:stm32"], note: "Physiological-signal models run on all three families. Choose by the signal's dimensionality, by certification and tooling constraints, and only then by raw efficiency." },
+    "Wearables":            { paths: ["npu-max78", "npu-gap", "arm-tflm"], via: ["q:QAT", "h:max002"], note: "Wearables trade the accelerator's energy per inference against the simpler Cortex-M stack. Hearing aids on the GAP9 showed how far the accelerator side of that trade reaches, and the MAX78x is where to reproduce it today." },
+    "Networking":           { paths: ["arm-tflm", "npu-max78"], via: ["q:PTQ", "h:stm32"], note: "Packet- and flow-level classifiers are small and latency-tolerant, so Cortex-M is the default. An accelerator brings sub-millisecond inference when the whole model fits inside it." },
+    "Environment":          { paths: ["arm-tflm", "arm-ei", "npu-max78"], via: ["q:PTQ", "h:stm32"], note: "Environmental sensing is long-duty-cycle and battery-bound, so the mature Cortex-M stack is the default; accelerators help once acoustic or image inputs are involved." },
+    "Agriculture":          { paths: ["arm-tflm", "npu-gap", "npu-max78"], via: ["q:PTQ", "h:stm32"], note: "Low-rate environmental inputs sit comfortably on Cortex-M; camera-based crop and livestock monitoring wants an accelerator. The surveyed deployment used a GAP8, which is now a reference rather than a recommendation." },
+    "Industrial":           { paths: ["riscv-tflm", "arm-tflm"], via: ["q:PTQ", "h:c3"], note: "Vibration and condition-monitoring classifiers are compact one-dimensional models. Both families suffice; RISC-V is attractive where unit cost and an open ISA matter." },
+    "Anomaly Detection":    { paths: ["npu-max78", "arm-tflm"], via: ["q:QAT", "h:max000"], note: "Anomaly detectors are small but always-on, so energy per inference decides. Accelerators reach milliwatt operation; Cortex-M remains the low-friction alternative." },
+    "Spectrum Sensing":     { paths: ["arm-tflm", "npu-max78"], via: ["q:QAT", "h:spresense"], note: "Spectrum sensing is a one-dimensional pipeline that Cortex-M handles at the reported sample rates. An accelerator becomes relevant for wideband inputs or tighter latency budgets." },
+    "DSP":                  { paths: ["arm-tflm", "npu-max78"], note: "Classical DSP front ends run on Cortex-M with its DSP kernels; neural DSP pipelines move to the accelerator." },
+    "Robotics":             { paths: ["riscv-tflm", "npu-gap", "npu-max78"], via: ["q:PTQ", "h:p4"], note: "The dual-core ESP32-P4 handles steering and throttle models directly. Reaction-critical perception loops want an accelerator, which historically meant the GAP family and now means the MAX78x." },
+    "Drones":               { paths: ["npu-max78", "npu-gap", "arm-tflm"], via: ["q:QAT", "h:max000"], note: "Drone perception is parallelisable, latency-bound, and power-limited, so it wants an accelerator. The surveyed work runs on GAP8 and GAP9; the MAX78x is the equivalent you can still buy. Cortex-M remains a fallback for the lightest navigation models." },
+    "Education":            { paths: ["arm-tflm", "arm-ei"], via: ["q:QAT", "h:spresense"], note: "Teaching platforms favour the most reproducible path, which is a Cortex-M board with a workflow that hides as little as possible behind vendor tooling." }
+  },
+
+  // Short explanations shown when a method, format, tool or platform is selected.
+  notes: {
+    "q:PTQ": "Post-training quantization is the right default on every route: the strongest balance between memory reduction, effort, and accuracy retention.",
+    "q:QAT": "Quantization-aware training is where accuracy must survive compression, and the only way to reach sub-8-bit widths on the accelerators that accept them.",
+    "s:uniform": "One bit-width for the whole network, INT8 in practice, is the best default on every route.",
+    "s:mixed": "Mixed precision pays off when profiling reveals clear layer sensitivity and the runtime can exploit finer-grained control, which today means an accelerator whose toolchain accepts several widths. On Cortex-M it is reachable only through custom kernels.",
+    "s:extreme": "Extreme low-bit networks are most justifiable when flash or bandwidth is the dominant bottleneck. They reach a device through an accelerator whose toolchain accepts the width, trained with QAT.",
+    "s:inttrain": "Integer training and on-device adaptation are not supported by the runtimes in this stack, which is challenge 8.6.",
+    "r:hwa": "Hardware-aware quantization matters most on the accelerator routes, where operator and format support decide what the toolchain will accept.",
+    "r:redis": "Redistribution reshapes weight or activation distributions before quantizing, and mostly pays off at low bit-widths.",
+    "r:dagn": "Data-agnostic methods matter when calibration data cannot leave the device or does not exist. They apply on every route.",
+    "d:uni": "Uniform grids are what integer kernels execute, so every route below assumes one.",
+    "d:nonuni": "Non-uniform grids need dedicated arithmetic, which is why no route in this stack uses them.",
+    "d:sym": "Symmetric quantization drops the zero-point term, which is why weights are usually symmetric.",
+    "d:asym": "Asymmetric quantization spends a zero-point to use the full range, which is why post-ReLU activations usually are.",
+    "d:pt": "Per-tensor scales are the cheapest to execute and what activations normally use.",
+    "d:pc": "Per-channel weight scales cost almost nothing at inference and are the converter default on the TensorFlow Lite routes.",
+    "d:pg": "Per-group scales are rare on MCUs; none of the runtimes in this stack exposes them.",
+    "d:static": "Static ranges are fixed at calibration time and are what every MCU runtime here supports.",
+    "d:dyn": "Dynamic quantization recomputes ranges at run time and is not available in these runtimes.",
+    "d:calib": "Calibration data selects the clipping range. PTQ quality depends on it more than on anything else.",
+    "n:INT8": "INT8 is the common denominator of every runtime and every platform in this stack.",
+    "n:INT16": "INT16 buys accuracy headroom at twice the memory, and is supported natively only on the platforms shown.",
+    "n:fxp": "In practice the fixed-point format is INT8: an integer grid with the scale kept outside the kernel.",
+    "n:mixed": "Several widths in one network, assigned per layer, per channel, per group, or separately to weights and activations. It needs a route whose toolchain and silicon accept more than one width.",
+    "n:FP16": "No MCU here lists FP16 among its formats; the one reported use ran on the GAP9 cluster cores rather than its accelerator.",
+    "n:posit": "Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the route stops at this step. Research hardware such as PHEE is where it currently ends.",
+    "n:takum": "Takum keeps Posit's tapered precision with a bounded regime and, like Posit, has no MCU runtime or silicon beneath it yet.",
+    "n:BF16": "BF16 is a training-side format. No MCU runtime or platform in this stack executes it.",
+    "n:FP8": "FP8 has no MCU runtime or platform beneath it in this stack.",
+    "n:MSFP": "Block floating-point has no MCU runtime or platform beneath it in this stack.",
+    "n:afx": "Adaptive fixed-point formats need dedicated hardware support that no platform here provides.",
+    "f:cmsis": "CMSIS-NN sits underneath TFLM on the Cortex-M routes rather than being chosen separately.",
+    "f:accel": "The vendor runtime that drives the accelerator: ai8x firmware on the MAX78x, the GAP SDK, the Ethos-U driver, or the Neural-ART runtime.",
+    "h:pulp": "A research platform, where low-bit and mixed-precision RISC-V kernels have been demonstrated, rather than a part you can buy."
   }
 },
 

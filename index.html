@@ -349,8 +349,15 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         transition: opacity 0.2s, border-color 0.12s, color 0.12s, background 0.12s, box-shadow 0.12s;
       }
       .stack-fig .mchip:hover, .stack-fig .mchip:focus-visible { border-color: var(--spine); color: var(--spine); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10); outline: none; }
-      .stk-tracing .mchip { opacity: 0.26; }
-      .stk-tracing .mchip.stk-on { opacity: 1; background: var(--spine); border-color: var(--spine); color: #fff; font-weight: 600; }
+      /* three states a chip can be in while a route is shown, plus dim */
+      .stk-tracing .mchip { opacity: 0.28; }
+      .stk-tracing .mchip.stk-line { opacity: 1; background: var(--pc); border-color: var(--pc); color: #fff; font-weight: 600; }
+      .stk-tracing .mchip.stk-branch {
+        opacity: 1; background: #fff; border: 1.5px dashed var(--pc); color: var(--pc); font-weight: 600;
+      }
+      .stk-tracing .mchip.stk-branch::after { content: " \2197"; font-size: 0.56rem; opacity: 0.55; }
+      .stk-tracing .mchip.stk-branch:hover { background: var(--pc); color: #fff; border-style: solid; }
+      .stk-tracing .mchip.stk-implied { opacity: 0.75; background: #eef0f3; border-color: #cdd3db; color: #555; font-weight: 400; font-style: italic; cursor: default; }
       .stk-tracing .stk-rowlabel { opacity: 0.5; }
       .stk-tracing .stk-rowlabel.stk-on { opacity: 1; }
       .stk-dim .stk-label, .stk-dim .mchip, .stk-dim .stk-rowlabel { opacity: 0.3; }
@@ -374,11 +381,8 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-rail-r .stk-rail-cell:hover { border-color: #C0392B; color: #fff; background: #C0392B; }
       .stk-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
       .stk-path-halo { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
-      .stk-path { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; transition: opacity 0.15s, stroke-width 0.15s; }
-      .stk-arrow { transition: opacity 0.15s; }
-      .stk-overlay.stk-focus .stk-path, .stk-overlay.stk-focus .stk-arrow { opacity: 0.12; }
-      .stk-overlay.stk-focus .stk-path.stk-path-hi { opacity: 1; stroke-width: 3.4; }
-      .stk-overlay.stk-focus .stk-arrow.stk-path-hi { opacity: 1; }
+      .stk-path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55; stroke-dasharray: 4 5; }
+      .stk-path.stk-main { stroke-width: 3; opacity: 1; stroke-dasharray: none; }
       .stk-path-broken { fill: none; stroke: #C0392B; stroke-width: 2.2; stroke-dasharray: 5 5; stroke-linecap: round; }
       .stk-bracket { fill: none; stroke: #C0392B; stroke-width: 2; stroke-linecap: round; }
       .stk-panel { margin: 0.75rem 0 0; font-size: 0.75rem; line-height: 1.5; color: #223; }
@@ -389,15 +393,41 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-ph a:hover { color: #fff; border-bottom-style: solid; }
       .stk-pbody { border: 1px solid #d5dbe2; border-top: none; border-radius: 0 0 6px 6px; padding: 0.55rem 0.8rem 0.6rem; background: #fff; }
       .stk-story { margin: 0 0 0.5rem; padding: 0.4rem 0.7rem; border-left: 3px solid #1f2430; background: #f3f4f7; border-radius: 0 6px 6px 0; }
-      .stk-legend { display: inline-flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; font-size: 0.7rem; color: #fff; }
-      .stk-ph span, .stk-ph .stk-leg { color: #fff; }
-      .stk-leg { display: inline-flex; align-items: center; gap: 0.35rem; cursor: default; }
-      .stk-dot { display: inline-block; width: 0.62rem; height: 0.62rem; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 0 1.5px #fff; }
-      .stk-guide { margin: 0 0 0.5rem; padding: 0.45rem 0.75rem; border-left: 3px solid #1f2430; background: #f3f4f7; border-radius: 0 6px 6px 0; }
-      .stk-fams { list-style: none; margin: 0 0 0.35rem; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
-      .stk-fams li { display: flex; gap: 0.55rem; align-items: baseline; padding: 0.15rem 0.3rem; border-radius: 4px; }
-      .stk-fams li:hover { background: #eef1f6; }
-      .stk-fams .stk-dot { position: relative; top: 0.05rem; }
+      .stk-ph span { color: #fff; }
+      .stk-crumbs { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem; }
+      .stk-crumb {
+        display: inline-block; font-size: 0.66rem; padding: 0.08rem 0.45rem; border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.4); cursor: pointer;
+      }
+      .stk-crumb:hover { background: rgba(255, 255, 255, 0.34); }
+      .stk-count { font-size: 0.7rem; opacity: 0.85; }
+      .stk-dot { display: inline-block; width: 0.62rem; height: 0.62rem; border-radius: 50%; flex: 0 0 auto; background: var(--pc); }
+      .stk-guide { margin: 0 0 0.55rem; padding: 0.45rem 0.75rem; border-left: 3px solid #1f2430; background: #f3f4f7; border-radius: 0 6px 6px 0; }
+      .stk-routes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+      .stk-route {
+        padding: 0.4rem 0.6rem; border: 1px solid #dfe4ea; border-left: 3px solid var(--pc); border-radius: 0 6px 6px 0;
+        background: #fff; cursor: pointer; transition: background 0.12s, box-shadow 0.12s; opacity: 0.72;
+      }
+      .stk-route:hover, .stk-route:focus-visible { background: #f6f8fa; outline: none; opacity: 1; }
+      .stk-route-main { opacity: 1; background: #f9fbfc; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pc) 30%, #fff); }
+      .stk-rhead { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+      .stk-rhead b { font-size: 0.78rem; }
+      .stk-fam { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #667; }
+      .stk-badge { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #fff; background: var(--pc); padding: 0.05rem 0.4rem; border-radius: 3px; }
+      .stk-caveat { font-size: 0.6rem; font-style: italic; color: #8a5a00; background: #fdf3e0; border: 1px solid #f0dcb4; padding: 0.02rem 0.4rem; border-radius: 3px; }
+      .stk-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem; margin: 0.28rem 0 0.2rem; }
+      .stk-step-chip { font-size: 0.64rem; padding: 0.04rem 0.36rem; border: 1px solid color-mix(in srgb, var(--pc) 35%, #fff); border-radius: 4px; background: #fff; color: #223; }
+      .stk-arr { color: var(--pc); font-size: 0.68rem; }
+      .stk-rstory { display: block; color: #445; }
+      .stk-reject { margin: 0.45rem 0 0; padding: 0.4rem 0.7rem; background: #fbeceb; border-left: 3px solid #C0392B; border-radius: 0 6px 6px 0; color: #7d2820; }
+      .stk-reject.stk-fixed { background: #eef0f3; border-left-color: #8a93a0; color: #3c444f; }
+      .stk-reject.stk-fixed .stk-crumb { background: rgba(60, 68, 79, 0.1); border-color: rgba(60, 68, 79, 0.3); color: #3c444f; }
+      .stk-reject .stk-crumb { background: rgba(192, 57, 43, 0.12); border-color: rgba(192, 57, 43, 0.4); color: #7d2820; }
+      .stk-legendnote { margin: 0.5rem 0 0; padding-top: 0.4rem; border-top: 1px dashed #d5dbe2; font-size: 0.66rem; color: #667; }
+      .stk-key { display: inline-block; width: 0.85rem; height: 0.72rem; border-radius: 3px; vertical-align: -0.1rem; --pc: #1f2430; }
+      .stk-key.stk-line { background: #1f2430; }
+      .stk-key.stk-branch { background: #fff; border: 1.5px dashed #1f2430; }
+      .stk-key.stk-implied { background: #eef0f3; border: 1px solid #cdd3db; }
       .stk-note { margin: 0.35rem 0 0; color: #445; }
       .stk-note b, .stk-evid b { color: #1f2430; }
       .stk-evid { margin: 0.55rem 0 0; padding-top: 0.45rem; border-top: 1px dashed #d5dbe2; color: #445; font-size: 0.71rem; line-height: 1.6; }
@@ -1675,8 +1705,8 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <svg class="stk-overlay" aria-hidden="true"></svg>
   </div>
   <div class="stk-panel" aria-live="polite"></div>
-  <div class="fig-hint">Start from what you need to deploy. Click any entry, or search above, to trace the recommended path through every layer, one colour per MCU family &#183; hover a layer, a rail, or a numbered pin for its role.</div>
-  <figcaption><b>Figure 17:</b> A practitioner&#8217;s map of quantized inference on MCUs, arranged as a deployment stack and read from the application down to the hardware. Each layer lists the choices available at that step. Numbered pins mark where the challenges of Section 8 arise between layers, the left rail carries the constraints that act on every layer, and the right rail the challenges that cut across all of them. Selecting any entry traces the deployment path we recommend for it through every layer, colour-coded by MCU family, with the reasoning behind the choice.</figcaption>
+  <div class="fig-hint">Start from what you need to deploy. Selecting an entry shows the routes that carry it, best first. Click a branch to take it and the question narrows; click Clear to start over &#183; hover a layer, a rail, or a numbered pin for its role.</div>
+  <figcaption><b>Figure 17:</b> A practitioner&#8217;s map of quantized inference on MCUs, arranged as a deployment stack and read from the application down to the hardware. Each layer lists the choices available at that step. Numbered pins mark where the challenges of Section 8 arise between layers, the left rail carries the constraints that act on every layer, and the right rail the challenges that cut across all of them. Selecting any entry shows the concrete routes that carry it, best first, each drawn in its own colour. A chip is either a step on the drawn route, a branch the reader can take instead, or a setting the route fixes rather than a choice.</figcaption>
 </figure>
 
 
@@ -1772,7 +1802,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260910w"></script>
   <script src="assets/js/supplements.js?v=20260910w"></script>
-  <script src="assets/js/figs.js?v=20260911g"></script>
+  <script src="assets/js/figs.js?v=20260911r"></script>
 
   </body>
 

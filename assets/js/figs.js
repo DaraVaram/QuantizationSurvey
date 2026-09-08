@@ -752,28 +752,72 @@
 
   /* ---------- Figure 17: the deployment stack ----------
      A practitioner's map, read top-down from the application to the
-     hardware. Selecting any entry traces the deployment path the survey
-     recommends for it, one coloured path per MCU family, from the guidance
-     authored in DATA.guide (Section 7.4 and Table 7 in data form). Table 3
-     (DATA.hardware) restricts the platforms a format or method can actually
-     run on. Tables 4-6 (DATA.apps) only help resolve free-text searches.
-     Hovering a challenge pin still brackets the layers it bridges. */
+     hardware. Selecting an entry shows the concrete routes that carry it,
+     drawn one colour per route from DATA.guide. Exactly three things can
+     happen to a chip while a route is shown, and they look different:
+     it is a step on the drawn line, it is a branch the reader can take
+     instead (clicking it re-traces through it, keeping the question), or
+     it is a setting the route fixes rather than a choice. Everything else
+     dims. Hovering a challenge pin still brackets the layers it bridges. */
   (function () {
     var fig = $("#figure-17.stack-fig");
     if (!fig) return;
-    var D = window.DATA || {}, G = D.guide || { families: {}, applications: {} };
+    var D = window.DATA || {}, G = D.guide || { families: {}, paths: {}, applications: {}, notes: {} };
     var grid = $(".stk-grid", fig), layersEl = $(".stk-layers", fig), overlay = $(".stk-overlay", fig), panel = $(".stk-panel", fig);
     var input = $(".stk-search", fig), suggest = $("#stk-suggest"), clearBtn = $(".stk-clear", fig);
     var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
-    var byKey = {};
-    chips.forEach(function (c) { byKey[c.getAttribute("data-k")] = c; });
+    var byKey = {}, LABEL = {};
+    chips.forEach(function (c) {
+      var k = c.getAttribute("data-k");
+      byKey[k] = c; LABEL[k] = c.textContent.replace(/\s+/g, " ").trim();
+    });
     var NS = "http://www.w3.org/2000/svg";
-    var FAMS = ["arm", "riscv", "npu"];
-    function famOf(hwKey) { for (var i = 0; i < FAMS.length; i++) if ((G.families[FAMS[i]] || { hw: [] }).hw.indexOf(hwKey) !== -1) return FAMS[i]; return hwKey === "h:pulp" ? "riscv" : null; }
-    function famsOf(hwKeys) { var out = []; hwKeys.forEach(function (k) { var f = famOf(k); if (f && out.indexOf(f) === -1) out.push(f); }); return out; }
+    var PATHS = G.paths, PIDS = Object.keys(PATHS);
+    function famName(f) { return (G.families[f] || {}).name || f; }
 
-    /* ---- names as the tables spell them, for free-text search only ---- */
-    function tokens(s) { return String(s || "").split(/,/).map(function (t) { return t.trim(); }).filter(Boolean); }
+    /* ---- which routes touch a given chip ---- */
+    function pathTouches(pid, k) {
+      var P = PATHS[pid];
+      if (P.line.indexOf(k) !== -1) return "line";
+      var opt = P.options || {};
+      for (var step in opt) if (opt[step].indexOf(k) !== -1) return "branch";
+      return (P.implies || []).indexOf(k) !== -1 ? "implied" : null;
+    }
+    function byRank(a, b) { return (PATHS[a].rank || 99) - (PATHS[b].rank || 99); }
+    function pathsFor(k, kinds) {
+      return PIDS.filter(function (pid) { return kinds.indexOf(pathTouches(pid, k)) !== -1; }).sort(byRank);
+    }
+    // substitute a branch into the step it replaces, pulling coupled choices with it
+    var COUPLES = G.couples || {};
+    function withCouples(refs) {
+      var out = refs.slice();
+      refs.forEach(function (k) { (COUPLES[k] || []).forEach(function (c) { if (out.indexOf(c) === -1) out.push(c); }); });
+      return out;
+    }
+    function materialise(pid, refs) {
+      var P = PATHS[pid], line = P.line.slice(), opt = P.options || {}, all = withCouples(refs);
+      all.forEach(function (k) {
+        for (var step in opt) {
+          if (opt[step].indexOf(k) !== -1) { var i = line.indexOf(step); if (i !== -1) line[i] = k; return; }
+        }
+      });
+      // a width the current platform cannot carry moves the route to one that can
+      var ok = allowedHw(pid, all);
+      if (ok.length) {
+        for (var i = 0; i < line.length; i++) {
+          var c = byKey[line[i]];
+          if (c && c.closest(".stk-layer").getAttribute("data-layer") === "hw" && ok.indexOf(line[i]) === -1) line[i] = ok[0];
+        }
+      }
+      return line;
+    }
+    function accepts(pid, refs) {
+      if (!refs.every(function (k) { var t = pathTouches(pid, k); return t === "line" || t === "branch"; })) return false;
+      return allowedHw(pid, withCouples(refs)).length > 0;      // no platform carries it, so the route is out
+    }
+
+    /* ---- Table 3, to say which platforms carry a width ---- */
+    var FMTKEY = { INT1: "n:INT1", INT2: "n:INT2", INT4: "n:INT4", INT8: "n:INT8", INT16: "n:INT16" };
     var DEVMAP = [
       [/STM32N6/i, "h:n6"], [/STM32|Nucleo/i, "h:stm32"], [/Arduino|nRF52840/i, "h:nano33"], [/Spresense/i, "h:spresense"],
       [/OpenMV|H7 Plus/i, "h:openmv"], [/SparkFun/i, "h:sparkfun"], [/Apollo/i, "h:apollo"], [/Cortex-M4F/i, "h:cm4f"],
@@ -781,74 +825,34 @@
       [/MAX78000/i, "h:max000"], [/MAX78002/i, "h:max002"], [/GAP8/i, "h:gap8"], [/GAP9/i, "h:gap9"],
       [/Ethos|HX6538/i, "h:ethos"], [/MCXN/i, "h:mcxn"], [/MSPM0/i, "h:mspm0"]
     ];
-    function devKeys(s) {
-      var out = [];
-      tokens(s).forEach(function (t) { for (var i = 0; i < DEVMAP.length; i++) if (DEVMAP[i][0].test(t)) { if (out.indexOf(DEVMAP[i][1]) === -1) out.push(DEVMAP[i][1]); return; } });
-      return out;
-    }
-    var ROWS = [];
-    FAMS.forEach(function (fam) { ((D.apps || {})[fam] || []).forEach(function (r) { ROWS.push({ fam: fam, cat: r.cat, quant: r.quant, devices: r.devices, fw: r.fw, hw: devKeys(r.devices) }); }); });
-
-    /* ---- Table 3: which platforms list which formats ---- */
-    var FMTKEY = { INT1: "n:INT1", INT2: "n:INT2", INT4: "n:INT4", INT8: "n:INT8", INT16: "n:INT16" };
+    function devKey(s) { for (var i = 0; i < DEVMAP.length; i++) if (DEVMAP[i][0].test(s)) return DEVMAP[i][1]; return null; }
     var HW = (D.hardware || []).map(function (h) {
       var fk = [];
       (h.formats || []).forEach(function (f) { if (/INT2.INT8/.test(f)) fk.push("n:INT2", "n:INT4", "n:INT8"); else if (FMTKEY[f]) fk.push(FMTKEY[f]); });
-      return { platform: h.platform, chip: devKeys(h.platform)[0] || null, formats: h.formats || [], fkeys: fk };
+      return { platform: h.platform, chip: devKey(h.platform), formats: h.formats || [], fkeys: fk };
     });
     function platformsFor(fkeys) { return HW.filter(function (h) { return h.chip && fkeys.some(function (k) { return h.fkeys.indexOf(k) !== -1; }); }); }
-    function chipsOf(hs) { return hs.map(function (h) { return h.chip; }); }
-    function listNote(lead, hs) { return lead + " " + hs.map(function (h) { return h.platform + " (" + h.formats.join(", ") + ")"; }).join("; ") + "."; }
+    var WIDTHS = { "n:INT1": 1, "n:INT2": 1, "n:INT4": 1, "n:INT8": 1, "n:INT16": 1 };
+    var PW = {};                                        // every platform's supported widths
+    HW.forEach(function (h) { if (h.chip) PW[h.chip] = h.fkeys.slice(); });
+    Object.keys(G.platformWidths || {}).forEach(function (k) { if (!PW[k]) PW[k] = G.platformWidths[k].slice(); });
+    function carries(hwKey, w) { return !PW[hwKey] || PW[hwKey].indexOf(w) !== -1; }
+    function hwChoices(pid) {
+      var P = PATHS[pid], step = null;
+      P.line.forEach(function (k) { if (byKey[k] && byKey[k].closest(".stk-layer").getAttribute("data-layer") === "hw") step = k; });
+      return step ? [step].concat((P.options || {})[step] || []) : [];
+    }
+    function allowedHw(pid, refs) {
+      var ws = refs.filter(function (k) { return WIDTHS[k]; });
+      return hwChoices(pid).filter(function (h) { return ws.every(function (w) { return carries(h, w); }); });
+    }
+    function widthNote(fkeys, lead) {
+      var hs = platformsFor(fkeys);
+      if (!hs.length) return null;
+      return lead + " " + hs.map(function (h) { return h.platform + " (" + h.formats.join(", ") + ")"; }).join("; ") + ".";
+    }
 
-    /* ---- which platforms a tool targets ---- */
-    var TOOLHW = {
-      "f:ai8xt": ["h:max000", "h:max002"], "f:ai8xs": ["h:max000", "h:max002"], "f:gapflow": ["h:gap8", "h:gap9"], "f:ethos": ["h:ethos"],
-      "f:neuralart": ["h:n6"], "f:cubeai": ["h:stm32"], "f:espnn": ["h:c3", "h:c6", "h:p4"], "f:ariel": ["h:c3"], "f:pulpnn": ["h:pulp"], "f:xpulp": ["h:pulp"],
-      "f:accel": ["npu"], "f:cmsis": ["arm"], "f:ei": ["arm"], "f:minimal": ["arm"], "f:onnxrt": ["arm"], "f:tflm": ["arm", "riscv"],
-      "f:tflite": FAMS, "f:tf": FAMS, "f:pytorch": FAMS, "f:onnx": FAMS
-    };
-    var ROW_OF = {};                                   // software chip -> row index, keeps routes in process order
-    $$(".stk-layer[data-layer='sw'] .stk-row", fig).forEach(function (r, i) { $$(".mchip", r).forEach(function (c) { ROW_OF[c.getAttribute("data-k")] = i; }); });
-
-    /* ---- what an entry means, in one or two lines ---- */
-    var NOTE = {
-      "d:uni": "Uniform grids are what integer kernels execute; every path below assumes one.",
-      "d:nonuni": "Non-uniform grids (logarithmic, Posit-like) need dedicated arithmetic, which is why none of the recommended paths uses them.",
-      "d:sym": "Symmetric quantization drops the zero-point term, which is why weights are usually symmetric.",
-      "d:asym": "Asymmetric quantization spends a zero-point to use the full range, which is why post-ReLU activations are usually asymmetric.",
-      "d:pt": "Per-tensor scales are the cheapest to execute and what activations normally use.",
-      "d:pc": "Per-channel weight scales cost almost nothing at inference and are the converter default on the TensorFlow Lite path.",
-      "d:pg": "Per-group scales are rare on MCUs; the runtimes in the stack do not expose them.",
-      "d:static": "Static ranges are fixed at calibration time and are what every MCU runtime in the stack supports.",
-      "d:dyn": "Dynamic quantization recomputes ranges at run time and is not available in the MCU runtimes in the stack.",
-      "d:calib": "Calibration data selects the clipping range; PTQ quality depends on it more than on anything else.",
-      "r:hwa": "Hardware-aware quantization matters most on the accelerator path, where operator and format support decide what the toolchain will accept (see also 8.7).",
-      "r:redis": "Redistribution reshapes weight or activation distributions before quantizing, which mostly pays off at low bit-widths.",
-      "r:dagn": "Data-agnostic methods matter when calibration data cannot leave the device or does not exist; they apply on every path.",
-      "s:inttrain": "Integer training and on-device adaptation are not yet supported by the runtimes in the stack (see 8.6).",
-      "n:fxp": "In practice the fixed-point format is INT8: an integer grid with a scale kept outside the kernel.",
-      "n:FP16": "No MCU platform lists FP16 among its formats; the one reported use ran on the GAP9 cluster cores. FP32 is available on the ARM boards and the ESP32-P4 for unquantized baselines.",
-      "n:INT16": "INT16 buys accuracy headroom at twice the memory of INT8, and is supported natively on the platforms shown.",
-      "s:mixed": "Mixed precision pays off when profiling reveals clear layer sensitivity and the runtime can exploit finer-grained precision control, which today means an accelerator whose toolchain accepts several widths. On Cortex-M it is reachable only through custom kernels and ISA-level work.",
-      "s:extreme": "Extreme low-bit networks are most justifiable when flash memory or bandwidth is the dominant bottleneck. They reach MCUs through accelerators whose toolchains accept the width, trained with QAT, or through custom kernels.",
-      "q:QAT": "QAT is the path where always-on accuracy must survive compression, and the only path to sub-8-bit widths on the accelerators that accept them.",
-      "q:PTQ": "Uniform INT8 through PTQ is the right default on every family: the strongest balance between memory reduction, runtime simplicity, and accuracy retention.",
-      "s:uniform": "One bit-width for the whole network, INT8 in practice, is the best default on every family.",
-      "n:INT8": "INT8 is the common denominator of every runtime and every platform in the stack."
-    };
-    var BROKEN = { "n:BF16": "8.4", "n:FP8": "8.4", "n:MSFP": "8.4", "n:afx": "8.4", "n:posit": "8.4", "n:takum": "8.4" };
-    var BROKEN_NOTE = {
-      "n:posit": "Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the path stops here. Research hardware such as PHEE is where it currently ends.",
-      "n:takum": "Takum keeps Posit's tapered precision with a bounded regime and, like Posit, has no MCU runtime or silicon beneath it yet.",
-      "n:BF16": "BF16 is a training-side format; no MCU runtime or platform in the stack executes it.",
-      "n:FP8": "FP8 has no MCU runtime or platform beneath it in the stack.",
-      "n:MSFP": "Block floating-point has no MCU runtime or platform beneath it in the stack.",
-      "n:afx": "Adaptive fixed-point formats need dedicated hardware support that no platform in the stack provides."
-    };
-
-    /* ---- resolving an entry to a spec ---- */
-    var LABEL = {};
-    chips.forEach(function (c) { LABEL[c.getAttribute("data-k")] = c.textContent.replace(/\s+/g, " ").trim(); });
+    /* ---- free text ---- */
     var ALIAS = {
       "arm": "fam:arm", "arm-based": "fam:arm", "cortex": "fam:arm", "cortex-m": "fam:arm",
       "risc-v": "fam:riscv", "riscv": "fam:riscv", "risc-v-based": "fam:riscv",
@@ -871,121 +875,67 @@
       "stm32n6": "h:n6", "mcxn94": "h:mcxn", "nxp": "h:mcxn", "mspm0": "h:mspm0"
     };
     Object.keys(LABEL).forEach(function (k) { ALIAS[LABEL[k].toLowerCase()] = k; });
-    var GROUP = { "esp32": ["h:c3", "h:c6", "h:p4"], "gap": ["h:gap8", "h:gap9"], "max78": ["h:max000", "h:max002"], "esp32-c": ["h:c3", "h:c6"] };
+    var GROUP = { "esp32": ["h:c3", "h:c6", "h:p4"], "gap": ["h:gap8", "h:gap9"], "max78": ["h:max000", "h:max002"] };
 
-    // A spec: which family paths to draw, how each is restricted or re-routed, what else to light, and what to say.
-    function famPath(f, opts) {
-      var F = G.families[f]; opts = opts || {};
-      return { fam: f, hwOnly: opts.hwOnly || null, route: Object.assign({}, F.route, opts.route || {}), swVia: opts.swVia || null };
+    /* ---- a query: a subject, the routes that carry it, and any branches taken ---- */
+    function makeQuery(subject, label, pids, refs, note, base) {
+      return { subject: subject, label: label, pids: pids || [], refs: refs || [], base: base || [], note: note || null, pick: 0 };
     }
-    function base(k) {
-      var t = k.split(":")[0], val = k.slice(t.length + 1);
-      return { key: k, label: LABEL[k] || val, paths: [], light: [k], pin: null, broken: BROKEN[k] || null, notes: [], guide: null };
-    }
-    function specFromKey(k) {
-      var spec = base(k), t = k.split(":")[0], val = k.slice(t.length + 1);
-      if (t === "fam") {
-        spec.label = G.families[val].name; spec.paths = [famPath(val)];
-      } else if (t === "cat") {
-        var A = G.applications[val] || { fams: ["arm"], note: "" };
-        spec.paths = A.fams.map(function (f) { return famPath(f); }); spec.guide = A.note;
-      } else if (t === "h") {
-        var f = famOf(k);
-        if (f) spec.paths = [famPath(f, { hwOnly: [k], route: { hw: k } })];
-        var h3 = HW.filter(function (x) { return x.chip === k; })[0];
-        if (h3) spec.notes.push("Supported formats on this platform: " + h3.formats.join(", ") + ".");
-        if (k === "h:pulp") spec.notes.push("A research platform, where low-bit and mixed-precision RISC-V kernels (PULP-NN, XpulpNN) have been demonstrated, rather than a commercial part.");
-      } else if (t === "f") {
-        var tgt = TOOLHW[k] || FAMS, hwOnly = null, fams;
-        if (/^h:/.test(tgt[0])) { hwOnly = tgt; fams = famsOf(tgt); } else fams = tgt;
-        spec.paths = fams.map(function (f) { return famPath(f, { hwOnly: hwOnly, swVia: k }); });
-        if (k === "f:cmsis") spec.notes.push("CMSIS-NN sits underneath TFLM on most Cortex-M deployments and is rarely mentioned separately.");
-      } else if (t === "q" || k === "s:uniform" || k === "n:INT8" || k === "n:fxp") {
-        spec.paths = FAMS.map(function (f) { return famPath(f, { route: t === "q" ? { quant: [k, "s:uniform"] } : (k === "n:fxp" ? { repr: ["n:fxp"] } : {}) }); });
-        if (k === "n:fxp") spec.light.push("n:INT8");
-        spec.guide = NOTE[k];
-      } else if (k === "s:mixed" || k === "n:mixed") {
-        var caps = platformsFor(["n:INT4", "n:INT2", "n:INT1"]);
-        spec.paths = [famPath("npu", { hwOnly: chipsOf(caps), route: { quant: ["q:QAT", "s:mixed"], repr: ["n:mixed"], hw: chipsOf(caps)[chipsOf(caps).length - 1] } })];
-        spec.light.push("s:mixed", "n:mixed", "n:INT8", "n:INT4");
-        spec.guide = NOTE["s:mixed"];
-        spec.notes.push(listNote("Platforms whose supported formats go below 8 bits, which is what a mixed-precision network needs:", caps));
-      } else if (k === "s:extreme" || k === "n:INT4" || k === "n:INT2" || k === "n:INT1") {
-        var want = k === "s:extreme" ? ["n:INT2", "n:INT1"] : [k], caps2 = platformsFor(want), reprKey = k === "s:extreme" ? "n:INT2" : k;
-        if (caps2.length) spec.paths = [famPath("npu", { hwOnly: chipsOf(caps2), route: { quant: ["q:QAT", "s:extreme"], repr: [reprKey], sw: ["f:pytorch", "f:ai8xs", "f:accel"], hw: chipsOf(caps2)[0] } })];
-        spec.light.push("s:extreme", "q:QAT", reprKey);
-        spec.pin = "8.3";
-        spec.guide = NOTE["s:extreme"];
-        spec.notes.push(listNote("Platforms whose supported formats include this width:", caps2));
-      } else if (k === "n:INT16") {
-        var caps3 = platformsFor(["n:INT16"]);
-        spec.paths = famsOf(chipsOf(caps3)).map(function (f) {
-          var hs = chipsOf(caps3).filter(function (h) { return famOf(h) === f; });
-          return famPath(f, { hwOnly: hs, route: { repr: ["n:INT16"], hw: hs[0] } });
-        });
-        spec.guide = NOTE[k];
-        spec.notes.push(listNote("Platforms listing INT16 among their supported formats:", caps3));
-      } else if (k === "n:FP16") {
-        spec.paths = [famPath("npu", { hwOnly: ["h:gap9"], route: { repr: ["n:FP16"], quant: ["q:PTQ", "s:uniform"], hw: "h:gap9" } })];
-        spec.guide = NOTE[k];
-      } else if (k === "s:inttrain") {
-        spec.pin = "8.6"; spec.guide = NOTE[k];
-      } else if (t === "r" || t === "d") {
-        spec.paths = FAMS.map(function (f) { return famPath(f); });
-        spec.guide = NOTE[k];
+    function allRefs(q) { return (q.base || []).concat(q.refs); }
+    function queryFor(k) {
+      var t = k.split(":")[0], val = k.slice(t.length + 1), note = G.notes[k] || null;
+      if (t === "cat") {
+        var A = G.applications[val] || { paths: [], note: "" };
+        return makeQuery(k, LABEL[k], A.paths.slice(), [], A.note, (A.via || []).slice());
       }
-      if (spec.broken) { spec.pin = spec.broken; spec.guide = BROKEN_NOTE[k]; }
-      return spec;
+      if (t === "fam") return makeQuery(k, famName(val), PIDS.filter(function (p) { return PATHS[p].fam === val; }).sort(byRank), [], null);
+      var onLine = pathsFor(k, ["line"]), asBranch = pathsFor(k, ["branch"]), implied = pathsFor(k, ["implied"]);
+      if (onLine.length || asBranch.length) return makeQuery(k, LABEL[k], onLine.concat(asBranch).sort(byRank), [k], note);
+      if (implied.length) return makeQuery(k, LABEL[k], implied, [], note || "This is fixed by the routes below rather than chosen separately.");
+      // nothing carries it
+      var q = makeQuery(k, LABEL[k], [], [], note);
+      q.dead = true;
+      if (t === "n") q.width = k;
+      return q;
     }
-    function specFromGroup(label, hwKeys) {
-      var spec = { key: null, label: label, paths: [], light: [], pin: null, broken: null, notes: [], guide: null };
-      spec.paths = famsOf(hwKeys).map(function (f) { var hs = hwKeys.filter(function (h) { return famOf(h) === f; }); return famPath(f, { hwOnly: hs, route: { hw: hs[0] } }); });
-      return spec;
-    }
-    function resolveText(q) {
-      var t = q.trim().toLowerCase().replace(/\s+/g, " ");
+    function queryForText(s) {
+      var t = s.trim().toLowerCase().replace(/\s+/g, " ");
       if (!t) return null;
-      var spec = null;
-      if (ALIAS[t]) spec = specFromKey(ALIAS[t]);
-      else if (GROUP[t]) spec = specFromGroup(q.trim(), GROUP[t]);
-      else {
-        var hit = Object.keys(ALIAS).filter(function (a) { return a.length >= 3 && (a.indexOf(t) !== -1 || t.indexOf(a) !== -1); })
-                        .sort(function (a, b) { return Math.abs(a.length - t.length) - Math.abs(b.length - t.length); })[0];
-        if (hit) spec = specFromKey(ALIAS[hit]);
-        else {
-          var hws = [];
-          ROWS.filter(function (r) { return [r.cat, r.devices, r.fw, r.quant].join(" ").toLowerCase().indexOf(t) !== -1; })
-              .forEach(function (r) { r.hw.forEach(function (k) { if (hws.indexOf(k) === -1) hws.push(k); }); });
-          spec = hws.length ? specFromGroup(q.trim(), hws)
-               : { key: null, label: q.trim(), paths: [], light: [], pin: null, broken: null, guide: null,
-                   notes: ["Nothing in the stack matches this. Try an application, a method, a format, a tool, or a platform."] };
-        }
+      if (ALIAS[t]) return queryFor(ALIAS[t]);
+      if (GROUP[t]) {
+        var pids = []; GROUP[t].forEach(function (k) { pathsFor(k, ["line", "branch"]).forEach(function (p) { if (pids.indexOf(p) === -1) pids.push(p); }); });
+        return makeQuery(null, s.trim(), pids.sort(byRank), [], null);
       }
-      if (spec) spec.q = q.trim();
-      return spec;
+      var hit = Object.keys(ALIAS).filter(function (a) { return a.length >= 3 && (a.indexOf(t) !== -1 || t.indexOf(a) !== -1); })
+                      .sort(function (a, b) { return Math.abs(a.length - t.length) - Math.abs(b.length - t.length); })[0];
+      if (hit) return queryFor(ALIAS[hit]);
+      var q = makeQuery(null, s.trim(), [], [], "Nothing in the stack matches this. Try an application, a method, a format, a tool, or a platform.");
+      q.dead = true;
+      return q;
     }
+    // the routes still viable once the branches taken are applied
+    /* Only the branches the reader has taken decide which routes survive. The steps the
+       recommendation itself fixes are applied wherever a route can take them and ignored
+       where it cannot, so naming a board for one route never hides the others. */
+    function viable(q) { return q.pids.filter(function (p) { return accepts(p, q.refs); }); }
+    /* A route carrying a caveat, such as hardware that is no longer sold, keeps its place in
+       the list but never becomes the drawn recommendation while an available one exists. */
+    function defaultPick(vp) { for (var i = 0; i < vp.length; i++) if (!PATHS[vp[i]].caveat) return i; return 0; }
+    function pickedId(q) { var vp = viable(q); return vp[q.pickSet ? q.pick : defaultPick(vp)] || vp[0]; }
 
-    /* ---- rendering ---- */
-    var active = null;
+    /* ---- geometry ---- */
     function rel(el) {
       var g = grid.getBoundingClientRect(), b = el.getBoundingClientRect();
       return { x: b.left - g.left, y: b.top - g.top, w: b.width, h: b.height, cx: b.left - g.left + b.width / 2, cy: b.top - g.top + b.height / 2 };
     }
     function mk(tag, attrs) { var e = document.createElementNS(NS, tag); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); return e; }
     function pinByLabel(t) { for (var i = 0; i < pins.length; i++) if (pins[i].textContent.trim() === t) return pins[i]; return null; }
-    function clearPaths() { $$(".stk-path, .stk-path-halo, .stk-path-broken, .stk-arrow", overlay).forEach(function (e) { e.parentNode.removeChild(e); }); overlay.classList.remove("stk-focus"); }
-    function routeKeys(p) {
-      // the chips the line passes through, top-down; software rows in process order
-      var sw = (p.route.sw || []).slice();
-      if (p.swVia && sw.indexOf(p.swVia) === -1) { sw = sw.filter(function (k) { return ROW_OF[k] !== ROW_OF[p.swVia]; }); sw.push(p.swVia); }
-      sw.sort(function (a, b) { return (ROW_OF[a] || 0) - (ROW_OF[b] || 0); });
-      return [].concat(p.route.quant || [], p.route.repr || [], sw, p.route.hw ? [p.route.hw] : []);
-    }
-    function pathD(keys, dx, startKey) {
-      var pts = [], prevX = null, all = (startKey ? [startKey] : []).concat(keys);
+    function clearPaths() { $$(".stk-path, .stk-path-halo, .stk-path-broken, .stk-arrow", overlay).forEach(function (e) { e.parentNode.removeChild(e); }); }
+    function pathD(keys, dx) {
+      var pts = [], prevX = null;
       layers.forEach(function (L) {
         var bands = {};
-        all.map(function (k) { return byKey[k]; }).filter(function (c) { return c && c.closest(".stk-layer") === L; }).forEach(function (c) {
+        keys.map(function (k) { return byKey[k]; }).filter(function (c) { return c && c.closest(".stk-layer") === L; }).forEach(function (c) {
           var r = rel(c); r.cx += dx; var band = Math.round(r.cy / 8); (bands[band] = bands[band] || []).push(r);
         });
         Object.keys(bands).sort(function (a, b) { return a - b; }).forEach(function (band) {
@@ -1007,98 +957,183 @@
       }
       return { d: d, arrows: arrows };
     }
+
+    /* ---- rendering ---- */
+    var Q = null;
     function draw() {
       clearPaths();
-      if (!active) return;
-      var n = active.paths.length, startKey = active.key && /^cat:/.test(active.key) ? active.key : null;
-      active.paths.forEach(function (p, i) {
-        var col = G.families[p.fam].color, dx = (i - (n - 1) / 2) * 9;
-        var R = pathD(routeKeys(p), dx, startKey);
+      if (!Q) return;
+      var vp = viable(Q), n = vp.length;
+      var order = vp.slice(); // the picked route is drawn last, on top
+      var pickId = pickedId(Q);
+      order.sort(function (a, b) { return (a === pickId ? 1 : 0) - (b === pickId ? 1 : 0); });
+      order.forEach(function (pid) {
+        var P = PATHS[pid], main = pid === pickId, i = vp.indexOf(pid);
+        var startKey = Q.subject && /^cat:/.test(Q.subject) ? [Q.subject] : [];
+        var R = pathD(startKey.concat(materialise(pid, allRefs(Q))), (i - (n - 1) / 2) * 9);
         if (!R) return;
-        var halo = mk("path", { d: R.d, "class": "stk-path-halo" }), path = mk("path", { d: R.d, "class": "stk-path", stroke: col, "data-i": i });
-        overlay.appendChild(halo); overlay.appendChild(path);
-        R.arrows.forEach(function (ar) {
-          overlay.appendChild(mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: col, "data-i": i, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" }));
+        if (main) overlay.appendChild(mk("path", { d: R.d, "class": "stk-path-halo" }));
+        overlay.appendChild(mk("path", { d: R.d, "class": "stk-path" + (main ? " stk-main" : ""), stroke: P.color, "data-p": pid }));
+        if (main) R.arrows.forEach(function (ar) {
+          overlay.appendChild(mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: P.color, "data-p": pid, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" }));
         });
-        if (!reduced) {
-          var len = path.getTotalLength();
-          [halo, path].forEach(function (e) {
-            e.style.strokeDasharray = len; e.style.strokeDashoffset = len; e.getBoundingClientRect();
-            e.style.transition = "stroke-dashoffset " + Math.min(1.6, 0.3 + len / 1000) + "s ease-out " + (i * 0.1) + "s";
-            e.style.strokeDashoffset = "0";
-          });
-        }
       });
-      if (active.broken) {
-        var pin = pinByLabel(active.broken), src = byKey[active.key];
-        if (pin && src) {
+      if (Q.dead && Q.subject && byKey[Q.subject]) {
+        var pin = pinByLabel(/^n:/.test(Q.subject) ? "8.4" : "8.3"), src = byKey[Q.subject];
+        if (pin) {
           var p2 = rel(pin), s = rel(src), my2 = (s.cy + p2.cy) / 2;
           overlay.appendChild(mk("path", { d: "M" + s.cx + "," + s.cy + " C" + s.cx + "," + my2 + " " + p2.cx + "," + my2 + " " + p2.cx + "," + (p2.y - 2), "class": "stk-path-broken" }));
         }
       }
     }
-    function focusPath(i) {
-      overlay.classList.toggle("stk-focus", i !== null);
-      $$(".stk-path, .stk-arrow", overlay).forEach(function (p) { p.classList.toggle("stk-path-hi", i !== null && +p.getAttribute("data-i") === i); });
-    }
     function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
-    function renderPanel(spec) {
-      var h = '<div class="stk-ph"><b>' + esc(spec.label) + "</b>";
-      if (spec.paths.length) h += '<span class="stk-legend">' + spec.paths.map(function (p, i) {
-        return '<span class="stk-leg" data-i="' + i + '"><i class="stk-dot" style="background:' + G.families[p.fam].color + '"></i>' + G.families[p.fam].name + "</span>";
-      }).join("") + "</span>";
-      else h += "<span>no path to recommend yet</span>";
-      h += '</div><div class="stk-pbody">';
-      if (spec.guide) h += '<div class="stk-guide">' + spec.guide + "</div>";
-      if (spec.paths.length) h += '<ul class="stk-fams">' + spec.paths.map(function (p, i) {
-        var F = G.families[p.fam];
-        return '<li data-i="' + i + '"><i class="stk-dot" style="background:' + F.color + '"></i><span>' + F.story + "</span></li>";
-      }).join("") + "</ul>";
-      spec.notes.forEach(function (t) { h += '<div class="stk-note">' + t + "</div>"; });
-      h += "</div>";
-      panel.innerHTML = h;
-      $$(".stk-fams li, .stk-leg", panel).forEach(function (li) {
-        li.addEventListener("mouseenter", function () { focusPath(+li.getAttribute("data-i")); });
-        li.addEventListener("mouseleave", function () { focusPath(null); });
-      });
-    }
-    function apply(spec, fromText) {
-      active = spec;
-      chips.forEach(function (c) { c.classList.remove("stk-on"); });
+    function paint() {
+      chips.forEach(function (c) { c.classList.remove("stk-line", "stk-branch", "stk-implied"); c.style.removeProperty("--pc"); });
       $$(".stk-rowlabel", fig).forEach(function (l) { l.classList.remove("stk-on"); });
-      pins.forEach(function (p) { p.classList.remove("stk-pin-on", "stk-pulse"); });
-      $$(".stk-quick", fig).forEach(function (b) { var v = b.getAttribute("data-q").toLowerCase(); b.classList.toggle("stk-active", !!spec && (v === (spec.q || "").toLowerCase() || v === (spec.label || "").toLowerCase())); });
-      fig.classList.toggle("stk-tracing", !!spec);
-      clearBtn.hidden = !spec;
-      if (!spec) { panel.innerHTML = ""; if (!fromText) input.value = ""; draw(); return; }
-      var on = {};
-      spec.light.forEach(function (k) { on[k] = 1; });
-      spec.paths.forEach(function (p) {
-        var F = G.families[p.fam];
-        ["quant", "repr", "sw"].forEach(function (L) { (F.light[L] || []).forEach(function (k) { on[k] = 1; }); });
-        routeKeys(p).forEach(function (k) { on[k] = 1; });
-        (p.hwOnly || F.hw).forEach(function (k) { on[k] = 1; });
+      if (!Q) return;
+      var vp = viable(Q), pickId = pickedId(Q), pick = PATHS[pickId];
+      var lineSet = {}, branchSet = {}, impliedSet = {};
+      // solid: only the route actually drawn. Everything else a click could reach is a branch,
+      // so no chip can look like a step of a route the reader is not on.
+      if (pick) {
+        materialise(pickId, allRefs(Q)).forEach(function (k) { lineSet[k] = pick.color; });
+        (pick.implies || []).forEach(function (k) { impliedSet[k] = 1; });
+      }
+      vp.forEach(function (pid) {
+        var P = PATHS[pid], line = materialise(pid, allRefs(Q)), opt = P.options || {};
+        var ok = allowedHw(pid, withCouples(allRefs(Q)));
+        function offer(k) {
+          if (branchSet[k]) return;
+          var c = byKey[k];
+          if (c && c.closest(".stk-layer").getAttribute("data-layer") === "hw" && ok.indexOf(k) === -1) return;
+          branchSet[k] = P.color;
+        }
+        line.forEach(offer); P.line.forEach(offer);
+        Object.keys(opt).forEach(function (step) { opt[step].forEach(offer); });
       });
-      Object.keys(on).forEach(function (k) {
-        var c = byKey[k]; if (!c) return;
-        c.classList.add("stk-on");
+      if (Q.subject && /^cat:/.test(Q.subject)) lineSet[Q.subject] = PATHS[pickId] ? PATHS[pickId].color : "#1f2430";
+      if (Q.dead && Q.subject) lineSet[Q.subject] = "#C0392B";
+      Object.keys(lineSet).forEach(function (k) { var c = byKey[k]; if (c) { c.classList.add("stk-line"); c.style.setProperty("--pc", lineSet[k]); } });
+      Object.keys(branchSet).forEach(function (k) { var c = byKey[k]; if (c && !lineSet[k]) { c.classList.add("stk-branch"); c.style.setProperty("--pc", branchSet[k]); } });
+      Object.keys(impliedSet).forEach(function (k) { var c = byKey[k]; if (c && !lineSet[k] && !branchSet[k]) c.classList.add("stk-implied"); });
+      chips.forEach(function (c) {
+        if (!c.classList.contains("stk-line") && !c.classList.contains("stk-branch") && !c.classList.contains("stk-implied")) return;
         var lbl = c.closest(".stk-row") && $(".stk-rowlabel", c.closest(".stk-row")); if (lbl) lbl.classList.add("stk-on");
       });
-      if (spec.pin) { var pin = pinByLabel(spec.pin); if (pin) { pin.classList.add("stk-pin-on"); if (spec.broken && !reduced) pin.classList.add("stk-pulse"); } }
-      renderPanel(spec);
-      if (!fromText) input.value = spec.label;
-      draw();
+      pins.forEach(function (p) { p.classList.remove("stk-pin-on", "stk-pulse"); });
+      var pinLbl = Q.dead && Q.subject ? (/^n:/.test(Q.subject) ? "8.4" : null) : null;
+      if (Q.subject === "s:extreme" || Q.subject === "n:INT1" || Q.subject === "n:INT2" || Q.subject === "n:INT4") pinLbl = "8.3";
+      if (Q.subject === "s:inttrain") pinLbl = "8.6";
+      if (pinLbl) { var pn = pinByLabel(pinLbl); if (pn) { pn.classList.add("stk-pin-on"); if (Q.dead && !reduced) pn.classList.add("stk-pulse"); } }
+    }
+    function renderPanel() {
+      if (!Q) { panel.innerHTML = ""; return; }
+      var vp = viable(Q), pickId = pickedId(Q);
+      var h = '<div class="stk-ph"><span class="stk-crumbs"><b>' + esc(Q.label) + "</b>";
+      Q.refs.forEach(function (k) {
+        if (k === Q.subject) return;
+        h += '<span class="stk-crumb" data-drop="' + k + '" title="Drop this branch">' + esc(LABEL[k] || k) + " &#215;</span>";
+      });
+      h += "</span>";
+      h += '<span class="stk-count">' + (vp.length ? vp.length + (vp.length === 1 ? " route" : " routes") + ", best first" : "no route in this stack") + "</span></div>";
+      h += '<div class="stk-pbody">';
+      if (Q.note) h += '<div class="stk-guide">' + Q.note + "</div>";
+      if (vp.length) {
+        h += '<ol class="stk-routes">' + vp.map(function (pid) {
+          var P = PATHS[pid], line = materialise(pid, allRefs(Q)), main = pid === pickId;
+          var steps = line.map(function (k) { return '<span class="stk-step-chip">' + esc(LABEL[k] || k) + "</span>"; }).join('<span class="stk-arr">&#8594;</span>');
+          return '<li class="stk-route' + (main ? " stk-route-main" : "") + '" data-p="' + pid + '" tabindex="0" style="--pc:' + P.color + '">' +
+            '<span class="stk-rhead"><i class="stk-dot"></i><b>' + esc(P.name) + "</b>" +
+            '<span class="stk-fam">' + esc(famName(P.fam)) + "</span>" +
+            (main ? '<span class="stk-badge">recommended</span>' : "") +
+            (P.caveat ? '<span class="stk-caveat">' + esc(P.caveat) + "</span>" : "") + "</span>" +
+            '<span class="stk-steps">' + steps + "</span>" +
+            '<span class="stk-rstory">' + P.story + "</span></li>";
+        }).join("") + "</ol>";
+      }
+      if (Q.reject) {
+        var rk = Q.reject, imp = Q.rejectKind === "implied";
+        h += '<div class="stk-reject' + (imp ? " stk-fixed" : "") + '"><b>' + esc(LABEL[rk] || rk) + "</b> " +
+             (imp ? "is fixed by the recommended route rather than chosen." : "is not on any route for " + esc(Q.label) + ".") + " " +
+             (G.notes[rk] || (imp ? "" : "None of the routes above offers it as a branch.")) +
+             ' <span class="stk-crumb" data-drop="__reject">dismiss &#215;</span></div>';
+      }
+      if (Q.width) { var wn = widthNote([Q.width], "Platforms whose supported formats include this width:"); if (wn) h += '<div class="stk-note">' + wn + "</div>"; }
+      if (Q.subject === "s:mixed" || Q.subject === "n:mixed" || Q.subject === "s:extreme") {
+        var wn2 = widthNote(["n:INT4", "n:INT2", "n:INT1"], "Platforms whose supported formats go below 8 bits:");
+        if (wn2) h += '<div class="stk-note">' + wn2 + "</div>";
+      }
+      h += '<div class="stk-legendnote"><span class="stk-key stk-line"></span> on the route &#183; <span class="stk-key stk-branch"></span> a branch you can take, click it &#183; <span class="stk-key stk-implied"></span> fixed by the route, not a choice</div>';
+      h += "</div>";
+      panel.innerHTML = h;
+      $$(".stk-route", panel).forEach(function (li) {
+        function pick() { Q.pick = viable(Q).indexOf(li.getAttribute("data-p")); Q.pickSet = true; render(); }
+        li.addEventListener("click", pick);
+        li.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+      });
+      $$(".stk-crumb", panel).forEach(function (el) {
+        el.addEventListener("click", function () {
+          var d = el.getAttribute("data-drop");
+          if (d === "__reject") { Q.reject = null; Q.rejectKind = null; render(); return; }
+          Q.refs = Q.refs.filter(function (k) { return k !== d; });
+          Q.pick = 0; render();
+        });
+      });
+    }
+    function render() { paint(); renderPanel(); draw(); }
+    function setQuery(q, fromText) {
+      Q = q;
+      fig.classList.toggle("stk-tracing", !!q);
+      clearBtn.hidden = !q;
+      $$(".stk-quick", fig).forEach(function (b) {
+        var v = b.getAttribute("data-q").toLowerCase();
+        b.classList.toggle("stk-active", !!q && (v === (q.label || "").toLowerCase()));
+      });
+      if (!q) { chips.forEach(function (c) { c.classList.remove("stk-line", "stk-branch", "stk-implied"); }); panel.innerHTML = ""; clearPaths(); if (!fromText) input.value = ""; return; }
+      if (!fromText) input.value = q.label;
+      render();
+    }
+    /* Clicking a chip never restarts the question. It takes that branch when the
+       routes on screen offer it, drops it when it is already taken, and says so
+       when they do not. Only Clear starts over. The exception is a question that
+       has no route at all, where there is nothing to branch from. */
+    function chipClicked(k) {
+      if (!Q || !viable(Q).length) { setQuery(queryFor(k)); return; }
+      Q.reject = null; Q.rejectKind = null;
+      if (Q.refs.indexOf(k) !== -1 && k !== Q.subject) { Q.refs = Q.refs.filter(function (x) { return x !== k; }); Q.pick = 0; render(); return; }
+      var vp = viable(Q);
+      if (vp.some(function (pid) { var t = pathTouches(pid, k); return t === "branch" || t === "line"; })) {
+        var refs = Q.refs.concat([k]);
+        var base = Q.base.slice();
+        vp.forEach(function (pid) {                       // a choice replaces whatever competed for its step
+          var opt = PATHS[pid].options || {};
+          for (var step in opt) if (opt[step].indexOf(k) !== -1) {   // k is an alternative to `step`
+            refs = refs.filter(function (x) { return x === k || (opt[step].indexOf(x) === -1 && x !== step); });
+            base = base.filter(function (x) { return opt[step].indexOf(x) === -1 && x !== step; });
+          }
+          if (opt[k]) {                                              // k is the step itself, so undo its alternatives
+            refs = refs.filter(function (x) { return x === k || opt[k].indexOf(x) === -1; });
+            base = base.filter(function (x) { return opt[k].indexOf(x) === -1; });
+          }
+        });
+        Q = { subject: Q.subject, label: Q.label, pids: Q.pids, refs: refs, base: base, note: Q.note, pick: 0, pickSet: false };
+        if (viable(Q).length) { render(); return; }
+      }
+      var pick = pickedId(Q);
+      Q.reject = k;                                        // an option, but not one these routes reach
+      Q.rejectKind = pick && (PATHS[pick].implies || []).indexOf(k) !== -1 ? "implied" : "absent";
+      render();
     }
 
     /* ---- wiring ---- */
     fig.addEventListener("click", function (e) {
       var chip = e.target.closest ? e.target.closest(".mchip[data-k]") : null;
-      if (chip && fig.contains(chip)) { e.preventDefault(); apply(specFromKey(chip.getAttribute("data-k"))); return; }
+      if (chip && fig.contains(chip)) { e.preventDefault(); chipClicked(chip.getAttribute("data-k")); return; }
       var q = e.target.closest ? e.target.closest("[data-q]") : null;
       if (q && fig.contains(q)) {
         var v = q.getAttribute("data-q");
-        if (q.classList.contains("stk-active")) { apply(null); return; }
-        apply(/^fam:/.test(v) ? specFromKey(v) : resolveText(v)); return;
+        if (q.classList.contains("stk-active")) { setQuery(null); return; }
+        setQuery(/^fam:/.test(v) ? queryFor(v) : queryForText(v)); return;
       }
     });
     fig.addEventListener("keydown", function (e) {
@@ -1107,17 +1142,16 @@
       if (el) { e.preventDefault(); el.click(); }
     });
     chips.forEach(function (c) { c.setAttribute("tabindex", "0"); c.setAttribute("role", "button"); });
-    clearBtn.addEventListener("click", function () { apply(null); });
-    function runText() { var v = input.value.trim(); if (!v) { apply(null, true); return; } apply(resolveText(v), true); }
+    clearBtn.addEventListener("click", function () { setQuery(null); });
+    function runText() { var v = input.value.trim(); if (!v) { setQuery(null, true); return; } setQuery(queryForText(v), true); }
     input.addEventListener("change", runText);
-    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); runText(); } if (e.key === "Escape") { input.value = ""; apply(null); } });
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); runText(); } if (e.key === "Escape") { input.value = ""; setQuery(null); } });
     input.addEventListener("search", runText);
     var seen = {};
     function addOpt(v) { if (!v || seen[v.toLowerCase()]) return; seen[v.toLowerCase()] = 1; var o = document.createElement("option"); o.value = v; suggest.appendChild(o); }
-    FAMS.forEach(function (f) { addOpt(G.families[f].name); });
+    Object.keys(G.families).forEach(function (f) { addOpt(famName(f)); });
     chips.forEach(function (c) { addOpt(LABEL[c.getAttribute("data-k")]); });
-    ROWS.forEach(function (r) { tokens(r.devices).forEach(addOpt); tokens(r.fw).forEach(addOpt); });
-    ["Mixed precision", "Sub-8-bit", "INT4", "Binary", "ESP32", "GAP", "MAX78"].forEach(addOpt);
+    ["Mixed precision", "Sub-8-bit", "ESP32", "GAP", "MAX78"].forEach(addOpt);
 
     // hovering (or focusing) a pin lights the layers it bridges and brackets them
     function bridge(pin) {
@@ -1139,6 +1173,12 @@
     });
     if (window.ResizeObserver) new ResizeObserver(function () { draw(); }).observe(grid);
     else window.addEventListener("resize", draw);
-    window.QSStack = { resolve: resolveText, guide: G, hw: HW, apply: function (q) { apply(resolveText(q)); }, applyKey: function (k) { apply(specFromKey(k)); } };
+    window.QSStack = {
+      guide: G, paths: PATHS,
+      apply: function (s) { setQuery(queryForText(s)); },
+      applyKey: function (k) { setQuery(queryFor(k)); },
+      clickKey: function (k) { chipClicked(k); },
+      state: function () { return Q && { label: Q.label, refs: Q.refs, viable: viable(Q), pick: Q.pick, dead: !!Q.dead }; }
+    };
   })();
 })();
