@@ -812,7 +812,9 @@
       return line;
     }
     function accepts(pid, refs) {
-      if (!refs.every(function (k) { var t = pathTouches(pid, k); return t === "line" || t === "branch"; })) return false;
+      // "implied" counts: a route that fixes a choice for you does carry it, so asking for
+      // PyTorch must still reach the MAX78x route, where it arrives as ai8x-training
+      if (!refs.every(function (k) { var t = pathTouches(pid, k); return t === "line" || t === "branch" || t === "implied"; })) return false;
       return allowedHw(pid, withCouples(refs)).length > 0;      // no platform carries it, so the route is out
     }
 
@@ -890,7 +892,7 @@
       }
       if (t === "fam") return makeQuery(k, famName(val), PIDS.filter(function (p) { return PATHS[p].fam === val; }).sort(byRank), [], null);
       var onLine = pathsFor(k, ["line"]), asBranch = pathsFor(k, ["branch"]), implied = pathsFor(k, ["implied"]);
-      if (onLine.length || asBranch.length) return makeQuery(k, LABEL[k], onLine.concat(asBranch).sort(byRank), [k], note);
+      if (onLine.length || asBranch.length) return makeQuery(k, LABEL[k], onLine.concat(asBranch).concat(implied).sort(byRank), [k], note);
       if (implied.length) return makeQuery(k, LABEL[k], implied, [], note || "This is fixed by the routes below rather than chosen separately.");
       // nothing carries it
       var q = makeQuery(k, LABEL[k], [], [], note);
@@ -960,8 +962,11 @@
 
     /* ---- rendering ---- */
     var Q = null;
-    function draw() {
+    var drawnAt = { w: 0, h: 0 };
+    function draw(animate) {
       clearPaths();
+      var gr = grid.getBoundingClientRect();
+      drawnAt = { w: gr.width, h: gr.height };
       if (!Q) return;
       var vp = viable(Q), n = vp.length;
       var order = vp.slice(); // the picked route is drawn last, on top
@@ -972,11 +977,44 @@
         var startKey = Q.subject && /^cat:/.test(Q.subject) ? [Q.subject] : [];
         var R = pathD(startKey.concat(materialise(pid, allRefs(Q))), (i - (n - 1) / 2) * 9);
         if (!R) return;
-        if (main) overlay.appendChild(mk("path", { d: R.d, "class": "stk-path-halo" }));
-        overlay.appendChild(mk("path", { d: R.d, "class": "stk-path" + (main ? " stk-main" : ""), stroke: P.color, "data-p": pid }));
+        var halo = main ? mk("path", { d: R.d, "class": "stk-path-halo" }) : null;
+        if (halo) overlay.appendChild(halo);
+        var path = mk("path", { d: R.d, "class": "stk-path" + (main ? " stk-main" : ""), stroke: P.color, "data-p": pid });
+        overlay.appendChild(path);
+        var arrows = [];
         if (main) R.arrows.forEach(function (ar) {
-          overlay.appendChild(mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: P.color, "data-p": pid, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" }));
+          var a = mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: P.color, "data-p": pid, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" });
+          overlay.appendChild(a); arrows.push(a);
         });
+        /* Draw the route on rather than switching it on, so the reader's eye follows it
+           down the stack. An alternative draws solid and then settles into its dashed
+           style, which a marching dash offset could not do. */
+        if (animate && !reduced) {
+          var len = path.getTotalLength(), delay = main ? 0 : 0.12 + i * 0.09, dur = Math.min(1.5, 0.35 + len / 1100);
+          arrows.forEach(function (a) { a.style.transition = "none"; a.style.opacity = "0"; });
+          [halo, path].forEach(function (e) {
+            if (!e) return;
+            e.style.transition = "none";
+            e.style.strokeDasharray = len;
+            e.style.strokeDashoffset = len;
+          });
+          /* The nodes were inserted this tick, so their start state is only settled on the
+             next frame. Setting the target before then makes the value snap instead of run. */
+          requestAnimationFrame(function () {
+            [halo, path].forEach(function (e) {
+              if (!e) return;
+              e.style.transition = "stroke-dashoffset " + dur + "s ease-out " + delay + "s";
+              e.style.strokeDashoffset = "0";
+            });
+            arrows.forEach(function (a) {
+              a.style.transition = "opacity 0.25s ease-out " + (delay + dur * 0.7) + "s";
+              a.style.opacity = "1";
+            });
+          });
+          if (!main) setTimeout(function () {                            // hand the dash pattern back to the stylesheet
+            path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; path.style.transition = "";
+          }, (delay + dur) * 1000 + 120);
+        }
       });
       if (Q.dead && Q.subject && byKey[Q.subject]) {
         var pin = pinByLabel(/^n:/.test(Q.subject) ? "8.4" : "8.3"), src = byKey[Q.subject];
@@ -1111,7 +1149,13 @@
         });
       });
     }
-    function render() { paint(); renderPanel(); draw(); }
+    /* Lighting the chips changes their weight, which reflows the grid. Let that settle
+       before drawing, so the reflow cannot arrive mid-animation and wipe it. */
+    function render(animate) {
+      paint(); renderPanel();
+      if (animate === false) { draw(false); return; }
+      requestAnimationFrame(function () { draw(true); });
+    }
     function setQuery(q, fromText) {
       Q = q;
       fig.classList.toggle("stk-tracing", !!q);
@@ -1202,8 +1246,15 @@
       p.addEventListener("mouseenter", function () { bridge(p); }); p.addEventListener("focus", function () { bridge(p); });
       p.addEventListener("mouseleave", function () { bridge(null); }); p.addEventListener("blur", function () { bridge(null); });
     });
-    if (window.ResizeObserver) new ResizeObserver(function () { draw(); }).observe(grid);
-    else window.addEventListener("resize", draw);
+    // only a real change of the grid's size redraws; the reflow from lighting the chips
+    // must not restart the paths that were just drawn
+    function onResize() {
+      var r = grid.getBoundingClientRect();
+      if (Math.abs(r.width - drawnAt.w) < 1 && Math.abs(r.height - drawnAt.h) < 1) return;
+      draw(false);
+    }
+    if (window.ResizeObserver) new ResizeObserver(onResize).observe(grid);
+    else window.addEventListener("resize", onResize);
     window.QSStack = {
       guide: G, paths: PATHS,
       apply: function (s) { setQuery(queryForText(s)); },

@@ -106,7 +106,7 @@ apps: {
     {key:"moosmann2023tinyissimoyolo", cat:"Object Detection", quant:"INT8 QAT", devices:"MAX78000", fw:"PyTorch, ai8x-tools", perf:"43.50–75.40% mAP", power:"0.19 mJ", lat:"5.5", mem:"350–422"},
     {key:"moosmann2024ultra", cat:"Object Detection", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"14.00–49.00% mAP", power:"54 mW", lat:"56.45", mem:"<1000"},
     {key:"kang2024device", cat:"HAR", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"91.04–98.29% Acc.", power:"0.035–0.063 mJ", lat:"1.11–1.93", mem:"37.8–44.7"},
-    {key:"van2023real", cat:"Healthcare", quant:"INT8 QAT", devices:"MAX78002", fw:"PyTorch, ai8x-synthesis", perf:"94.60% AUC", power:"18 mW", lat:"0.248", mem:"25.156"},
+    {key:"van2023real", cat:"Healthcare", quant:"INT8 QAT", devices:"MAX78002", fw:"PyTorch, ai8x-tools", perf:"94.60% AUC", power:"18 mW", lat:"0.248", mem:"25.156"},
     {key:"busia2025endoscopy", cat:"Healthcare", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"98.5% Acc.", power:"30.6 mW", lat:"61", mem:"750"},
     {key:"ibrahim2024end", cat:"Healthcare", quant:"INT8 QAT", devices:"Ethos-U55", fw:"PyTorch", perf:"94.25% Acc.", power:"2×10⁻⁸ mJ", lat:"5", mem:"<32"},
     {key:"lightbody2022host", cat:"Anomaly Detection", quant:"INT8 QAT", devices:"MAX78000", fw:"PyTorch", perf:"87.19–99.95% Acc.", power:"15 mW", lat:"2.556", mem:"55.9"},
@@ -151,7 +151,7 @@ guide: {
         "f:tf": ["f:pytorch"],
         "f:tflite": ["f:onnx"],
         "f:tflm": ["f:onnxrt", "f:minimal"],
-        "h:stm32": ["h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo", "h:cm4f"]
+        "h:stm32": ["h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo"]
       }
     },
     "arm-cube": {
@@ -166,7 +166,7 @@ guide: {
       story: "The end-to-end route. Data collection, feature extraction, training, quantization, and firmware generation happen in one workflow, which is the fastest way to a working prototype and the least visibility into what it emits.",
       line: ["q:PTQ", "s:uniform", "n:INT8", "f:ei", "f:tflite", "f:tflm", "h:nano33"],
       implies: ["d:uni", "d:asym", "d:pt", "d:static", "d:calib", "f:cmsis"],
-      options: { "q:PTQ": ["q:QAT"], "h:nano33": ["h:stm32", "h:spresense", "h:openmv", "h:cm4f"] }
+      options: { "q:PTQ": ["q:QAT"], "h:nano33": ["h:stm32", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo"] }
     },
 
     "riscv-tflm": {
@@ -199,7 +199,7 @@ guide: {
       rank: 2, name: "ai8x on MAX78000/78002", fam: "npu", color: "#5E35B1",
       story: "The tightly coupled CNN-accelerator route, and the accelerator path we would start from today. ai8x trains with the accelerator's constraints in the loop and synthesises the network into it, which is how sub-8-bit and mixed widths actually reach a shipping device.",
       line: ["q:QAT", "s:uniform", "n:INT8", "f:ai8xt", "f:ai8xs", "f:accel", "h:max000"],
-      implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa", "f:pytorch"],
       options: { "q:QAT": ["q:PTQ"], "s:uniform": ["s:extreme", "s:mixed"], "n:INT8": ["n:INT4", "n:INT2", "n:INT1", "n:mixed"], "h:max000": ["h:max002"] }
     },
     "npu-ethos": {
@@ -237,8 +237,7 @@ guide: {
   platformWidths: {
     "h:stm32":     ["n:INT8", "n:INT16"],
     "h:apollo":    ["n:INT8", "n:INT16"],
-    "h:cm4f":      ["n:INT8", "n:INT16"],
-    "h:max000":    ["n:INT1", "n:INT2", "n:INT4", "n:INT8"],
+        "h:max000":    ["n:INT1", "n:INT2", "n:INT4", "n:INT8"],
     "h:mcxn":      ["n:INT8"],
     "h:pulp":      ["n:INT2", "n:INT4", "n:INT8", "n:INT16"]
   },
@@ -252,7 +251,7 @@ guide: {
 
   // Per application: the routes worth considering, best first, and why.
   applications: {
-    "Speech":               { paths: ["arm-tflm", "npu-max78", "npu-gap"], via: ["q:QAT", "h:cm4f"], note: "Speech models are always-on, so energy per inference decides. Cortex-M is the low-friction default; move to an accelerator when the audio front end and the model together must fit a hard budget." },
+    "Speech":               { paths: ["arm-tflm", "npu-max78", "npu-gap"], via: ["q:QAT"], note: "Speech models are always-on, so energy per inference decides. Cortex-M is the low-friction default; move to an accelerator when the audio front end and the model together must fit a hard budget." },
     "Keyword Spotting":     { paths: ["arm-tflm", "npu-max78", "npu-nxp"], note: "Keyword spotting is small and permanently listening. Start on Cortex-M, and move to an accelerator when the duty cycle is high enough that inference energy dominates the power budget." },
     "Object Detection":     { paths: ["npu-max78", "npu-gap", "arm-tflm"], via: ["q:QAT", "h:max000"], note: "Detection is where accelerators pay off most, and the MAX78x is the one still generally available. On Cortex-M it is confined to tiny detectors at low frame rates." },
     "Image Classification": { paths: ["npu-max78", "npu-gap", "arm-tflm"], via: ["q:QAT", "h:max002"], note: "Compact classifiers fit Cortex-M at modest input resolution; an accelerator extends resolution and frame rate at lower energy." },
@@ -309,6 +308,8 @@ guide: {
     "n:afx": "Adaptive fixed-point formats need dedicated hardware support that no platform here provides.",
     "f:cmsis": "CMSIS-NN sits underneath TFLM on the Cortex-M routes rather than being chosen separately.",
     "f:accel": "The vendor runtime that drives the accelerator: ai8x firmware on the MAX78x, the GAP SDK, the Ethos-U driver, or the Neural-ART runtime.",
+    "f:ai8xt": "ai8x-training is a PyTorch fork that trains with the MAX78x accelerator's constraints in the loop, so choosing it is a PyTorch flow.",
+    "f:pytorch": "PyTorch reaches every family. On the MAX78x it arrives as ai8x-training, the fork that trains with the accelerator's constraints in the loop.",
     "h:pulp": "A research platform, where low-bit and mixed-precision RISC-V kernels have been demonstrated, rather than a part you can buy."
   }
 },

@@ -330,7 +330,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-name { font-weight: 700; font-size: 0.92rem; line-height: 1.15; color: #fff; letter-spacing: 0.01em; }
       .stk-step {
         display: inline-flex; align-items: center; justify-content: center; width: 1.35rem; height: 1.35rem; border-radius: 50%;
-        background: rgba(255, 255, 255, 0.22); border: 1.5px solid rgba(255, 255, 255, 0.85); color: #fff; font-size: 0.72rem; font-weight: 700;
+        background: rgba(0, 0, 0, 0.32); border: 1.5px solid rgba(255, 255, 255, 0.8); color: #fff; font-size: 0.72rem; font-weight: 700;
       }
       .stk-row-plain .stk-rowchips { padding-left: 0; }
       .stk-chips { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; padding: 0.55rem 0.9rem 0.6rem; }
@@ -444,6 +444,16 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         .stk-rowlabel { flex-basis: auto; }
         .stk-rail-cell { font-size: 0.56rem; }
       }
+      /* main.css carries d-article a { color: ... !important }, which reaches every
+         anchor in this figure: the Read link, the challenge pins, and the right rail.
+         Restate them at the same weight so the colour coding survives. */
+      .stack-fig .stk-label { color: #fff !important; }
+      .stack-fig .stk-pin { color: #A93226 !important; border-bottom: none !important; }
+      .stack-fig .stk-pin:hover, .stack-fig .stk-pin:focus-visible, .stack-fig .stk-pin.stk-pin-on { color: #fff !important; }
+      .stack-fig .stk-rail-r .stk-rail-cell { color: #A93226 !important; border-bottom: 1px solid #efc4bf !important; }
+      .stack-fig .stk-rail-r .stk-rail-cell:hover { color: #fff !important; border-color: #C0392B !important; }
+      .stack-fig .stk-ph a.stk-read { color: #cfe3ff !important; border-bottom: 1px dotted rgba(207, 227, 255, 0.55) !important; }
+      .stack-fig .stk-ph a.stk-read:hover { color: #fff !important; border-bottom-color: #fff !important; }
       /* end Figure 17 */
       .flash-p { background: #fff3c4 !important; }
       .flash-fade { transition: background 1.6s ease; background: transparent; }
@@ -1563,7 +1573,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 <tr><td><d-cite key="moosmann2023tinyissimoyolo"></d-cite></td><td>Object Detection</td><td>INT8 QAT</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>43.50&#8211;75.40% mAP</td><td>0.19 mJ</td><td>5.5</td><td>350&#8211;422</td></tr>
 <tr><td><d-cite key="moosmann2024ultra"></d-cite></td><td>Object Detection</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>14.00&#8211;49.00% mAP</td><td>54 mW</td><td>56.45</td><td>&lt;1000</td></tr>
 <tr><td><d-cite key="kang2024device"></d-cite></td><td>HAR</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>91.04&#8211;98.29% Acc.</td><td>0.035&#8211;0.063 mJ</td><td>1.11&#8211;1.93</td><td>37.8&#8211;44.7</td></tr>
-<tr><td><d-cite key="van2023real"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>MAX78002</td><td>PyTorch,<br>ai8x-synthesis</td><td>94.60% AUC</td><td>18 mW</td><td>0.248</td><td>25.156</td></tr>
+<tr><td><d-cite key="van2023real"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>MAX78002</td><td>PyTorch,<br>ai8x-tools</td><td>94.60% AUC</td><td>18 mW</td><td>0.248</td><td>25.156</td></tr>
 <tr><td><d-cite key="busia2025endoscopy"></d-cite></td><td>Healthcare</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>98.5% Acc.</td><td>30.6 mW</td><td>61</td><td>750</td></tr>
 <tr><td><d-cite key="ibrahim2024end"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>Ethos-U55</td><td>PyTorch</td><td>94.25% Acc.</td><td>\(2\times10^{-8}\) mJ</td><td>5</td><td>&lt;32</td></tr>
 <tr><td><d-cite key="lightbody2022host"></d-cite></td><td>Anomaly Detection</td><td>INT8 QAT</td><td>MAX78000</td><td>PyTorch</td><td>87.19&#8211;99.95% Acc.</td><td>15 mW</td><td>2.556</td><td>55.9</td></tr>
@@ -1694,7 +1704,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
       <div class="stk-layer" data-layer="hw">
         <a class="stk-label" href="#hardware-platforms" data-tip="Hardware. The platforms in the three families the survey uses throughout: ARM-based, RISC-V-based, and NPU-integrated. Click a family name to trace its whole path."><span class="stk-step">5</span><span class="stk-name">Hardware</span></a>
-        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel" data-q="fam:arm" role="button" tabindex="0" title="Trace the ARM-based path">ARM-based</span><span class="stk-rowchips"><span class="mchip" data-k="h:stm32" data-sec="table-3" data-term="">STM32 F4 &#183; F7 &#183; H7 &#183; L4</span><span class="mchip" data-k="h:nano33" data-sec="table-3" data-term="">Arduino Nano 33 BLE Sense</span><span class="mchip" data-k="h:spresense" data-sec="table-3" data-term="">Sony Spresense</span><span class="mchip" data-k="h:openmv" data-sec="table-3" data-term="">OpenMV Cam H7</span><span class="mchip" data-k="h:sparkfun" data-sec="table-3" data-term="">SparkFun Edge</span><span class="mchip" data-k="h:apollo" data-sec="table-4" data-term="">Apollo4</span><span class="mchip" data-k="h:cm4f" data-sec="table-4" data-term="">Other Cortex-M4F boards</span></span></div><div class="stk-row"><span class="stk-rowlabel" data-q="fam:riscv" role="button" tabindex="0" title="Trace the RISC-V-based path">RISC-V-based</span><span class="stk-rowchips"><span class="mchip" data-k="h:c3" data-sec="riscv-mcus" data-term="ESP32-C3">ESP32-C3</span><span class="mchip" data-k="h:c6" data-sec="riscv-mcus" data-term="ESP32-C6">ESP32-C6</span><span class="mchip" data-k="h:p4" data-sec="riscv-mcus" data-term="ESP32-P4">ESP32-P4</span><span class="mchip" data-k="h:pulp" data-sec="riscv-mcus" data-term="PULP">PULP &#183; PULPissimo (research)</span></span></div><div class="stk-row"><span class="stk-rowlabel" data-q="fam:npu" role="button" tabindex="0" title="Trace the NPU-integrated path">NPU-integrated</span><span class="stk-rowchips"><span class="mchip" data-k="h:max000" data-sec="table-6" data-term="">MAX78000</span><span class="mchip" data-k="h:max002" data-sec="table-3" data-term="">MAX78002</span><span class="mchip" data-k="h:gap8" data-sec="npu-mcus" data-term="GAP8">GAP8</span><span class="mchip" data-k="h:gap9" data-sec="npu-mcus" data-term="GAP9">GAP9</span><span class="mchip" data-k="h:ethos" data-sec="npu-mcus" data-term="Ethos-U">Ethos-U55 (HX6538-WE2)</span><span class="mchip" data-k="h:n6" data-sec="npu-mcus" data-term="STM32N6">STM32N6 (Neural-ART)</span><span class="mchip" data-k="h:mcxn" data-sec="table-6" data-term="">NXP MCXN94</span><span class="mchip" data-k="h:mspm0" data-sec="table-3" data-term="">MSPM0G5187</span></span></div></div>
+        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel" data-q="fam:arm" role="button" tabindex="0" title="Trace the ARM-based path">ARM-based</span><span class="stk-rowchips"><span class="mchip" data-k="h:stm32" data-sec="table-3" data-term="">STM32 F4 &#183; F7 &#183; H7 &#183; L4</span><span class="mchip" data-k="h:nano33" data-sec="table-3" data-term="">Arduino Nano 33 BLE Sense</span><span class="mchip" data-k="h:spresense" data-sec="table-3" data-term="">Sony Spresense</span><span class="mchip" data-k="h:openmv" data-sec="table-3" data-term="">OpenMV Cam H7</span><span class="mchip" data-k="h:sparkfun" data-sec="table-3" data-term="">SparkFun Edge</span><span class="mchip" data-k="h:apollo" data-sec="table-4" data-term="">Apollo4</span></span></div><div class="stk-row"><span class="stk-rowlabel" data-q="fam:riscv" role="button" tabindex="0" title="Trace the RISC-V-based path">RISC-V-based</span><span class="stk-rowchips"><span class="mchip" data-k="h:c3" data-sec="riscv-mcus" data-term="ESP32-C3">ESP32-C3</span><span class="mchip" data-k="h:c6" data-sec="riscv-mcus" data-term="ESP32-C6">ESP32-C6</span><span class="mchip" data-k="h:p4" data-sec="riscv-mcus" data-term="ESP32-P4">ESP32-P4</span><span class="mchip" data-k="h:pulp" data-sec="riscv-mcus" data-term="PULP">PULP &#183; PULPissimo (research)</span></span></div><div class="stk-row"><span class="stk-rowlabel" data-q="fam:npu" role="button" tabindex="0" title="Trace the NPU-integrated path">NPU-integrated</span><span class="stk-rowchips"><span class="mchip" data-k="h:max000" data-sec="table-6" data-term="">MAX78000</span><span class="mchip" data-k="h:max002" data-sec="table-3" data-term="">MAX78002</span><span class="mchip" data-k="h:gap8" data-sec="npu-mcus" data-term="GAP8">GAP8</span><span class="mchip" data-k="h:gap9" data-sec="npu-mcus" data-term="GAP9">GAP9</span><span class="mchip" data-k="h:ethos" data-sec="npu-mcus" data-term="Ethos-U">Ethos-U55 (HX6538-WE2)</span><span class="mchip" data-k="h:n6" data-sec="npu-mcus" data-term="STM32N6">STM32N6 (Neural-ART)</span><span class="mchip" data-k="h:mcxn" data-sec="table-6" data-term="">NXP MCXN94</span><span class="mchip" data-k="h:mspm0" data-sec="table-3" data-term="">MSPM0G5187</span></span></div></div>
       </div>
 
     </div>
@@ -1802,7 +1812,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260910w"></script>
   <script src="assets/js/supplements.js?v=20260910w"></script>
-  <script src="assets/js/figs.js?v=20260911v"></script>
+  <script src="assets/js/figs.js?v=20260911-3"></script>
 
   </body>
 
