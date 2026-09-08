@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260909n">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260909o">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260909n"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260909n"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260909n"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260909o"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260909o"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260909o"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1176,7 +1176,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     \label{eq:fp-general}
 \end{equation}
 
-<p>Equation \eqref{eq:fp32} is the IEEE 754 single-precision instance of this form, and the formats below differ in how they divide the available bits between the exponent and the mantissa. The widely used FP32 format allocates 8 bits to the exponent and 23 bits to the mantissa, enabling a wide dynamic range suitable for a broad range of numerical tasks. However, this range often exceeds what is needed in DNNs, particularly during inference, leading to low information-per-bit density and unnecessary costs in power, area, and latency <d-cite key="leon2021improving"></d-cite>.</p>
+<p>This form generalizes \eqref{eq:fp32}, the IEEE 754 single-precision case, and the formats below specialize it differently in how they divide the available bits between the exponent and the mantissa. The widely used FP32 format allocates 8 bits to the exponent and 23 bits to the mantissa, enabling a wide dynamic range suitable for a broad range of numerical tasks. However, this range often exceeds what is needed in DNNs, particularly during inference, leading to low information-per-bit density and unnecessary costs in power, area, and latency <d-cite key="leon2021improving"></d-cite>.</p>
 
 <p>Reduced floating-point formats such as FP16 <d-cite key="kahan1996ieee"></d-cite>, Google&#8217;s BFloat16 (BF16) <d-cite key="guntoro2020next,intel2018bf16"></d-cite>, NVIDIA&#8217;s TensorFloat-32 (TF32) <d-cite key="choquette2021nvidia"></d-cite>, and 8-bit floating-point formats <d-cite key="wu2021low,kang2018short"></d-cite> reduce memory and arithmetic cost while preserving more dynamic range than fixed-point formats. Industry-oriented formats such as Microsoft&#8217;s MSFP <d-cite key="darvish2020pushing"></d-cite> and Tesla&#8217;s CFloat8/CFloat16 <d-cite key="tesla_dojo_2025"></d-cite> further show how major hardware vendors tailor numerical formats to inference and training workloads <d-cite key="ma2021specializing,vogel2018efficient"></d-cite>.</p>
 
@@ -1554,7 +1554,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260909n"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260909o"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1575,9 +1575,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260909n"></script>
-  <script src="assets/js/supplements.js?v=20260909n"></script>
-  <script src="assets/js/figs.js?v=20260909n"></script>
+  <script src="assets/js/data.js?v=20260909o"></script>
+  <script src="assets/js/supplements.js?v=20260909o"></script>
+  <script src="assets/js/figs.js?v=20260909o"></script>
 
   </body>
 
