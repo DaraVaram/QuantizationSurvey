@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260910b">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260910c">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260910b"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260910b"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260910b"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260910c"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260910c"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260910c"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1160,7 +1160,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <div class="tax-leaf-label">5.2. Adaptive Fixed-Point Formats</div>
     <span class="mchip" data-nav="adaptive-fixed" data-term="Zero-Skew">Zero-Skew <d-cite key="jacob2018quantization"></d-cite></span><span class="mchip" data-nav="adaptive-fixed" data-term="F8Net">F8Net <d-cite key="jin2022f8net"></d-cite></span><span class="mchip" data-nav="adaptive-fixed" data-term="VS-Quant">Vs-Quant <d-cite key="dai2021vs"></d-cite></span>
     <div class="tax-leaf-label">5.3. Tapered-Precision Formats</div>
-    <span class="mchip" data-nav="tapered" data-term="Posit">Posit <d-cite key="gustafson2017beating,gustafson2"></d-cite></span><span class="mchip" data-nav="tapered" data-term="Takum">Takum <d-cite key="hunhold2024beating"></d-cite></span>
+    <span class="mchip" data-nav="tapered" data-term="Posit">Posit <d-cite key="gustafson2017beating,gustafson2"></d-cite></span><span class="mchip" data-nav="tapered" data-term="Takum">Takum <d-cite key="hunhold2024beating,hunhold2025tekum"></d-cite></span>
   </div>
   <figcaption><b>Figure 15:</b> Taxonomy of the alternative numerical representations reviewed in this section, grouped into reduced floating-point, adaptive fixed-point, and tapered-precision formats.</figcaption>
 </figure>
@@ -1209,7 +1209,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h3 id="tapered">5.3&ensp;Tapered-Precision Formats</h3>
 
-<p>A third direction explores tapered-precision formats, which vary the number of mantissa bits with the magnitude of the value being encoded rather than fixing the field widths in advance. Two are relevant here: Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>, and the more recent takum <d-cite key="hunhold2024beating"></d-cite>. Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
+<p>A third direction explores tapered-precision formats, which vary the number of mantissa bits with the magnitude of the value being encoded rather than fixing the field widths in advance. Two are relevant here: (1) Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>, and (2) takum <d-cite key="hunhold2024beating,hunhold2025tekum"></d-cite>. Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
 
 <p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits, although the 2022 posit standard fixes \(es\) at 2 and parameterizes a posit by its bit-width alone <d-cite key="mallasen2025navigating"></d-cite>. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered precision</em>, a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
 
@@ -1560,7 +1560,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260910b"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260910c"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1581,9 +1581,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260910b"></script>
-  <script src="assets/js/supplements.js?v=20260910b"></script>
-  <script src="assets/js/figs.js?v=20260910b"></script>
+  <script src="assets/js/data.js?v=20260910c"></script>
+  <script src="assets/js/supplements.js?v=20260910c"></script>
+  <script src="assets/js/figs.js?v=20260910c"></script>
 
   </body>
 
