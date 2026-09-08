@@ -143,7 +143,7 @@ guide: {
       rank: 1, name: "TFLM on Cortex-M", fam: "arm", color: "#D81B60",
       story: "The mainstream route. Quantize to INT8, export through TensorFlow Lite, and run under TFLM, which calls CMSIS-NN kernels on any Cortex-M part. Take it when mature tooling and portability matter more than peak efficiency.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:tflite", run: "f:tflm" },
-      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16", "n:fxp"],
+      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:tflite", "f:onnx"], run: ["f:tflm", "f:onnxrt", "f:minimal"] },
       implies: ["d:uni", "d:sym", "d:asym", "d:pt", "d:pc", "d:static", "d:calib", "f:cmsis"],
       targets: ["h:stm32", "h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo"]
@@ -153,7 +153,7 @@ guide: {
       story: "The tightly coupled CNN-accelerator route, and the accelerator path we would start from today. ai8x-training is a PyTorch fork that trains with the accelerator's constraints in the loop; ai8x-synthesis maps the network into it. This is how sub-8-bit and mixed widths actually reach a shipping device.",
       steps: { path: "q:QAT", strat: "s:uniform", repr: "n:INT8", dev: "f:ai8xt", conv: "f:ai8xs", run: "f:accel" },
       can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform", "s:mixed", "s:extreme"],
-             repr: ["n:INT8", "n:INT4", "n:INT2", "n:INT1", "n:mixed", "n:fxp"],
+             repr: ["n:INT8", "n:INT4", "n:INT2", "n:INT1", "n:mixed"],
              dev: ["f:ai8xt"], conv: ["f:ai8xs"], run: ["f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa", "f:pytorch"],
       targets: ["h:max000", "h:max002"]
@@ -162,7 +162,7 @@ guide: {
       rank: 3, name: "STM32Cube.AI", fam: "arm", color: "#AD1457",
       story: "The vendor route on STM32. Cube.AI converts the trained model straight into embedded C and brings its own runtime, so there is no separate inference engine to choose. That trades portability for a shorter path to working firmware.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: null },
-      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16", "n:fxp"],
+      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:cubeai"], run: [] },
       implies: ["d:uni", "d:sym", "d:asym", "d:pc", "d:static", "d:calib"],
       targets: ["h:stm32"]
@@ -171,7 +171,7 @@ guide: {
       rank: 4, name: "TFLM + ESP-NN on ESP32", fam: "riscv", color: "#EF6C00",
       story: "The commercial RISC-V route. The same TensorFlow Lite export as on Cortex-M, run by TFLM with ESP-NN kernels. Take it when a low-cost open-ISA part suffices and a younger toolchain is acceptable.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:tflite", run: "f:tflm" },
-      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:fxp"],
+      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:tflite", "f:onnx"], run: ["f:tflm", "f:ariel"] },
       implies: ["d:uni", "d:asym", "d:pt", "d:static", "d:calib", "f:espnn"],
       targets: ["h:c3", "h:c6", "h:p4"]
@@ -180,7 +180,7 @@ guide: {
       rank: 5, name: "Ethos-U toolchain", fam: "npu", color: "#00838F",
       story: "The microNPU route. The Ethos-U compiler maps whatever of the network it supports onto the accelerator and leaves the rest on the Cortex-M core, so operator coverage decides how much you actually gain.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:ethos", run: "f:accel" },
-      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16", "n:fxp"],
+      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:ethos"], run: ["f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
       targets: ["h:ethos"]
@@ -189,7 +189,7 @@ guide: {
       rank: 6, name: "Neural-ART on STM32N6", fam: "npu", color: "#455A64",
       story: "ST's accelerator route, deployed through the same Cube tooling as the Cortex-M parts, which makes it the shortest move from an existing STM32 product to an accelerated one.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:neuralart", run: "f:accel" },
-      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:fxp"],
+      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:neuralart"], run: ["f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
       targets: ["h:n6"]
@@ -198,7 +198,7 @@ guide: {
       rank: 7, name: "TFLite on NXP MCXN", fam: "npu", color: "#6D4C41",
       story: "A middle route: a standard TensorFlow Lite export, executed by the vendor runtime on an integrated NPU, so the accelerator arrives without a bespoke toolchain.",
       steps: { path: "q:QAT", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:tflite", run: "f:accel" },
-      can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform"], repr: ["n:INT8", "n:fxp"],
+      can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform"], repr: ["n:INT8"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:tflite"], run: ["f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
       targets: ["h:mcxn"]
@@ -208,7 +208,7 @@ guide: {
       story: "The smallest accelerator route here, on a Cortex-M0+ part with only tens of kilobytes of SRAM. Its NPU carries widths down to INT2, so it suits a model small enough to be co-designed with the memory rather than fitted to it afterwards. TinyEngine comes out of the MCUNet line of work, so this is a PyTorch flow, and conversion happens inside the vendor tooling rather than as a step you pick.",
       steps: { path: "q:QAT", strat: "s:uniform", repr: "n:INT8", dev: "f:pytorch", conv: null, run: "f:accel" },
       can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform", "s:mixed", "s:extreme"],
-             repr: ["n:INT8", "n:INT4", "n:INT2", "n:mixed", "n:fxp"],
+             repr: ["n:INT8", "n:INT4", "n:INT2", "n:mixed"],
              dev: ["f:pytorch"], conv: [], run: ["f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
       targets: ["h:mspm0"]
@@ -217,7 +217,7 @@ guide: {
       rank: 9, name: "Edge Impulse", fam: "arm", color: "#F06292",
       story: "The end-to-end route. Data collection, feature extraction, training, quantization, and firmware generation happen in one workflow, which is the fastest way to a working prototype and the least visibility into what it emits.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:ei", conv: "f:tflite", run: "f:tflm" },
-      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:fxp"],
+      can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
              dev: ["f:ei"], conv: ["f:tflite"], run: ["f:tflm"] },
       implies: ["d:uni", "d:asym", "d:pt", "d:static", "d:calib", "f:cmsis"],
       targets: ["h:nano33", "h:stm32", "h:spresense", "h:openmv", "h:sparkfun"]
@@ -228,7 +228,7 @@ guide: {
       story: "The clustered-accelerator route, and the one much of the surveyed literature runs on. GAPflow tiles the graph, orchestrates DMA, and generates code for the convolution engine. Treat it as a reference point rather than a starting point, since the GAP parts are no longer generally available: take it only if you already have the hardware and toolchain.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:pytorch", conv: "f:gapflow", run: "f:accel" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform", "s:mixed", "s:extreme"],
-             repr: ["n:INT8", "n:INT16", "n:INT4", "n:INT2", "n:mixed", "n:FP16", "n:fxp"],
+             repr: ["n:INT8", "n:INT16", "n:INT4", "n:INT2", "n:mixed", "n:FP16"],
              dev: ["f:pytorch", "f:tf"], conv: ["f:gapflow"], run: ["f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib", "r:hwa"],
       targets: ["h:gap9", "h:gap8"]
@@ -239,7 +239,7 @@ guide: {
       story: "The research route, and the only RISC-V one that reaches below 8 bits. Co-designed kernels and ISA extensions carry mixed and low-bit precision on PULP-class cores, at the cost of leaving commercial silicon behind.",
       steps: { path: "q:QAT", strat: "s:mixed", repr: "n:mixed", dev: "f:pytorch", conv: null, run: "f:pulpnn" },
       can: { path: ["q:QAT", "q:PTQ"], strat: ["s:mixed", "s:extreme", "s:uniform"],
-             repr: ["n:INT8", "n:INT4", "n:INT2", "n:mixed", "n:fxp"],
+             repr: ["n:INT8", "n:INT4", "n:INT2", "n:mixed"],
              dev: ["f:pytorch"], conv: [], run: ["f:pulpnn", "f:xpulp"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
       targets: ["h:pulp"]
@@ -315,7 +315,6 @@ guide: {
     "d:calib": "Calibration data selects the clipping range. PTQ quality depends on it more than on anything else.",
     "n:INT8": "INT8 is the common denominator of every runtime and every platform in this stack.",
     "n:INT16": "INT16 buys accuracy headroom at twice the memory, and only the platforms that list it can carry it.",
-    "n:fxp": "Fixed-point is the family every integer route belongs to. In practice on an MCU it means INT8, an integer grid with the scale kept outside the kernel.",
     "n:mixed": "Several widths in one network, assigned per layer, per channel, per group, or separately to weights and activations. It needs a toolchain that can express more than one width and a part that carries them.",
     "n:FP16": "No MCU here lists FP16 among its formats; the one reported use ran on the GAP9 cluster cores rather than its accelerator.",
     "n:posit": "Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the route stops at this step. Research hardware such as PHEE is where it currently ends.",

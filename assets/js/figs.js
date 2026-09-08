@@ -811,7 +811,6 @@
       var w = PW[h];
       if (!w) return true;                                   // unlisted part: do not pretend to know
       if (repr === "n:mixed") return SUB8.some(function (x) { return w.indexOf(x) !== -1; }) && w.length > 1;
-      if (repr === "n:fxp") return true;
       if (FMT[repr.slice(2)]) return w.indexOf(repr) !== -1;
       return true;
     }
@@ -922,7 +921,7 @@
       "mpq": "s:mixed", "mixed": "s:mixed", "mixed-precision": "s:mixed", "mixed precision": "s:mixed",
       "sub-8-bit": "s:extreme", "sub8": "s:extreme", "sub-8": "s:extreme", "low-bit": "s:extreme", "binary": "n:INT1", "ternary": "n:INT1", "bnn": "n:INT1",
       "int8": "n:INT8", "uint8": "n:INT8", "int16": "n:INT16", "int4": "n:INT4", "int2": "n:INT2", "fp16": "n:FP16", "bf16": "n:BF16", "fp8": "n:FP8",
-      "msfp": "n:MSFP", "block floating-point": "n:MSFP", "posit": "n:posit", "takum": "n:takum", "fixed-point": "n:fxp",
+      "msfp": "n:MSFP", "block floating-point": "n:MSFP", "posit": "n:posit", "takum": "n:takum", "fixed-point": "n:INT8",
       "qat": "q:QAT", "ptq": "q:PTQ", "post-training": "q:PTQ", "quantization-aware": "q:QAT",
       "tflm": "f:tflm", "tflite": "f:tflite", "litert": "f:tflite", "tensorflow lite": "f:tflite", "tensorflow": "f:tf", "pytorch": "f:pytorch",
       "edge impulse": "f:ei", "edgeimpulse": "f:ei", "cmsis": "f:cmsis", "cmsis-nn": "f:cmsis", "onnx": "f:onnx", "cube.ai": "f:cubeai", "stm32cube": "f:cubeai",
