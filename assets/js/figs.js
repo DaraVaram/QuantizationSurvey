@@ -795,12 +795,12 @@
         story: "<b>The accelerator-backed path.</b> QAT in PyTorch, then the vendor toolchain (ai8x) maps the network onto the MAX78000 CNN accelerator, as in <a class=\"xref\" href=\"#table-6\">Table 6</a>. The strongest latency and energy predictability, and the strongest dependence on hardware-specific tooling."
       },
       sub8: {
-        keys: ["cnn", "xlb", "uni", "sym", "pt", "bin", "int4", "custom", "cm", "isa"], pin: "8.1",
-        story: "<b>The research frontier.</b> Binary and sub-8-bit networks reach MCUs only through custom kernels and ISA-level optimizations, because mainstream runtimes stop at INT8. That gap is <a class=\"xref\" href=\"#ch-sub8\">challenge 8.1</a>."
+        keys: ["cnn", "xlb", "uni", "sym", "pt", "bin", "int4", "custom", "cm", "isa"], pin: "8.3",
+        story: "<b>The research frontier.</b> Binary and sub-8-bit networks reach MCUs only through custom kernels and ISA-level optimizations, because mainstream runtimes stop at INT8. That gap is <a class=\"xref\" href=\"#ch-sub8\">challenge 8.3</a>."
       },
       posit: {
-        keys: ["qat", "nonuni", "posit"], pin: "8.6", broken: true,
-        story: "<b>An alternative format.</b> Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the path stops at the number system. Research hardware such as PHEE (Section 5.3) is where it currently ends, which is <a class=\"xref\" href=\"#ch-formats\">challenge 8.6</a>."
+        keys: ["qat", "nonuni", "posit"], pin: "8.4", broken: true,
+        story: "<b>An alternative format.</b> Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the path stops at the number system. Research hardware such as PHEE (Section 5.3) is where it currently ends, which is <a class=\"xref\" href=\"#ch-formats\">challenge 8.4</a>."
       }
     };
     var active = null;

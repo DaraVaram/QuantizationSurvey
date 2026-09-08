@@ -630,12 +630,12 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
             <div class="toc-sub"><a href="#apps-npu">7.3&ensp;NPU-Integrated MCUs</a></div>
             <div class="toc-sub"><a href="#cross-case">7.4&ensp;Cross-Case Recommendations</a></div>
             <div><a href="#challenges">8&ensp;Challenges and Future Directions</a></div>
-            <div class="toc-sub"><a href="#ch-sub8">8.1&ensp;Limited Sub-8-Bit and QAT Support</a></div>
-            <div class="toc-sub"><a href="#ch-operator">8.2&ensp;Operator Support in Quantization Toolchains</a></div>
-            <div class="toc-sub"><a href="#ch-memory">8.3&ensp;Static Memory Allocation Constraints and Mixed Precision</a></div>
-            <div class="toc-sub"><a href="#ch-arch">8.4&ensp;Extended Support for Emerging Architectures</a></div>
-            <div class="toc-sub"><a href="#ch-training">8.5&ensp;On-Device Training</a></div>
-            <div class="toc-sub"><a href="#ch-formats">8.6&ensp;Support for Alternative Numerical Formats</a></div>
+            <div class="toc-sub"><a href="#ch-operator">8.1&ensp;Operator Support in Quantization Toolchains</a></div>
+            <div class="toc-sub"><a href="#ch-arch">8.2&ensp;Extended Support for Emerging Architectures</a></div>
+            <div class="toc-sub"><a href="#ch-sub8">8.3&ensp;Limited Sub-8-Bit and QAT Support</a></div>
+            <div class="toc-sub"><a href="#ch-formats">8.4&ensp;Support for Alternative Numerical Formats</a></div>
+            <div class="toc-sub"><a href="#ch-memory">8.5&ensp;Static Memory Allocation Constraints and Mixed Precision</a></div>
+            <div class="toc-sub"><a href="#ch-training">8.6&ensp;On-Device Training</a></div>
             <div class="toc-sub"><a href="#ch-codesign">8.7&ensp;Hardware-Aware Quantization Co-Design</a></div>
             <div class="toc-sub"><a href="#ch-sustain">8.8&ensp;Sustainability and Environmental Impact</a></div>
             <div><a href="#conclusion">9&ensp;Conclusion</a></div>
@@ -1609,7 +1609,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
           <span class="stk-sep" aria-hidden="true"></span>
           <span class="mchip stk-alt" data-k="cnn" data-nav="apps-npu" data-term="CNN">CNN</span><span class="mchip stk-alt" data-k="tfm" data-nav="apps-npu" data-term="transformer">Transformer</span><span class="mchip stk-alt" data-k="kd" data-nav="apps-riscv" data-term="knowledge distillation">Knowledge distillation</span>
         </div>
-        <div class="stk-seam"><a class="stk-pin" href="#ch-operator" data-bridge="app sw" data-tip="<b>8.2 Operator support.</b> Converting a whole network exposes operators the quantization toolchain does not cover, so the model and the software stack disagree about what can run.">8.2</a><a class="stk-pin" href="#ch-arch" data-bridge="app sw" data-tip="<b>8.4 Emerging architectures.</b> Transformers and diffusion models reach the edge faster than quantization frameworks learn to support their operations and memory patterns.">8.4</a></div>
+        <div class="stk-seam"><a class="stk-pin" href="#ch-operator" data-bridge="app sw" data-tip="<b>8.1 Operator support.</b> Converting a whole network exposes operators the quantization toolchain does not cover, so the model and the software stack disagree about what can run.">8.1</a><a class="stk-pin" href="#ch-arch" data-bridge="app sw" data-tip="<b>8.2 Emerging architectures.</b> Transformers and diffusion models reach the edge faster than quantization frameworks learn to support their operations and memory patterns.">8.2</a></div>
       </div>
 
       <div class="stk-layer stk-tan" data-layer="alg">
@@ -1635,7 +1635,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
           <span class="stk-sep" aria-hidden="true"></span>
           <span class="mchip stk-alt" data-k="fp" data-nav="reduced-fp" data-term="BF16">FP16 &#183; BF16 &#183; TF32</span><span class="mchip stk-alt" data-k="fp8" data-nav="reduced-fp" data-term="FP8">FP8 &#183; MSFP</span><span class="mchip stk-alt" data-k="afx" data-nav="adaptive-fixed" data-term="fixed-point">Adaptive fixed-point</span><span class="mchip stk-alt" data-k="posit" data-nav="tapered" data-term="Posit">Posit</span><span class="mchip stk-alt" data-k="takum" data-nav="tapered" data-term="takum">Takum</span>
         </div>
-        <div class="stk-seam"><a class="stk-pin" href="#ch-sub8" data-bridge="alg num sw" data-tip="<b>8.1 Sub-8-bit and QAT support.</b> Mainstream frameworks stop at 8 bits, so sub-8-bit and QAT flows fall back to device-specific toolchains with limited portability.">8.1</a><a class="stk-pin" href="#ch-formats" data-bridge="num sw hw" data-tip="<b>8.6 Alternative numerical formats.</b> Posit and other emerging formats widen the design space on paper, but no mainstream runtime or MCU silicon executes them.">8.6</a></div>
+        <div class="stk-seam"><a class="stk-pin" href="#ch-sub8" data-bridge="alg num sw" data-tip="<b>8.3 Sub-8-bit and QAT support.</b> Mainstream frameworks stop at 8 bits, so sub-8-bit and QAT flows fall back to device-specific toolchains with limited portability.">8.3</a><a class="stk-pin" href="#ch-formats" data-bridge="num sw hw" data-tip="<b>8.4 Alternative numerical formats.</b> Posit and other emerging formats widen the design space on paper, but no mainstream runtime or MCU silicon executes them.">8.4</a></div>
       </div>
 
       <div class="stk-layer stk-blue" data-layer="sw">
@@ -1643,7 +1643,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
         <div class="stk-chips">
           <span class="mchip" data-k="fe" data-nav="software-frameworks" data-term="front end">Front end &#183; TensorFlow/LiteRT &#183; PyTorch &#183; ONNX</span><span class="mchip" data-k="rt" data-nav="software-frameworks" data-term="TFLM">Runtime &#183; TFLM</span><span class="mchip" data-k="kern" data-nav="software-frameworks" data-term="CMSIS-NN">Kernels &#183; CMSIS-NN &#183; PULP-NN</span><span class="mchip" data-k="vendor" data-nav="software-frameworks" data-term="STM32Cube.AI">Vendor toolchains &#183; STM32Cube.AI &#183; ai8x &#183; nntool</span><span class="mchip" data-k="e2e" data-nav="software-frameworks" data-term="Edge Impulse">Edge Impulse</span><span class="mchip" data-k="custom" data-nav="software-frameworks" data-term="ISA-level">Co-designed kernels &amp; ISA extensions</span>
         </div>
-        <div class="stk-seam"><a class="stk-pin" href="#ch-memory" data-bridge="alg sw hw" data-tip="<b>8.3 Static memory allocation.</b> A fixed tensor arena on KB-scale SRAM leaves little room for mixed-precision layers or variable-shaped tensors.">8.3</a><a class="stk-pin" href="#ch-training" data-bridge="alg sw hw" data-tip="<b>8.5 On-device training.</b> Training on the device asks for memory, energy, and kernels that MCUs and their runtimes rarely provide.">8.5</a></div>
+        <div class="stk-seam"><a class="stk-pin" href="#ch-memory" data-bridge="alg sw hw" data-tip="<b>8.5 Static memory allocation.</b> A fixed tensor arena on KB-scale SRAM leaves little room for mixed-precision layers or variable-shaped tensors.">8.5</a><a class="stk-pin" href="#ch-training" data-bridge="alg sw hw" data-tip="<b>8.6 On-device training.</b> Training on the device asks for memory, energy, and kernels that MCUs and their runtimes rarely provide.">8.6</a></div>
       </div>
 
       <div class="stk-layer stk-blue" data-layer="hw">
@@ -1668,25 +1668,13 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h2 id="challenges">8&ensp;Challenges and Future Directions</h2>
 
-<p>Despite the progress surveyed here, several obstacles continue to limit the broader, more systematic deployment of quantized neural networks on MCU-class devices. These challenges are no longer purely algorithmic. Rather, they increasingly arise at the interfaces between quantization methods, deployment toolchains, runtime systems, and hardware support. Broadly speaking, the remaining gaps fall into three connected categories: software and framework support, reflected in limited sub-8-bit QAT and operator coverage; runtime flexibility for emerging models and precision schemes, reflected in static memory allocation, mixed precision, on-device training, emerging architectures, and alternative numerical formats; and system-level evaluation and hardware&#8211;software co-design, reflected in hardware-aware quantization and sustainability. The following subsections discuss these bottlenecks and outline the most promising directions for future work.</p>
+<p>Despite the progress surveyed here, several obstacles continue to limit the broader, more systematic deployment of quantized neural networks on MCU-class devices. These challenges are no longer purely algorithmic. Rather, they increasingly arise at the interfaces between quantization methods, deployment toolchains, runtime systems, and hardware support. We therefore present them in the order they arise in the deployment stack of <a class="xref" href="#figure-17">Fig. 17</a>, descending from the model to the silicon: operator and architecture coverage in the quantization toolchains; the numerical formats that the stack will not carry, from sub-8-bit integers to Posit; and the runtime and hardware limits that constrain mixed precision and on-device adaptation. The last two challenges, hardware-aware co-design and sustainability, span the full height of the stack rather than sitting between any two layers. The following subsections discuss these bottlenecks and outline the most promising directions for future work.</p>
 
-<h3 id="ch-sub8">8.1&ensp;Limited Sub-8-Bit and QAT Support</h3>
-
-<p>Mainstream frameworks such as TensorFlow and PyTorch currently lack native support for quantization below 8 bits. As a result, researchers often turn to device-specific toolchains (e.g., MAX7800x frameworks) or custom implementations, which typically have limited documentation, non-standard workflows, and reduced reproducibility. This hinders adoption in adjacent applications and prevents building on standardized foundations. While 8-bit quantization remains the norm for MCU-class devices, more aggressive approaches see limited use primarily due to insufficient framework support.</p>
-
-<p>Future work should extend popular frameworks to support sub-8-bit quantization, particularly for extreme edge devices, given that 4-bit and even binary models can be effective in many scenarios (see <a class="xref" href="#extreme-low-bit">Section 4.2</a>). Integrating QAT at these low precisions would further standardize workflows for latency- and energy-sensitive applications. Community-driven initiatives could also define a compact, quantization-aware model exchange format (e.g., an extension of ONNX) that encodes precision, scale, and operation-level metadata to promote interoperability and reduce engineering overhead.</p>
-
-<h3 id="ch-operator">8.2&ensp;Operator Support in Quantization Toolchains</h3>
+<h3 id="ch-operator">8.1&ensp;Operator Support in Quantization Toolchains</h3>
 
 <p>Current quantization frameworks often lack consistent operator coverage, leading to incompatibilities, especially when converting complete networks to their quantized forms. For instance, TensorFlow&#8217;s QAT pipeline requires manual annotations and replacements for many layer operations, reducing the portability of QAT-tuned models and complicating deployment on resource-constrained devices. Addressing this gap will require a unified operator support standard across libraries, supported by exporter&#8211;compiler co-design and validation tools that ensure full &#8220;quantizability&#8221; and provide safe replacements where native support is absent.</p>
 
-<h3 id="ch-memory">8.3&ensp;Static Memory Allocation Constraints and Mixed Precision</h3>
-
-<p>Most embedded frameworks, such as TFLM <d-cite key="tensorflow"></d-cite>, rely on static memory allocation via a fixed tensor arena. While this simplifies management, it restricts the deployment of models with variable-shaped tensors or mixed-precision layers. Mixed precision quantization, which was shown to improve efficiency without compromising performance <d-cite key="mazumder2021,htq"></d-cite> (see <a class="xref" href="#mixed-precision">Section 4.3</a>), is rarely supported due to this limitation, as hardware and toolchains are tied to fixed allocation schemes. RAMS <d-cite key="chu2026rams"></d-cite> addresses this limitation from the runtime side by scaling INT8 inference memory according to available resources and using cache-aware memory management. Compared with the widely used TFLM runtime, it reports up to a \(1.57\times\) speedup and a 67.74% reduction in power consumption with a comparable memory footprint. Such flexible runtimes remain uncommon in MCU deployment stacks.</p>
-
-<p>To address these limitations, future work should explore dynamic memory virtualization at the software level and extend MCU-class deployment stacks to better support mixed-precision model parameters. This would be essential to support more complex models, flexible precision settings, and efficient multi-model deployment on memory-constrained hardware.</p>
-
-<h3 id="ch-arch">8.4&ensp;Extended Support for Emerging Architectures</h3>
+<h3 id="ch-arch">8.2&ensp;Extended Support for Emerging Architectures</h3>
 
 <p>Modern architectures, such as transformers and diffusion models, are gaining traction at the edge but remain largely unsupported in current quantization frameworks due to their non-convolutional operations and complex memory patterns.</p>
 
@@ -1694,15 +1682,27 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>To fully integrate such architectures into embedded AI workflows, quantization toolchains must extend their support to non-CNN models, including those with attention-aware operators, advanced memory scheduling, and mixed precision flexibility. Recent advances form a foundation, but broader integration is needed to close this gap.</p>
 
-<h3 id="ch-training">8.5&ensp;On-Device Training</h3>
+<h3 id="ch-sub8">8.3&ensp;Limited Sub-8-Bit and QAT Support</h3>
+
+<p>Mainstream frameworks such as TensorFlow and PyTorch currently lack native support for quantization below 8 bits. As a result, researchers often turn to device-specific toolchains (e.g., MAX7800x frameworks) or custom implementations, which typically have limited documentation, non-standard workflows, and reduced reproducibility. This hinders adoption in adjacent applications and prevents building on standardized foundations. While 8-bit quantization remains the norm for MCU-class devices, more aggressive approaches see limited use primarily due to insufficient framework support.</p>
+
+<p>Future work should extend popular frameworks to support sub-8-bit quantization, particularly for extreme edge devices, given that 4-bit and even binary models can be effective in many scenarios (see <a class="xref" href="#extreme-low-bit">Section 4.2</a>). Integrating QAT at these low precisions would further standardize workflows for latency- and energy-sensitive applications. Community-driven initiatives could also define a compact, quantization-aware model exchange format (e.g., an extension of ONNX) that encodes precision, scale, and operation-level metadata to promote interoperability and reduce engineering overhead.</p>
+
+<h3 id="ch-formats">8.4&ensp;Support for Alternative Numerical Formats</h3>
+
+<p>Conventional 8-bit and fixed-point formats limit flexibility across diverse edge workloads. Emerging formats like Posit offer improved dynamic range but lack mainstream hardware support. For example, POLARON <d-cite key="lokhande2025polaron"></d-cite> introduces a trans-precision framework that adaptively switches between floating-point, fixed-point, and Posit representations. Its reconfigurable hardware and precision-aware controller enable runtime tuning based on workload sensitivity. Integrating trans-precision support into quantization toolchains and hardware platforms could enable more adaptive and efficient inference under tight resource constraints.</p>
+
+<h3 id="ch-memory">8.5&ensp;Static Memory Allocation Constraints and Mixed Precision</h3>
+
+<p>Most embedded frameworks, such as TFLM <d-cite key="tensorflow"></d-cite>, rely on static memory allocation via a fixed tensor arena. While this simplifies management, it restricts the deployment of models with variable-shaped tensors or mixed-precision layers. Mixed precision quantization, which was shown to improve efficiency without compromising performance <d-cite key="mazumder2021,htq"></d-cite> (see <a class="xref" href="#mixed-precision">Section 4.3</a>), is rarely supported due to this limitation, as hardware and toolchains are tied to fixed allocation schemes. RAMS <d-cite key="chu2026rams"></d-cite> addresses this limitation from the runtime side by scaling INT8 inference memory according to available resources and using cache-aware memory management. Compared with the widely used TFLM runtime, it reports up to a \(1.57\times\) speedup and a 67.74% reduction in power consumption with a comparable memory footprint. Such flexible runtimes remain uncommon in MCU deployment stacks.</p>
+
+<p>To address these limitations, future work should explore dynamic memory virtualization at the software level and extend MCU-class deployment stacks to better support mixed-precision model parameters. This would be essential to support more complex models, flexible precision settings, and efficient multi-model deployment on memory-constrained hardware.</p>
+
+<h3 id="ch-training">8.6&ensp;On-Device Training</h3>
 
 <p>While inference on MCUs has grown into a practical standard, enabling on-device training remains a major challenge due to tight memory, energy, and compute constraints. This limitation hinders applications that require continual learning, federated learning, or user-specific personalization. Several recent efforts have been made to address these challenges <d-cite key="deutel2024device,kang2024device"></d-cite>, yet adoption remains immature. TrainDeeploy <d-cite key="wang2026traindeeploy"></d-cite> explicitly extends Deeploy&#8217;s inference compiler <d-cite key="scherer2024deeploy"></d-cite> with automatic differentiation and training-oriented passes while retaining its compile-time static allocation and tiling principles. For LoRA training, it reports a 23% reduction in dynamic memory use, \(15\times\) fewer trainable parameters and gradients, \(1.6\times\) less memory transfer, and \(2.3\)&#8211;\(3.5\times\) speedup from GEMM acceleration. However, the evaluation uses FP32 training on a simulated heterogeneous PULP-based SoC with a RedMulE accelerator, so it points to accelerator-assisted adaptation rather than training directly on a general-purpose MCU.</p>
 
 <p>To enable on-device training, frameworks must support quantized gradient descent, efficient memory reallocation, and selective fine-tuning strategies. Although these components have been studied individually, future research can work on proposing robust frameworks for continual and federated learning directly on MCUs. This would extend MCU quantization beyond fixed offline inference to truly adaptive, privacy-preserving intelligence at the extreme edge.</p>
-
-<h3 id="ch-formats">8.6&ensp;Support for Alternative Numerical Formats</h3>
-
-<p>Conventional 8-bit and fixed-point formats limit flexibility across diverse edge workloads. Emerging formats like Posit offer improved dynamic range but lack mainstream hardware support. For example, POLARON <d-cite key="lokhande2025polaron"></d-cite> introduces a trans-precision framework that adaptively switches between floating-point, fixed-point, and Posit representations. Its reconfigurable hardware and precision-aware controller enable runtime tuning based on workload sensitivity. Integrating trans-precision support into quantization toolchains and hardware platforms could enable more adaptive and efficient inference under tight resource constraints.</p>
 
 <h3 id="ch-codesign">8.7&ensp;Hardware-Aware Quantization Co-Design</h3>
 
@@ -1714,7 +1714,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>Recent work has begun to explicitly position compression and low-bit quantization through a sustainability lens <d-cite key="rashid2024tinym,rashid2025hac"></d-cite>. However, to make sustainability a defensible and reproducible future direction for quantization on microcontrollers, we recommend that future work (i) treat sustainability as a first-class objective in quantization by explicitly optimizing accuracy&#8211;latency&#8211;memory alongside energy and, where feasible, carbon-aware metrics, (ii) report both end-to-end and phase-separated energy/latency so that quantization gains are not overstated or masked by pipeline overheads <d-cite key="bartoli2025benchmarking"></d-cite>, (iii) evaluate system-level trade-offs jointly (compute versus communication, update frequency, and duty-cycle effects) rather than relying on model-only efficiency, and (iv) extend quantization toolchains to better support deployment regimes aligned with sustainability constraints, including lifetime-aware scheduling, energy-budgeted inference policies, and maintenance strategies that minimize costly re-training or frequent device-side updates.</p>
 
-<p>The next phase of progress in MCU quantization will likely depend less on isolated improvements in low-bit arithmetic and more on the maturity of end-to-end deployment. Software support for sub-8-bit QAT and operator coverage must improve alongside runtime flexibility for mixed precision, on-device adaptation, emerging architectures, and alternative numerical formats. At the same time, hardware-aware co-design and system-level evaluation will be needed to ensure that quantization gains translate into measurable improvements in latency, energy, memory use, and sustainability. Future gains will therefore come from treating quantization as part of a unified deployment stack rather than as a standalone compression step, enabling MCU-scale intelligence that is efficient, robust, portable, and sustainable across real-world edge applications.</p>
+<p>The next phase of progress in MCU quantization will likely depend less on isolated improvements in low-bit arithmetic and more on the maturity of end-to-end deployment. Operator and architecture coverage in the toolchains must improve alongside the range of numerical formats the stack is willing to carry, and alongside the runtime and hardware flexibility that mixed precision and on-device adaptation demand. At the same time, hardware-aware co-design and system-level evaluation will be needed to ensure that quantization gains translate into measurable improvements in latency, energy, memory use, and sustainability. Future gains will therefore come from treating quantization as part of a unified deployment stack rather than as a standalone compression step, enabling MCU-scale intelligence that is efficient, robust, portable, and sustainable across real-world edge applications.</p>
 
 <h2 id="conclusion">9&ensp;Conclusion</h2>
 
@@ -1758,7 +1758,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260910w"></script>
   <script src="assets/js/supplements.js?v=20260910w"></script>
-  <script src="assets/js/figs.js?v=20260910z"></script>
+  <script src="assets/js/figs.js?v=20260911a"></script>
 
   </body>
 
