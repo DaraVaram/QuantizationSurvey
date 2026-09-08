@@ -688,15 +688,15 @@
   })();
 
   /* ---------- Keyboard and focus parity for the remaining controls ----------
-     Figure 15's stages, Figure 10's method chips, Table 3's platforms and the
+     Figure 16's stages, Figure 10's method chips, Table 3's platforms and the
      citations inside the tables all explained themselves on hover only. Each
      now takes focus and reveals the same thing there. */
   (function () {
-    // Figure 15: every pipeline stage, including the inspection icon
-    $$("#figure-15 .f9-node").forEach(function (n) {
+    // Figure 16: every pipeline stage, including the inspection icon
+    $$("#figure-16 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
-    // Figure 10 / supplement method chips navigate into the prose. They contain
+    // Taxonomy (Figures 10 and 15) and supplement method chips navigate into the prose. They contain
     // <d-cite> children, so they stay spans with button semantics rather than
     // nesting one interactive element inside another.
     $$(".mchip[data-nav]").forEach(function (chip) {
@@ -725,7 +725,7 @@
     });
   })();
 
-  /* ---------- Figure 10 taxonomy + generic chip navigation ---------- */
+  /* ---------- Taxonomy figures + generic chip navigation ---------- */
   (function () {
     document.addEventListener("click", function (e) {
       if (e.target.closest && e.target.closest("d-cite")) return; // let citations be citations
