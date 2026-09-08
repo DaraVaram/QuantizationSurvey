@@ -594,6 +594,11 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         a.xref { border-bottom: none; color: inherit; }
         d-article { border-top: none; }
       }
+      /* Below the sidebar breakpoint Table 1 can no longer shrink to fit, and
+         d-article clips what spills out, so let the wrapper scroll instead. */
+      @media (max-width: 1024px) {
+        .ptable-wrap.t1-wide { overflow-x: auto; }
+      }
       @media (max-width: 768px) {
         table.ptable { font-size: 0.66rem; }
       }
