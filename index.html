@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260909l">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260909n">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260909l"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260909l"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260909l"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260909n"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260909n"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260909n"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1165,21 +1165,66 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <figcaption><b>Figure 15:</b> Taxonomy of the alternative numerical representations reviewed in this section, grouped into reduced floating-point, adaptive fixed-point, and tapered-accuracy formats.</figcaption>
 </figure>
 
+<p>As mentioned in <a class="xref" href="#numerical-representations">Section 2.1</a>, the core challenge is to approximate 32-bit floating-point numbers using fewer bits while maintaining numerical fidelity and enabling efficient hardware implementation. This trade-off becomes especially critical in constrained environments such as microcontrollers and edge devices. While formats like FP16 are widely supported by modern FPUs, they may not offer the optimal balance between accuracy, performance, and computational cost. Fixed-point and integer arithmetic, though hardware-efficient and simple, often suffer from a limited dynamic range and reduced expressivity&#8212;making them less suitable for deeper or more sensitive models. As a result, new number systems have emerged that better match the distributional characteristics of DNN weights and activations, aiming to improve both memory and compute efficiency.</p>
+
 <h3 id="reduced-fp">5.1&ensp;Reduced Floating-Point Formats</h3>
 
-<p>One direction revisits floating-point design. Reduced floating-point formats such as FP16 <d-cite key="kahan1996ieee"></d-cite>, Google&#8217;s BFloat16 (BF16) <d-cite key="guntoro2020next,intel2018bf16"></d-cite>, NVIDIA&#8217;s TensorFloat-32 (TF32) <d-cite key="choquette2021nvidia"></d-cite>, and 8-bit floating-point formats <d-cite key="wu2021low,kang2018short"></d-cite> reduce memory and arithmetic cost while preserving more dynamic range than fixed-point formats. Industry-oriented formats such as Microsoft&#8217;s MSFP <d-cite key="darvish2020pushing"></d-cite> and Tesla&#8217;s CFloat8/CFloat16 <d-cite key="tesla_dojo_2025"></d-cite> further show how major hardware vendors tailor numerical formats to inference and training workloads <d-cite key="ma2021specializing,vogel2018efficient"></d-cite>. Analytical studies such as Chmiel et al. <d-cite key="chmiel2020neural"></d-cite> also examine how different floating-point bit allocations affect numerical error in neural networks.</p>
+<p>One direction revisits floating-point design. Traditional floating-point (FP) representation encodes real numbers using a sign bit, an exponent, and a mantissa. A general form of this representation can be written as:</p>
 
-<p>Other reduced-floating-point variants improve compression or adaptability. BSFP <d-cite key="lo2023block"></d-cite> represents weights using compact sub-word components with separate scaling factors. AdaptiveFloat <d-cite key="tambe2020algorithm"></d-cite> adapts the numerical range per tensor, ANT <d-cite key="guo2022ant"></d-cite> adjusts the internal format from the encoded bit pattern, and DFloat <d-cite key="zhang202570"></d-cite> compresses redundant information in BF16-like representations. These formats are especially relevant for accelerators and training-oriented hardware, but they remain less common in MCU deployment, where integer kernels and memory-constrained runtimes are dominant.</p>
+\begin{equation}
+    n = \text{sign} \times 2^{\text{exponent value}} \times \text{mantissa value}.
+    \label{eq:fp-general}
+\end{equation}
+
+<p>Equation \eqref{eq:fp32} is the IEEE 754 single-precision instance of this form, and the formats below differ in how they divide the available bits between the exponent and the mantissa. The widely used FP32 format allocates 8 bits to the exponent and 23 bits to the mantissa, enabling a wide dynamic range suitable for a broad range of numerical tasks. However, this range often exceeds what is needed in DNNs, particularly during inference, leading to low information-per-bit density and unnecessary costs in power, area, and latency <d-cite key="leon2021improving"></d-cite>.</p>
+
+<p>Reduced floating-point formats such as FP16 <d-cite key="kahan1996ieee"></d-cite>, Google&#8217;s BFloat16 (BF16) <d-cite key="guntoro2020next,intel2018bf16"></d-cite>, NVIDIA&#8217;s TensorFloat-32 (TF32) <d-cite key="choquette2021nvidia"></d-cite>, and 8-bit floating-point formats <d-cite key="wu2021low,kang2018short"></d-cite> reduce memory and arithmetic cost while preserving more dynamic range than fixed-point formats. Industry-oriented formats such as Microsoft&#8217;s MSFP <d-cite key="darvish2020pushing"></d-cite> and Tesla&#8217;s CFloat8/CFloat16 <d-cite key="tesla_dojo_2025"></d-cite> further show how major hardware vendors tailor numerical formats to inference and training workloads <d-cite key="ma2021specializing,vogel2018efficient"></d-cite>.</p>
+
+<p>Concretely, FP16 uses a 5-bit exponent and a 10-bit mantissa, while BF16 retains the 8-bit exponent of FP32 but reduces the mantissa to 7 bits. TF32 also uses 8 exponent bits but limits the mantissa to 10 bits, resulting in a 19-bit format. These formats preserve the dynamic range required for DNN workloads while reducing bit-width, leading to faster computation and improved memory efficiency. They are now widely adopted across training accelerators, including those from Google, NVIDIA, and Intel.</p>
+
+<p>Researchers have also explored the theoretical foundations of FP bit allocation. For an FP format with a total bit-width of \(N\), the bit-lengths of the mantissa (\(n_1\)) and exponent (\(n_2\)) can be optimized by analyzing propagation of quantization error. With one bit reserved for the sign, the relationship becomes \(n_1 = N - n_2 - 1\). By differentiating the quantization error function and setting the result to zero, the optimal allocation of bits between mantissa and exponent can be derived. NVIDIA&#8217;s TF32, for example, follows such a rationale, and optimal trade-offs between exponent and mantissa can be derived by minimizing expected error through analytical means <d-cite key="chmiel2020neural"></d-cite>.</p>
+
+<p>More aggressive reductions have targeted inference use cases, including the 8-bit floating-point formats above, which show that with proper QAT, competitive accuracy can be achieved. In practice, such formats are typically used for storing weights and activations, while higher-precision (e.g., FP32) is retained for accumulations and weight updates to avoid numerical degradation <d-cite key="wang2019bfloat16,kang2018short,narang2018mixed"></d-cite>.</p>
+
+<p>Other reduced-floating-point variants improve compression or adaptability. Microsoft&#8217;s MSFP <d-cite key="darvish2020pushing"></d-cite> shares a single exponent across a group of values&#8212;known as a &#8220;bounding box&#8221;, allowing smaller per-value mantissas and enabling Single Instruction Multiple Data (SIMD)-style acceleration. Block and Subword-Scaling Floating-Point (BSFP) <d-cite key="lo2023block"></d-cite> builds upon this by representing each full precision weight as a combination of two low-bit sub-word vectors, each scaled independently by low-bit floating-point factors. This dual-scale mechanism captures both coarse and fine variations in weight distributions.</p>
+
+<p>Other adaptive formats focus on structural optimizations. AdaptiveFloat <d-cite key="tambe2020algorithm"></d-cite> dynamically sets the exponent bias per tensor to minimize quantization error, while the adaptive numerical data type (ANT) <d-cite key="guo2022ant"></d-cite> infers the exponent-mantissa boundary from the bitstream itself, based on the first occurrence of 1. Dynamic-Length Float (DFloat) <d-cite key="zhang202570"></d-cite> identifies redundancy in BF16&#8217;s exponent representation and applies Huffman coding to compress it losslessly, yielding highly compact encodings (e.g., 11-bit representations for LLM weights). These formats are especially relevant for accelerators and training-oriented hardware, but they remain less common in MCU deployment, where integer kernels and memory-constrained runtimes are dominant.</p>
 
 <h3 id="adaptive-fixed">5.2&ensp;Adaptive Fixed-Point Formats</h3>
 
-<p>A second direction extends fixed-point quantization itself. TFLite&#8217;s Zero-Skew format <d-cite key="jacob2018quantization"></d-cite> generalizes standard fixed-point quantization through a scale and zero-point, shifting the integer grid so that real zero is represented exactly and asymmetric activation distributions are handled more effectively. F8Net <d-cite key="jin2022f8net"></d-cite> keeps a fixed bit-width but adapts the fractional boundary per layer according to tensor statistics, reducing saturation and underutilization of the representable range. VS-Quant <d-cite key="dai2021vs"></d-cite> increases scaling granularity through lightweight vector-level factors, improving local range allocation while preserving efficient fixed-point execution.</p>
+<p>A second direction extends fixed-point quantization itself. Fixed-point representations, most commonly realized as integer quantization (e.g., INT8), remain a practical choice for efficient DNN inference due to their hardware simplicity and low memory footprint. However, conventional low-precision fixed-point suffers from limited dynamic range and bias around zero, making it best suited for narrow-support distributions and often requiring careful calibration to avoid overflow or underflow. To overcome these limitations, several alternative fixed-point schemes have been proposed that better align numerical resolution with the statistics of the target data while retaining the efficiency of integer arithmetic.</p>
+
+<p>A notable generalization of \eqref{eq:fixedpoint} is TFLite&#8217;s Zero-Skew format <d-cite key="jacob2018quantization"></d-cite>, a uniform fixed-point representation with zero-centered bins. In this scheme, a real number \(n\) is represented as:</p>
+
+\begin{equation}
+    n = s\,(q - z),
+    \label{eq:zero-skew}
+\end{equation}
+
+<p>where \(s\) is the <em>skew</em> (scale factor) and \(z\) is the zero-point. The pair \((s, z)\) are the same quantization parameters defined in <a class="xref" href="#formalization">Section 2.2</a>. This zero alignment shifts the quantization grid to match the distribution mean, reducing bias and improving accuracy for asymmetric data.</p>
+
+<p>Beyond grid alignment, adaptability in fractional precision offers further gains. F8Net <d-cite key="jin2022f8net"></d-cite> maintains a fixed bit-width but determines the position of the fractional boundary separately for each layer based on the statistical properties of its activations or weights. By analyzing the standard deviation of the target tensor, F8Net selects a precision setting that ensures the representable range is well matched to the layer&#8217;s value distribution. This per-layer adjustment minimizes saturation and underutilization of the numeric range, thereby reducing quantization error while preserving compatibility with efficient integer computation.</p>
+
+<p>Complementary to per-layer adaptation, VS-Quant <d-cite key="dai2021vs"></d-cite> increases scale granularity through a hierarchical design that combines coarse per-channel scaling with lightweight per-vector factors. This finer partitioning locally reduces dynamic range, improving low bit-width accuracy, particularly in PTQ, while keeping metadata and computation overhead minimal. The vector-level granularity aligns with typical accelerator MAC tile sizes, preserving efficient fixed-point execution.</p>
 
 <p>These approaches retain much of the efficiency of integer arithmetic while improving how the available numeric range is allocated across layers, channels, or vectors. They are therefore closer to MCU-oriented quantization than entirely new number systems, although their value still depends on runtime and kernel support.</p>
 
 <h3 id="tapered">5.3&ensp;Tapered-Accuracy Formats</h3>
 
-<p>A third direction explores tapered-accuracy formats such as Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>. Unlike conventional floating-point formats, Posit does not distribute precision uniformly across the representable range. Instead, it provides higher precision around commonly used value ranges and lower precision near numerical extremes. This tapered-accuracy behavior makes Posit attractive for low-precision DNN inference from a numerical perspective <d-cite key="langroudi2021alps"></d-cite>, and prior work has explored its use for efficient DNN execution <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite> and approximate computing at the edge <d-cite key="guntoro2020next"></d-cite>. Nevertheless, Posit has not become a mainstream format in MCU deployment due to limited hardware and software support.</p>
+<p>A third direction explores tapered-accuracy formats such as Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>. It offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
+
+<p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered accuracy</em>&#8212;a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
+
+<p>The numerical value of a real number \(n\) is represented in the Posit format (by \(\hat{n}\)) as follows:</p>
+
+\begin{equation}
+    \hat{n} = (-1)^s \times u^k \times 2^e \times \left(1 + \frac{m}{2^{ms}}\right),
+    \label{eq:posit}
+\end{equation}
+
+<p>where \(s\) is the sign bit, \(e\) the exponent, \(m\) the mantissa, and \(u = 2^{2^{es}}\) is the so-called <em>useed</em>. The regime value \(k\) is computed from the run of repeated bits in the regime field: for a run of \(d\) identical bits, \(k = -d\) when those bits are 0 and \(k = d - 1\) when they are 1. Unlike floating-point, which maintains fixed-length fields, the Posit dynamically adjusts the mantissa length based on the magnitude of the number. This leads to higher relative precision near 1 and lower near the extremes.</p>
+
+<p>This tapered-accuracy behavior makes Posit attractive for low-precision DNN inference from a numerical perspective, and Posit arithmetic has been shown to run effectively on MCUs with minimal accuracy loss <d-cite key="cococcioni2019fast"></d-cite> and is also being explored for approximate computing at the edge <d-cite key="guntoro2020next"></d-cite>. Nevertheless, Posit has not become a mainstream format in MCU deployment due to limited hardware and software support.</p>
 
 <p>Overall, alternative numerical representations broaden the design space beyond standard integer quantization. They show that efficiency can be improved not only by reducing bit-width, but also by changing how precision and dynamic range are distributed. For practical MCU inference, however, uniform and affine integer quantization remain the most widely adopted choices because they align best with existing kernels, runtimes, and hardware support. For broader coverage of emerging number systems, we refer readers to the survey by Alsuhli et al. <d-cite key="alsuhli2023number"></d-cite>, and for hardware-oriented approximate arithmetic, to the study by Guntoro et al. <d-cite key="guntoro2020next"></d-cite>.</p>
 
@@ -1509,7 +1554,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260909l"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260909n"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1530,9 +1575,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260909l"></script>
-  <script src="assets/js/supplements.js?v=20260909l"></script>
-  <script src="assets/js/figs.js?v=20260909l"></script>
+  <script src="assets/js/data.js?v=20260909n"></script>
+  <script src="assets/js/supplements.js?v=20260909n"></script>
+  <script src="assets/js/figs.js?v=20260909n"></script>
 
   </body>
 
