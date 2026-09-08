@@ -21,7 +21,7 @@
   function showTip(el, x, y) {
     var t = ensureTip();
     if (!el) { tipTxt = null; t.style.opacity = "0"; return; }
-    // keyed on the text, not the element: Figure 7 reuses one cube group and
+    // keyed on the text, not the element: Figure 6 reuses one cube group and
     // rewrites its [data-tip] per region, so caching the element goes stale
     var txt = el.getAttribute("data-tip");
     if (txt !== tipTxt) {                    // only re-render and re-measure when the hint changes
@@ -69,14 +69,14 @@
   });
 
 
-  /* ---------- Figure 10: sweep the loss landscape ----------
+  /* ---------- Figure 9: sweep the loss landscape ----------
      The static figure already makes the point: after PTQ the converged weight
      sits in a narrow minimum and rounding to the integer grid costs a lot of
      loss, while after QAT it sits in a flat one and rounding costs almost
      nothing. Sweeping a probe across either panel lets the reader check that
      for any w, not just the one the figure happens to draw. */
   (function () {
-    var panels = $$("#figure-10 .fl-panel");
+    var panels = $$("#figure-9 .fl-panel");
     if (!panels.length) return;
     // the same landscape the figure is drawn from: an exact parabolic basin,
     // joined C1 to a cubic-Hermite left structure with slope 0 at the extrema
@@ -129,13 +129,13 @@
   })();
 
 
-  /* ---------- Figure 13: the bit controller picks a policy per input ----------
+  /* ---------- Figure 12: the bit controller picks a policy per input ----------
      Adaptive allocation means the bit-widths are not fixed offline: a controller
      reads the input and chooses a precision for each layer. Activating one of the
      four inputs shows the policy that input would get, which is the whole point
      of content-aware allocation and is hard to convey in a static drawing. */
   (function () {
-    var fig = $("#figure-13");
+    var fig = $("#figure-12");
     if (!fig) return;
     var ins = $$(".f12-in", fig), cells = $$(".f12-cell", fig), read = $(".f12-read", fig);
     if (!ins.length || !cells.length) return;
@@ -168,12 +168,12 @@
     fig.addEventListener("pointerleave", clear);
   })();
 
-  /* ---------- Figure 7: granularity hints ----------
+  /* ---------- Figure 6: granularity hints ----------
      Per-tensor, per-channel and per-group behave identically: the hovered cube
      receives [data-tip], so the shared tooltip above shows and positions the
      hint the same way for every granularity, on hover and on tap. */
   (function () {
-    var svg = $("#figure-7 svg");
+    var svg = $("#figure-6 svg");
     if (!svg) return;
     var TIP = {
       t: function () { return "Per-tensor: a single scale (s, z) is shared by every value in the tensor."; },
@@ -248,9 +248,9 @@
     });
   })();
 
-  /* ---------- Figure 9: traveling marker + forward/backward isolation ---------- */
+  /* ---------- Figure 8: traveling marker + forward/backward isolation ---------- */
   (function () {
-    var svg = $("#figure-9 svg");
+    var svg = $("#figure-8 svg");
     if (!svg) return;
     var path = $("#f4-loop", svg), dot = $("#f4-dot", svg);
     var L = path ? path.getTotalLength() : 0;   // segment lengths: 677|1972|1477|1972|665
@@ -325,7 +325,7 @@
       isolate(locked);
     });
     document.addEventListener("click", function (e) {
-      if (locked && !(e.target.closest && e.target.closest("#figure-9"))) { locked = null; isolate(null); }
+      if (locked && !(e.target.closest && e.target.closest("#figure-8"))) { locked = null; isolate(null); }
     });
 
     if ("IntersectionObserver" in window) {
@@ -343,9 +343,9 @@
     window.addEventListener("afterprint", checkVis);
   })();
 
-  /* ---------- Figure 12: clickable bit selector ---------- */
+  /* ---------- Figure 11: clickable bit selector ---------- */
   (function () {
-    var svg = $("#figure-12 svg");
+    var svg = $("#figure-11 svg");
     if (!svg) return;
     var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
     var DEFAULT = { "1": "2", "2": "3", "n": "b" };
@@ -465,9 +465,9 @@
     render();
   })();
 
-  /* ---------- Figure 15: continuously looping step-through (gif-style) ---------- */
+  /* ---------- Figure 14: continuously looping step-through (gif-style) ---------- */
   (function () {
-    var fig = $("#figure-15");
+    var fig = $("#figure-14");
     if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
@@ -688,15 +688,15 @@
   })();
 
   /* ---------- Keyboard and focus parity for the remaining controls ----------
-     Figure 17's stages, Figure 11's method chips, Table 3's platforms and the
+     Figure 16's stages, Figure 10's method chips, Table 3's platforms and the
      citations inside the tables all explained themselves on hover only. Each
      now takes focus and reveals the same thing there. */
   (function () {
-    // Figure 17: every pipeline stage, including the inspection icon
-    $$("#figure-17 .f9-node").forEach(function (n) {
+    // Figure 16: every pipeline stage, including the inspection icon
+    $$("#figure-16 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
-    // Taxonomy (Figures 11 and 16) and supplement method chips navigate into the prose. They contain
+    // Taxonomy (Figures 10 and 15) and supplement method chips navigate into the prose. They contain
     // <d-cite> children, so they stay spans with button semantics rather than
     // nesting one interactive element inside another.
     $$(".mchip[data-nav]").forEach(function (chip) {
@@ -750,7 +750,7 @@
     });
   })();
 
-  /* ---------- Figure 2: the deployment stack ----------
+  /* ---------- Figure 17: the deployment stack ----------
      The static figure already reads as a stack with section tags. This adds
      three things: hovering a challenge pin shows which layers it bridges, the
      recipe buttons trace a representative deployment from Section 7 through
@@ -758,7 +758,7 @@
      chips (the chips sit above it, so the line visibly enters and leaves
      each one). */
   (function () {
-    var fig = $("#figure-2.stack-fig");
+    var fig = $("#figure-17.stack-fig");
     if (!fig) return;
     var grid = $(".stk-grid", fig), layersEl = $(".stk-layers", fig), overlay = $(".stk-overlay", fig), story = $(".stk-story", fig);
     var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
