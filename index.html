@@ -1680,7 +1680,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>Overall, the application literature reinforces the central argument of this survey. On MCU-class devices, the outcome of quantized deployment is determined not by compression in isolation, but by the co-design of the model, the runtime, and the target hardware.</p>
 
-<p><a class="xref" href="#figure-17">Fig. 17</a> gathers the survey into a single view. It arranges the choices from every preceding section as a deployment stack, read from the application down to the hardware, reversing the order in which the survey presented them, and places the challenges of <a class="xref" href="#challenges">Section 8</a> at the seams where one layer meets the next. Selecting an application, or any single constraint, narrows the stack to the routes that remain compatible, traces the one we would recommend first, and leaves the alternatives open to explore.</p>
+<p><a class="xref" href="#figure-17">Fig. 17</a> is where the survey comes together. It stacks what the preceding sections covered, the application on top and the hardware at the bottom, so a single deployment can be followed down through the quantization, the format, the toolchain, and the runtime that carry it. Choosing an application, or any one requirement, cuts the stack to the routes that can still deliver it and draws the one we would recommend, with the rest left in view. The challenges of <a class="xref" href="#challenges">Section 8</a> sit on the boundaries between layers, where the next section takes them up.</p>
 
 <figure class="pfig stack-fig l-page" id="figure-17">
   <div class="stk-toolbar" role="search">
