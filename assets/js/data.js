@@ -156,7 +156,7 @@ guide: {
     },
     "arm-cube": {
       rank: 3, name: "STM32Cube.AI", fam: "arm", color: "#AD1457",
-      story: "The vendor route on STM32. Cube.AI converts the trained model straight into embedded C with its own runtime, which trades portability for a shorter path to working firmware.",
+      story: "The vendor route on STM32. Cube.AI converts the trained model straight into embedded C and brings its own runtime, so there is no separate inference engine to choose. That trades portability for a shorter path to working firmware.",
       line: ["q:PTQ", "s:uniform", "n:INT8", "f:tf", "f:cubeai", "h:stm32"],
       implies: ["d:uni", "d:sym", "d:asym", "d:pc", "d:static", "d:calib"],
       options: { "q:PTQ": ["q:QAT"], "f:tf": ["f:pytorch"] }
@@ -225,7 +225,7 @@ guide: {
     },
     "npu-ti": {
       rank: 8, name: "TinyEngine NPU on MSPM0", fam: "npu", color: "#827717",
-      story: "The smallest accelerator route here, on a Cortex-M0+ part with only tens of kilobytes of SRAM. Its NPU carries widths down to INT2, so it suits a model small enough to be co-designed with the memory rather than fitted to it afterwards.",
+      story: "The smallest accelerator route here, on a Cortex-M0+ part with only tens of kilobytes of SRAM. Its NPU carries widths down to INT2, so it suits a model small enough to be co-designed with the memory rather than fitted to it afterwards. Conversion and code generation happen inside the vendor flow rather than as a step you pick.",
       line: ["q:QAT", "s:uniform", "n:INT8", "f:pytorch", "f:accel", "h:mspm0"],
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "r:hwa"],
       options: { "q:QAT": ["q:PTQ"], "s:uniform": ["s:extreme", "s:mixed"], "n:INT8": ["n:INT4", "n:INT2", "n:mixed"] }
@@ -247,7 +247,7 @@ guide: {
   couples: {
     "n:mixed": ["s:mixed"], "s:mixed": ["n:mixed"],
     "n:INT4": ["s:extreme"], "n:INT2": ["s:extreme"], "n:INT1": ["s:extreme"],
-    "s:extreme": ["n:INT2"], "s:inttrain": ["q:QAT"]
+    "s:extreme": ["n:INT2"]
   },
 
   // Per application: the routes worth considering, best first, and why.
@@ -279,14 +279,14 @@ guide: {
   notes: {
     "q:PTQ": "Post-training quantization is the right default on every route: the strongest balance between memory reduction, effort, and accuracy retention.",
     "q:QAT": "Quantization-aware training is where accuracy must survive compression, and the only way to reach sub-8-bit widths on the accelerators that accept them.",
-    "s:uniform": "One bit-width for the whole network, INT8 in practice, is the best default on every route.",
+    "s:uniform": "One bit-width for the whole network, INT8 in practice, is the best default on every route. Not to be confused with a uniform grid, which is about how the levels are spaced.",
     "s:mixed": "Mixed precision pays off when profiling reveals clear layer sensitivity and the runtime can exploit finer-grained control, which today means an accelerator whose toolchain accepts several widths. On Cortex-M it is reachable only through custom kernels.",
     "s:extreme": "Extreme low-bit networks are most justifiable when flash or bandwidth is the dominant bottleneck. They reach a device through an accelerator whose toolchain accepts the width, trained with QAT.",
-    "s:inttrain": "Integer training and on-device adaptation are not supported by the runtimes in this stack, which is challenge 8.6.",
+    "q:qt": "Quantized training carries quantization into the training process itself, including the backward pass. Section 4.1 finds it markedly less mature than PTQ and QAT for MCU deployment, and no runtime in this stack supports it, so it remains a research direction rather than a route you can take today. It is what challenge 8.6 would have to unlock.",
     "r:hwa": "Hardware-aware quantization matters most on the accelerator routes, where operator and format support decide what the toolchain will accept.",
     "r:redis": "Redistribution reshapes weight or activation distributions before quantizing, and mostly pays off at low bit-widths.",
     "r:dagn": "Data-agnostic methods matter when calibration data cannot leave the device or does not exist. They apply on every route.",
-    "d:uni": "Uniform grids are what integer kernels execute, so every route below assumes one.",
+    "d:uni": "An evenly spaced grid is what integer kernels execute, so every route below assumes one. This is a separate choice from using one bit-width throughout.",
     "d:nonuni": "Non-uniform grids need dedicated arithmetic, which is why no route in this stack uses them.",
     "d:sym": "Symmetric quantization drops the zero-point term, which is why weights are usually symmetric.",
     "d:asym": "Asymmetric quantization spends a zero-point to use the full range, which is why post-ReLU activations usually are.",
@@ -298,7 +298,7 @@ guide: {
     "d:calib": "Calibration data selects the clipping range. PTQ quality depends on it more than on anything else.",
     "n:INT8": "INT8 is the common denominator of every runtime and every platform in this stack.",
     "n:INT16": "INT16 buys accuracy headroom at twice the memory, and is supported natively only on the platforms shown.",
-    "n:fxp": "In practice the fixed-point format is INT8: an integer grid with the scale kept outside the kernel.",
+    "n:fxp": "Fixed-point is the family every integer route below belongs to. In practice on an MCU it means INT8, an integer grid with the scale kept outside the kernel.",
     "n:mixed": "Several widths in one network, assigned per layer, per channel, per group, or separately to weights and activations. It needs a route whose toolchain and silicon accept more than one width.",
     "n:FP16": "No MCU here lists FP16 among its formats; the one reported use ran on the GAP9 cluster cores rather than its accelerator.",
     "n:posit": "Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the route stops at this step. Research hardware such as PHEE is where it currently ends.",

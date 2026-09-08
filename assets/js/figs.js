@@ -987,6 +987,32 @@
       }
     }
     function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+    function secOf(k) {
+      var c = byKey[k];
+      return c && c.getAttribute("data-sec") ? { id: c.getAttribute("data-sec"), term: c.getAttribute("data-term") } : null;
+    }
+    function secLabel(id) {
+      if (/^table-(\d+)$/.test(id)) return "Table " + id.slice(6);
+      var h = document.getElementById(id);
+      return h ? h.textContent.replace(/\s+/g, " ").trim().replace(/^(\d+(\.\d+)*)\s.*/, "Section $1") : "";
+    }
+    function flash(el) {
+      el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+      el.classList.remove("flash-fade"); el.classList.add("flash-p");
+      setTimeout(function () { el.classList.add("flash-fade"); el.classList.remove("flash-p"); }, 1600);
+      setTimeout(function () { el.classList.remove("flash-fade"); }, 3400);
+    }
+    function navTo(sec) {
+      var heading = document.getElementById(sec.id);
+      if (!heading) return;
+      if (/^table-/.test(sec.id)) { flash(heading); return; }
+      var target = null, node = heading.nextElementSibling, term = sec.term || "";
+      while (term && node && !/^H[234]$/.test(node.tagName)) {
+        if (node.tagName === "P" && node.textContent.indexOf(term) !== -1) { target = node; break; }
+        node = node.nextElementSibling;
+      }
+      if (target) flash(target); else heading.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    }
     function paint() {
       chips.forEach(function (c) { c.classList.remove("stk-line", "stk-branch", "stk-implied"); c.style.removeProperty("--pc"); });
       $$(".stk-rowlabel", fig).forEach(function (l) { l.classList.remove("stk-on"); });
@@ -1023,7 +1049,7 @@
       pins.forEach(function (p) { p.classList.remove("stk-pin-on", "stk-pulse"); });
       var pinLbl = Q.dead && Q.subject ? (/^n:/.test(Q.subject) ? "8.4" : null) : null;
       if (Q.subject === "s:extreme" || Q.subject === "n:INT1" || Q.subject === "n:INT2" || Q.subject === "n:INT4") pinLbl = "8.3";
-      if (Q.subject === "s:inttrain") pinLbl = "8.6";
+      if (Q.subject === "q:qt") pinLbl = "8.6";
       if (pinLbl) { var pn = pinByLabel(pinLbl); if (pn) { pn.classList.add("stk-pin-on"); if (Q.dead && !reduced) pn.classList.add("stk-pulse"); } }
     }
     function renderPanel() {
@@ -1035,7 +1061,10 @@
         h += '<span class="stk-crumb" data-drop="' + k + '" title="Drop this branch">' + esc(LABEL[k] || k) + " &#215;</span>";
       });
       h += "</span>";
-      h += '<span class="stk-count">' + (vp.length ? vp.length + (vp.length === 1 ? " route" : " routes") + ", best first" : "no route in this stack") + "</span></div>";
+      h += '<span class="stk-count">' + (vp.length ? vp.length + (vp.length === 1 ? " route" : " routes") + ", best first" : "no route in this stack") + "</span>";
+      var sec = Q.subject && secOf(Q.subject);
+      if (sec) h += '<a href="#' + sec.id + '" class="stk-read" data-sec="' + sec.id + '" data-term="' + esc(sec.term || "") + '">Read ' + secLabel(sec.id) + "</a>";
+      h += "</div>";
       h += '<div class="stk-pbody">';
       if (Q.note) h += '<div class="stk-guide">' + Q.note + "</div>";
       if (vp.length) {
@@ -1071,6 +1100,8 @@
         li.addEventListener("click", pick);
         li.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
       });
+      var read = $(".stk-read", panel);
+      if (read) read.addEventListener("click", function (e) { e.preventDefault(); navTo({ id: read.getAttribute("data-sec"), term: read.getAttribute("data-term") }); });
       $$(".stk-crumb", panel).forEach(function (el) {
         el.addEventListener("click", function () {
           var d = el.getAttribute("data-drop");
