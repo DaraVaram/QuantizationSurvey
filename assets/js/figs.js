@@ -877,6 +877,9 @@
               : base[s] && canDo(tid, s, base[s]) ? base[s]           // the surveyed step, where this route allows it
               : T.steps[s];
         if (k) out.push(k);
+        /* A tool the route fixes for you still sits on the path: ai8x-training is a
+           PyTorch fork, and TFLM calls CMSIS-NN, so the line runs through both. */
+        (T.implies || []).forEach(function (im) { if (SLOT[im] === s && out.indexOf(im) === -1) out.push(im); });
       });
       return out;
     }

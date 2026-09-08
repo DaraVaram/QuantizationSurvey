@@ -349,15 +349,31 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         transition: opacity 0.2s, border-color 0.12s, color 0.12s, background 0.12s, box-shadow 0.12s;
       }
       .stack-fig .mchip:hover, .stack-fig .mchip:focus-visible { border-color: var(--spine); color: var(--spine); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10); outline: none; }
-      /* three states a chip can be in while a route is shown, plus dim */
-      .stk-tracing .mchip { opacity: 0.28; }
-      .stk-tracing .mchip.stk-line { opacity: 1; background: var(--pc); border-color: var(--pc); color: #fff; font-weight: 600; }
-      .stk-tracing .mchip.stk-branch {
-        opacity: 1; background: #fff; border: 1.5px dashed var(--pc); color: var(--pc); font-weight: 600;
+      /* Three states while a route is shown, plus dim for what is out of reach. The route
+         has to dominate, so a branch reads as available rather than as chosen: quieter
+         ink, a dashed edge tinted by the route it belongs to, and full strength on hover. */
+      .stk-tracing .mchip { opacity: 0.25; }
+      .stk-tracing .mchip.stk-line {
+        opacity: 1; background-color: var(--pc); background-image: none;
+        border-color: var(--pc); border-style: solid; color: #fff; font-weight: 600;
+        box-shadow: 0 1px 3px rgba(20, 24, 40, 0.22);
       }
-      .stk-tracing .mchip.stk-branch::after { content: " \2197"; font-size: 0.56rem; opacity: 0.55; }
-      .stk-tracing .mchip.stk-branch:hover { background: var(--pc); color: #fff; border-style: solid; }
-      .stk-tracing .mchip.stk-implied { opacity: 0.75; background: #eef0f3; border-color: #cdd3db; color: #555; font-weight: 400; font-style: italic; cursor: default; }
+      .stk-tracing .mchip.stk-branch {
+        opacity: 1; background-color: rgba(255, 255, 255, 0.4); background-image: none;
+        color: #4a5260; font-weight: 400;
+        border-width: 1px; border-style: dashed; border-color: color-mix(in srgb, var(--pc) 45%, #b6bdc7);
+      }
+      .stk-tracing .mchip.stk-branch::after { content: " \2197"; font-size: 0.55rem; opacity: 0.4; }
+      .stk-tracing .mchip.stk-branch:hover, .stk-tracing .mchip.stk-branch:focus-visible {
+        background-color: #fff; border-width: 1px; border-style: solid; border-color: var(--pc);
+        color: var(--pc); font-weight: 600; box-shadow: 0 1px 5px rgba(20, 24, 40, 0.14);
+      }
+      .stk-tracing .mchip.stk-branch:hover::after, .stk-tracing .mchip.stk-branch:focus-visible::after { opacity: 0.8; }
+      .stk-tracing .mchip.stk-implied {
+        opacity: 1; background-color: transparent; background-image: none;
+        border-width: 1px; border-style: solid; border-color: rgba(20, 24, 40, 0.14);
+        color: #6b7280; font-weight: 400; font-style: italic; cursor: default;
+      }
       .stk-tracing .stk-rowlabel { opacity: 0.5; }
       .stk-tracing .stk-rowlabel.stk-on { opacity: 1; }
       .stk-dim .stk-label, .stk-dim .mchip, .stk-dim .stk-rowlabel { opacity: 0.3; }
@@ -406,7 +422,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-routes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
       .stk-route {
         padding: 0.4rem 0.6rem; border: 1px solid #dfe4ea; border-left: 3px solid var(--pc); border-radius: 0 6px 6px 0;
-        background: #fff; cursor: pointer; transition: background 0.12s, box-shadow 0.12s; opacity: 0.72;
+        background: #fff; cursor: pointer; transition: background 0.12s, box-shadow 0.12s; opacity: 0.88;
       }
       .stk-route:hover, .stk-route:focus-visible { background: #f6f8fa; outline: none; opacity: 1; }
       .stk-route-main { opacity: 1; background: #f9fbfc; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pc) 30%, #fff); }
@@ -414,7 +430,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-rhead b { font-size: 0.78rem; }
       .stk-fam { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #667; }
       .stk-badge { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #fff; background: var(--pc); padding: 0.05rem 0.4rem; border-radius: 3px; }
-      .stk-caveat { font-size: 0.6rem; font-style: italic; color: #8a5a00; background: #fdf3e0; border: 1px solid #f0dcb4; padding: 0.02rem 0.4rem; border-radius: 3px; }
+      .stk-caveat { font-size: 0.6rem; font-style: italic; color: #6f4000; background: #fdf3e0; border: 1px solid #e8cf9d; padding: 0.02rem 0.4rem; border-radius: 3px; }
       .stk-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem; margin: 0.28rem 0 0.2rem; }
       .stk-step-chip { font-size: 0.64rem; padding: 0.04rem 0.36rem; border: 1px solid color-mix(in srgb, var(--pc) 35%, #fff); border-radius: 4px; background: #fff; color: #223; }
       .stk-arr { color: var(--pc); font-size: 0.68rem; }
@@ -428,8 +444,8 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-legendnote { margin: 0.5rem 0 0; padding-top: 0.4rem; border-top: 1px dashed #d5dbe2; font-size: 0.66rem; color: #667; }
       .stk-key { display: inline-block; width: 0.85rem; height: 0.72rem; border-radius: 3px; vertical-align: -0.1rem; --pc: #1f2430; }
       .stk-key.stk-line { background: #1f2430; }
-      .stk-key.stk-branch { background: #fff; border: 1.5px dashed #1f2430; }
-      .stk-key.stk-implied { background: #eef0f3; border: 1px solid #cdd3db; }
+      .stk-key.stk-branch { background: rgba(255, 255, 255, 0.45); border: 1px dashed #8b93a0; }
+      .stk-key.stk-implied { background: transparent; border: 1px solid rgba(20, 24, 40, 0.12); }
       .stk-note { margin: 0.35rem 0 0; color: #445; }
       .stk-note b, .stk-evid b { color: #1f2430; }
       .stk-evid { margin: 0.55rem 0 0; padding-top: 0.45rem; border-top: 1px dashed #d5dbe2; color: #445; font-size: 0.71rem; line-height: 1.6; }
@@ -1667,10 +1683,10 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <figure class="pfig stack-fig l-page" id="figure-17">
   <div class="stk-toolbar" role="search">
-    <label class="stk-tb-label" for="stk-q">Trace a deployment</label>
-    <input class="stk-search" id="stk-q" type="search" list="stk-suggest" placeholder="an application, a method, a format, a tool, or a platform" autocomplete="off" spellcheck="false">
+    <label class="stk-tb-label" for="stk-q">What are you deploying?</label>
+    <input class="stk-search" id="stk-q" type="search" list="stk-suggest" placeholder="an application, or a method, format, tool or platform to narrow by" autocomplete="off" spellcheck="false">
     <datalist id="stk-suggest"></datalist>
-    <span class="stk-quick-wrap"><button type="button" class="stk-quick" data-q="Drones">Drones</button><button type="button" class="stk-quick" data-q="Healthcare">Healthcare</button><button type="button" class="stk-quick" data-q="Keyword spotting">Keyword spotting</button><button type="button" class="stk-quick" data-q="Human activity recognition">HAR</button><button type="button" class="stk-quick" data-q="Mixed precision">Mixed precision</button><button type="button" class="stk-quick" data-q="Sub-8-bit">Sub-8-bit</button><button type="button" class="stk-quick" data-q="Posit">Posit</button><button type="button" class="stk-quick" data-q="QAT">QAT</button><button type="button" class="stk-quick" data-q="GAP9">GAP9</button><button type="button" class="stk-quick" data-q="ESP32">ESP32</button><button type="button" class="stk-quick" data-q="STM32">STM32</button><button type="button" class="stk-quick" data-q="NPU-integrated">NPU-integrated</button></span>
+    <span class="stk-quick-wrap"><button type="button" class="stk-quick" data-q="Drones">Drones</button><button type="button" class="stk-quick" data-q="Healthcare">Healthcare</button><button type="button" class="stk-quick" data-q="Keyword spotting">Keyword spotting</button><button type="button" class="stk-quick" data-q="Human activity recognition">HAR</button><button type="button" class="stk-quick" data-q="Object detection">Object detection</button><button type="button" class="stk-quick" data-q="Image classification">Image classification</button><button type="button" class="stk-quick" data-q="Environmental sensing">Environmental sensing</button><button type="button" class="stk-quick" data-q="Industrial monitoring">Industrial monitoring</button><button type="button" class="stk-quick" data-q="Anomaly detection">Anomaly detection</button><button type="button" class="stk-quick" data-q="Robotics">Robotics</button><button type="button" class="stk-quick" data-q="Speech">Speech</button><button type="button" class="stk-quick" data-q="Spectrum sensing">Spectrum sensing</button></span>
     <button type="button" class="stk-clear" hidden>Clear</button>
   </div>
   <div class="stk-grid">
@@ -1717,8 +1733,8 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <svg class="stk-overlay" aria-hidden="true"></svg>
   </div>
   <div class="stk-panel" aria-live="polite"></div>
-  <div class="fig-hint">Start from what you need to deploy. Selecting an entry shows the routes that carry it, best first. Click a branch to take it and the question narrows; click Clear to start over &#183; hover a layer, a rail, or a numbered pin for its role.</div>
-  <figcaption><b>Figure 17:</b> A practitioner&#8217;s map of quantized inference on MCUs, arranged as a deployment stack and read from the application down to the hardware. Each layer lists the choices available at that step. Numbered pins mark where the challenges of Section 8 arise between layers, the left rail carries the constraints that act on every layer, and the right rail the challenges that cut across all of them. Selecting any entry shows the concrete routes that carry it, best first, each drawn in its own colour. A chip is either a step on the drawn route, a branch the reader can take instead, or a setting the route fixes rather than a choice.</figcaption>
+  <div class="fig-hint">Start from your application, then read down. Clicking any entry narrows the question and keeps it; Clear starts over &#183; hover a layer, a rail, or a numbered pin for its role.</div>
+  <figcaption><b>Figure 17:</b> A practitioner&#8217;s map of quantized inference on MCUs. Start from the application you need to deploy and read down: the figure shows the routes that carry it, best first and each in its own colour, from the quantization you apply to the part it runs on. Selecting anything narrows the question rather than restarting it, so a method, a format, a tool or a platform keeps only the routes that support it, and any combination the tools and the silicon allow can be traced. A chip is either a step on the drawn route, a branch still open to you, or a setting the route fixes rather than a choice. Numbered pins mark where the challenges of Section 8 arise between layers, the left rail carries the constraints that act on every layer, and the right rail the challenges that cut across all of them.</figcaption>
 </figure>
 
 
@@ -1814,7 +1830,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260910w"></script>
   <script src="assets/js/supplements.js?v=20260910w"></script>
-  <script src="assets/js/figs.js?v=20260911-7"></script>
+  <script src="assets/js/figs.js?v=20260911-11"></script>
 
   </body>
 
