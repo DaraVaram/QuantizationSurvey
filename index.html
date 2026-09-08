@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260909y">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260909z">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260909y"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260909y"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260909y"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260909z"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260909z"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260909z"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -533,7 +533,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
             <div><a href="#alt-formats">5&ensp;Alternative Numerical Representations</a></div>
             <div class="toc-sub"><a href="#reduced-fp">5.1&ensp;Reduced Floating-Point Formats</a></div>
             <div class="toc-sub"><a href="#adaptive-fixed">5.2&ensp;Adaptive Fixed-Point Formats</a></div>
-            <div class="toc-sub"><a href="#tapered">5.3&ensp;Tapered-Accuracy Formats</a></div>
+            <div class="toc-sub"><a href="#tapered">5.3&ensp;Tapered-Precision Formats</a></div>
             <div><a href="#deployment-stack">6&ensp;Hardware and Software Deployment Stack</a></div>
             <div class="toc-sub"><a href="#hardware-platforms">6.1&ensp;Hardware Platforms</a></div>
             <div class="toc-sub2"><a href="#arm-mcus">6.1.1&ensp;ARM Cortex-M MCUs</a></div>
@@ -1147,7 +1147,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h2 id="alt-formats">5&ensp;Alternative Numerical Representations</h2>
 
-<p>Most MCU-oriented quantization pipelines rely on fixed-point or integer arithmetic because these formats are simple, efficient, and widely supported by embedded hardware. Nevertheless, alternative numerical representations are important to review as part of a forward-looking assessment of the MCU quantization landscape. Reduced floating-point, adaptive fixed-point, and tapered-accuracy formats clarify how precision and dynamic range can be redistributed beyond conventional INT8 inference, even though their practical value still depends on hardware support, runtime integration, and optimized kernels. <a class="xref" href="#figure-15">Fig. 15</a> provides an overview of the formats discussed, grouped by how each redistributes precision and dynamic range. Their inclusion, therefore, helps identify which hardware and software capabilities would be required for future MCU platforms to move beyond standard uniform affine integer quantization.</p>
+<p>Most MCU-oriented quantization pipelines rely on fixed-point or integer arithmetic because these formats are simple, efficient, and widely supported by embedded hardware. Nevertheless, alternative numerical representations are important to review as part of a forward-looking assessment of the MCU quantization landscape. Reduced floating-point, adaptive fixed-point, and tapered-precision formats clarify how precision and dynamic range can be redistributed beyond conventional INT8 inference, even though their practical value still depends on hardware support, runtime integration, and optimized kernels. <a class="xref" href="#figure-15">Fig. 15</a> provides an overview of the formats discussed, grouped by how each redistributes precision and dynamic range. Their inclusion, therefore, helps identify which hardware and software capabilities would be required for future MCU platforms to move beyond standard uniform affine integer quantization.</p>
 
 <!-- Figure 15 (fig:format-taxonomy) — the alternative-format branch of the taxonomy,
      following the paragraph in Section 5 that introduces it. -->
@@ -1159,10 +1159,10 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <span class="mchip" data-nav="reduced-fp" data-term="FP16">FP16 <d-cite key="kahan1996ieee"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="BF16">BF16 <d-cite key="guntoro2020next"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="TF32">TF32 <d-cite key="choquette2021nvidia"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="CFloat8">CFloat8 &amp; CFloat16 <d-cite key="tesla_dojo_2025"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="MSFP">MSFP <d-cite key="darvish2020pushing"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="BSFP">BSFP <d-cite key="lo2023block"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="AdaptiveFloat">AdaptiveFloat <d-cite key="tambe2020algorithm"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="DFloat">DFloat <d-cite key="zhang202570"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="ANT">ANT <d-cite key="guo2022ant"></d-cite></span>
     <div class="tax-leaf-label">5.2. Adaptive Fixed-Point Formats</div>
     <span class="mchip" data-nav="adaptive-fixed" data-term="Zero-Skew">Zero-Skew <d-cite key="jacob2018quantization"></d-cite></span><span class="mchip" data-nav="adaptive-fixed" data-term="F8Net">F8Net <d-cite key="jin2022f8net"></d-cite></span><span class="mchip" data-nav="adaptive-fixed" data-term="VS-Quant">Vs-Quant <d-cite key="dai2021vs"></d-cite></span>
-    <div class="tax-leaf-label">5.3. Tapered-Accuracy Formats</div>
+    <div class="tax-leaf-label">5.3. Tapered-Precision Formats</div>
     <span class="mchip" data-nav="tapered" data-term="Posit">Posit <d-cite key="gustafson2017beating,gustafson2"></d-cite></span>
   </div>
-  <figcaption><b>Figure 15:</b> Taxonomy of the alternative numerical representations reviewed in this section, grouped into reduced floating-point, adaptive fixed-point, and tapered-accuracy formats.</figcaption>
+  <figcaption><b>Figure 15:</b> Taxonomy of the alternative numerical representations reviewed in this section, grouped into reduced floating-point, adaptive fixed-point, and tapered-precision formats.</figcaption>
 </figure>
 
 <p>As mentioned in <a class="xref" href="#numerical-representations">Section 2.1</a>, the core challenge is to approximate 32-bit floating-point numbers using fewer bits while maintaining numerical fidelity and enabling efficient hardware implementation. This trade-off becomes especially critical in constrained environments such as microcontrollers and edge devices. While formats like FP16 are widely supported by modern FPUs, they may not offer the optimal balance between accuracy, performance, and computational cost. Fixed-point and integer arithmetic, though hardware-efficient and simple, often suffer from a limited dynamic range and reduced expressivity, making them less suitable for deeper or more sensitive models. As a result, new number systems have emerged that better match the distributional characteristics of DNN weights and activations, aiming to improve both memory and compute efficiency.</p>
@@ -1207,11 +1207,11 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>These approaches retain much of the efficiency of integer arithmetic while improving how the available numeric range is allocated across layers, channels, or vectors. They are therefore closer to MCU-oriented quantization than entirely new number systems, although their value still depends on runtime and kernel support.</p>
 
-<h3 id="tapered">5.3&ensp;Tapered-Accuracy Formats</h3>
+<h3 id="tapered">5.3&ensp;Tapered-Precision Formats</h3>
 
-<p>A third direction explores tapered-accuracy formats such as Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>. Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
+<p>A third direction explores tapered-precision formats such as Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>. Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
 
-<p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered accuracy</em>, a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
+<p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered precision</em>, a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
 
 <p>The numerical value of a real number \(n\) is represented in the Posit format (by \(\hat{n}\)) as follows:</p>
 
@@ -1222,7 +1222,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>where \(s\) is the sign bit, \(e\) the exponent, \(m\) the mantissa, \(ms\) the number of mantissa bits, and \(u = 2^{2^{es}}\) is the so-called <em>useed</em>. The regime value \(k\) is computed from the run of repeated bits in the regime field: for a run of \(d\) identical bits, \(k = -d\) when those bits are 0 and \(k = d - 1\) when they are 1. Unlike floating-point, which maintains fixed-length fields, the Posit dynamically adjusts the mantissa length based on the magnitude of the number, which is what produces its tapered precision profile.</p>
 
-<p>This tapered-accuracy behavior makes Posit attractive for low-precision DNN inference from a numerical perspective, and Posit arithmetic has been shown to run effectively on MCUs with minimal accuracy loss <d-cite key="cococcioni2019fast"></d-cite> and is also being explored for approximate computing at the edge <d-cite key="guntoro2020next"></d-cite>. Nevertheless, Posit has not become a mainstream format in MCU deployment due to limited hardware and software support.</p>
+<p>This tapered-precision behavior makes Posit attractive for low-precision DNN inference from a numerical perspective, and Posit arithmetic has been shown to run effectively on MCUs with minimal accuracy loss <d-cite key="cococcioni2019fast"></d-cite> and is also being explored for approximate computing at the edge <d-cite key="guntoro2020next,langroudi2019positnn"></d-cite>. Nevertheless, Posit has not become a mainstream format in MCU deployment due to limited hardware and software support.</p>
 
 <p>Overall, alternative numerical representations broaden the design space beyond standard integer quantization. They show that efficiency can be improved not only by reducing bit-width, but also by changing how precision and dynamic range are distributed. For practical MCU inference, however, uniform and affine integer quantization remain the most widely adopted choices because they align best with existing kernels, runtimes, and hardware support. For broader coverage of emerging number systems, we refer readers to the survey by Alsuhli et al. <d-cite key="alsuhli2023number"></d-cite>, and for hardware-oriented approximate arithmetic, to the study by Guntoro et al. <d-cite key="guntoro2020next"></d-cite>.</p>
 
@@ -1552,7 +1552,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260909y"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260909z"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1573,9 +1573,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260909y"></script>
-  <script src="assets/js/supplements.js?v=20260909y"></script>
-  <script src="assets/js/figs.js?v=20260909y"></script>
+  <script src="assets/js/data.js?v=20260909z"></script>
+  <script src="assets/js/supplements.js?v=20260909z"></script>
+  <script src="assets/js/figs.js?v=20260909z"></script>
 
   </body>
 
