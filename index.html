@@ -1098,7 +1098,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <figcaption><b>Figure 6:</b> Simplified illustration of quantization granularity for the weight tensor \(W\) of a given layer \(l\). Quantization can be done per-tensor, per channel, or per group.</figcaption>
 </figure>
 
-<p>In summary, quantization granularity spans from global to per-tensor, per-channel, and per-group. Moving to finer granularity generally improves accuracy by better matching local distributions, at the cost of extra quantization parameters and kernel complexity <d-cite key="garg2021confounding"></d-cite>, and many CNN deployments settle on per-channel weights with per-tensor activations for that reason. Taken together, the choices in this section show that quantization is less a single technique than a design space, and for MCU deployment the preferred operating point is usually not the most expressive quantizer, but the one that offers the best trade-off between numerical robustness, simplicity, and hardware support.</p>
+<p>In summary, quantization granularity spans from global to per-tensor, per-channel, and per-group. Moving to finer granularity generally improves accuracy by better matching local distributions, at the cost of extra quantization parameters and kernel complexity, and many CNN deployments settle on per-channel weights with per-tensor activations for that reason. We refer interested readers to <d-cite key="garg2021confounding"></d-cite> for trade-offs associated with these design choices.</p>
+
+<p>Taken together, the choices in this section show that quantization is less a single technique than a design space, and for MCU deployment the preferred operating point is usually not the most expressive quantizer, but the one that offers the best trade-off between numerical robustness, simplicity, and hardware support.</p>
 
 <h2 id="ptq-qat">3&ensp;Primary Quantization Techniques</h2>
 
