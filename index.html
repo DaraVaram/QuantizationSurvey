@@ -1088,7 +1088,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>Beyond global quantization, finer-grained strategies are commonly used and can be classified into the following levels, arranged from coarse to fine granularity (see <a class="xref" href="#figure-6">Fig. 6</a>).</p>
 
-<p><strong>Per-tensor:</strong> Also known as per-layer, this method applies a single set of quantization parameters to the entire tensor, so all elements share the same clipping range <d-cite key="krishnamoorthi2018quantizing"></d-cite>. It is the most common choice for <em>activations</em> due to its simpler hardware implementation.</p>
+<p><strong>Per-tensor:</strong> Also known as per-layer, this method applies a single set of quantization parameters to the entire tensor of a given layer, so all of its elements share the same clipping range <d-cite key="krishnamoorthi2018quantizing"></d-cite>. For the weights of a convolutional layer, for instance, every filter is quantized with the same scale and zero-point. It is the most common choice for <em>activations</em> due to its simpler hardware implementation.</p>
 
 <p><strong>Per-channel:</strong> Also known as per-axis, this method assigns a distinct set of quantization parameters to each output channel, so every channel is scaled and clipped according to its own distribution. Compared to per-tensor (a single shared range), per-channel captures inter-channel variation, reducing quantization error and typically improving accuracy, while eliminating the need for global rescaling across channels. In practice, it is the standard choice for convolutional/linear <em>weights</em>, where channel-wise distributions often differ substantially.</p>
 
