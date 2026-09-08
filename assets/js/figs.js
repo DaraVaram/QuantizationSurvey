@@ -768,7 +768,7 @@
     var G = (window.DATA || {}).guide;
     if (!G || !G.toolchains) return;
     var grid = $(".stk-grid", fig), layersEl = $(".stk-layers", fig), overlay = $(".stk-overlay", fig), panel = $(".stk-panel", fig);
-    var input = $(".stk-search", fig), suggest = $("#stk-suggest"), clearBtn = $(".stk-clear", fig);
+    var input = $(".stk-search", fig), clearBtn = $(".stk-clear", fig);
     var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
     var NS = "http://www.w3.org/2000/svg";
     var TC = G.toolchains, TIDS = Object.keys(TC), COUPLES = G.couples || {}, FREE = G.free || [];
@@ -975,8 +975,16 @@
       var d = "M" + pts[0].cx + "," + pts[0].cy, arrows = [];
       for (var i = 1; i < pts.length; i++) {
         var a = pts[i - 1], b = pts[i];
-        if (Math.abs(b.cy - a.cy) < 4) d += " L" + b.cx + "," + b.cy;
-        else {
+        if (Math.abs(b.cy - a.cy) < 4) {
+          /* Two steps in the same row usually have other chips between them, and the chips
+             are opaque so the line would disappear behind them. Hop over the gap above the
+             row instead, which stays visible and reads as one continuous route. */
+          var gap = Math.abs(b.cx - a.cx) - (a.w + b.w) / 2;
+          if (gap > 6) {
+            var top = Math.min(a.y, b.y) - 7;
+            d += " C" + a.cx + "," + top + " " + b.cx + "," + top + " " + b.cx + "," + b.cy;
+          } else d += " L" + b.cx + "," + b.cy;
+        } else {
           var my = (a.cy + b.cy) / 2;
           d += " C" + a.cx + "," + my + " " + b.cx + "," + my + " " + b.cx + "," + b.cy;
           if (b.cy - a.cy > 40) arrows.push({ x: (a.cx + b.cx) / 2, y: my, ang: Math.atan2(0.75 * (b.cy - a.cy), 1.5 * (b.cx - a.cx)) * 180 / Math.PI });
@@ -992,36 +1000,37 @@
       clearPaths();
       var gr = grid.getBoundingClientRect(); drawnAt = { w: gr.width, h: gr.height };
       if (!Q) return;
-      var vp = shown(Q).slice(0, 3), n = vp.length, pickId = pickedId(Q);
+      /* Only the recommended route is drawn. The alternatives stay selectable as chips
+         and in the route list; drawing them as dashed lines behind the dimmed chips
+         read as clutter rather than as choice. */
+      var vp = shown(Q), pickId = pickedId(Q);
       if (Q.famOnly && vp.indexOf(pickId) === -1) pickId = vp[0];
-      var seq = vp.slice().sort(function (a, b) { return (a === pickId ? 1 : 0) - (b === pickId ? 1 : 0); });
-      seq.forEach(function (tid) {
-        var T = TC[tid], main = tid === pickId, i = vp.indexOf(tid);
+      if (pickId) {
+        var T = TC[pickId];
         var start = Q.app ? ["cat:" + Q.app] : [];
-        var R = pathD(start.concat(lineOf(tid, Q)), (i - (n - 1) / 2) * 9);
-        if (!R) return;
-        var halo = main ? mk("path", { d: R.d, "class": "stk-path-halo" }) : null;
-        if (halo) overlay.appendChild(halo);
-        var path = mk("path", { d: R.d, "class": "stk-path" + (main ? " stk-main" : ""), stroke: T.color, "data-t": tid });
-        overlay.appendChild(path);
-        var arrows = [];
-        if (main) R.arrows.forEach(function (ar) {
-          var a = mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: T.color, "data-t": tid, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" });
-          overlay.appendChild(a); arrows.push(a);
-        });
-        if (animate && !reduced) {
-          var len = path.getTotalLength(), delay = main ? 0 : 0.12 + i * 0.09, dur = Math.min(1.5, 0.35 + len / 1100);
-          arrows.forEach(function (a) { a.style.transition = "none"; a.style.opacity = "0"; });
-          [halo, path].forEach(function (e) { if (!e) return; e.style.transition = "none"; e.style.strokeDasharray = len; e.style.strokeDashoffset = len; });
-          /* The nodes were inserted this tick, so their start state only settles on the
-             next frame; setting the target before then makes the value snap. */
-          requestAnimationFrame(function () {
-            [halo, path].forEach(function (e) { if (!e) return; e.style.transition = "stroke-dashoffset " + dur + "s ease-out " + delay + "s"; e.style.strokeDashoffset = "0"; });
-            arrows.forEach(function (a) { a.style.transition = "opacity 0.25s ease-out " + (delay + dur * 0.7) + "s"; a.style.opacity = "1"; });
+        var R = pathD(start.concat(lineOf(pickId, Q)), 0);
+        if (R) {
+          var halo = mk("path", { d: R.d, "class": "stk-path-halo" });
+          overlay.appendChild(halo);
+          var path = mk("path", { d: R.d, "class": "stk-path", stroke: T.color, "data-t": pickId });
+          overlay.appendChild(path);
+          var arrows = R.arrows.map(function (ar) {
+            var a = mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: T.color, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" });
+            overlay.appendChild(a); return a;
           });
-          if (!main) setTimeout(function () { path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; path.style.transition = ""; }, (delay + dur) * 1000 + 120);
+          if (animate && !reduced) {
+            var len = path.getTotalLength(), dur = Math.min(1.5, 0.35 + len / 1100);
+            arrows.forEach(function (a) { a.style.transition = "none"; a.style.opacity = "0"; });
+            [halo, path].forEach(function (e) { e.style.transition = "none"; e.style.strokeDasharray = len; e.style.strokeDashoffset = len; });
+            /* The nodes were inserted this tick, so their start state only settles on the
+               next frame; setting the target before then makes the value snap. */
+            requestAnimationFrame(function () {
+              [halo, path].forEach(function (e) { e.style.transition = "stroke-dashoffset " + dur + "s ease-out"; e.style.strokeDashoffset = "0"; });
+              arrows.forEach(function (a) { a.style.transition = "opacity 0.25s ease-out " + (dur * 0.7) + "s"; a.style.opacity = "1"; });
+            });
+          }
         }
-      });
+      }
       if (Q.dead && Q.subject && byKey[Q.subject]) {
         var pin = pinByLabel(/^n:/.test(Q.subject) ? "8.4" : "8.3"), src = byKey[Q.subject];
         if (pin) { var p2 = rel(pin), s = rel(src), my2 = (s.cy + p2.cy) / 2;
@@ -1203,11 +1212,6 @@
     input.addEventListener("change", runText);
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); runText(); } if (e.key === "Escape") { input.value = ""; setQuery(null); } });
     input.addEventListener("search", runText);
-    var seen = {};
-    function addOpt(v) { if (!v || seen[v.toLowerCase()]) return; seen[v.toLowerCase()] = 1; var o = document.createElement("option"); o.value = v; suggest.appendChild(o); }
-    Object.keys(G.families).forEach(function (f) { addOpt(famName(f)); });
-    chips.forEach(function (c) { addOpt(LABEL[c.getAttribute("data-k")]); });
-    ["Mixed precision", "Sub-8-bit", "ESP32", "GAP", "MAX78"].forEach(addOpt);
 
     // hovering (or focusing) a pin lights the layers it bridges and brackets them
     function bridge(pin) {
