@@ -162,10 +162,10 @@ guide: {
     "cube": {
       rank: 3, name: "STM32Cube.AI", fam: "arm", color: "#AD1457",
       vendorFor: ["h:stm32"],
-      story: "The vendor route on STM32. Cube.AI converts the trained model straight into embedded C and brings its own runtime, so there is no separate inference engine to choose. That trades portability for a shorter path to working firmware.",
-      steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: null },
+      story: "The vendor route on STM32. Cube.AI converts the trained model into embedded C and emits the runtime library that executes it, so the inference engine comes with the conversion rather than being chosen separately. That trades portability for a shorter path to working firmware.",
+      steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: "f:cubert" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
-             dev: ["f:tf", "f:pytorch"], conv: ["f:cubeai"], run: [] },
+             dev: ["f:tf", "f:pytorch"], conv: ["f:cubeai"], run: ["f:cubert"] },
       implies: ["d:uni", "d:sym", "d:asym", "d:pc", "d:static", "d:calib"],
       targets: ["h:stm32"]
     },
@@ -334,6 +334,7 @@ guide: {
     "f:cmsis": "CMSIS-NN sits underneath TFLM on the Cortex-M routes rather than being chosen separately.",
     "f:espnn": "ESP-NN sits underneath TFLM on the ESP32 parts, the way CMSIS-NN does on Cortex-M.",
     "f:accel": "The vendor runtime that drives the accelerator: ai8x firmware on the MAX78x, the GAP SDK, the Ethos-U driver, or the Neural-ART runtime.",
+    "f:cubert": "The network runtime library STM32Cube.AI emits alongside the converted C. Cube.AI only converts; this is what executes the model on the part.",
     "f:ai8xt": "ai8x-training is a PyTorch fork that trains with the MAX78x accelerator's constraints in the loop, so choosing it is a PyTorch flow.",
     "f:pytorch": "PyTorch reaches every family. On the MAX78x it arrives as ai8x-training, the fork that trains with the accelerator's constraints in the loop.",
     "h:pulp": "A research platform, where low-bit and mixed-precision RISC-V kernels have been demonstrated, rather than a part you can buy."
