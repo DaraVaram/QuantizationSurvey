@@ -1324,7 +1324,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h2 id="alt-formats">5&ensp;Alternative Numerical Representations</h2>
 
-<p>Most MCU-oriented quantization pipelines rely on fixed-point or integer arithmetic because these formats are simple, efficient, and widely supported by embedded hardware. Nevertheless, alternative numerical representations are important to review as part of a forward-looking assessment of the MCU quantization landscape. Reduced floating-point, adaptive fixed-point, and tapered-precision formats clarify how precision and dynamic range can be redistributed beyond conventional INT8 inference, even though their practical value still depends on hardware support, runtime integration, and optimized kernels. <a class="xref" href="#figure-15">Fig. 15</a> provides an overview of the formats discussed, grouped by how each redistributes precision and dynamic range. Their inclusion, therefore, helps identify which hardware and software capabilities would be required for future MCU platforms to move beyond standard uniform affine integer quantization.</p>
+<p>Most MCU-oriented quantization pipelines rely on fixed-point or integer arithmetic because these formats are simple, efficient, and widely supported by embedded hardware. Their limited dynamic range and expressivity nevertheless make alternative numerical representations important to review as part of a forward-looking assessment of the MCU quantization landscape. Reduced floating-point, adaptive fixed-point, and tapered-precision formats clarify how precision and dynamic range can be redistributed beyond conventional INT8 inference, even though their practical value still depends on hardware support, runtime integration, and optimized kernels. <a class="xref" href="#figure-15">Fig. 15</a> provides an overview of the formats discussed, grouped by how each redistributes precision and dynamic range. Their inclusion helps identify which hardware and software capabilities would be required for future MCU platforms to move beyond standard uniform affine integer quantization.</p>
 
 <!-- Figure 15 (fig:format-taxonomy) — the alternative-format branch of the taxonomy,
      following the paragraph in Section 5 that introduces it. -->
@@ -1341,8 +1341,6 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   </div>
   <figcaption><b>Figure 15:</b> Taxonomy of the alternative numerical representations reviewed in this section, grouped into reduced floating-point, adaptive fixed-point, and tapered-precision formats.</figcaption>
 </figure>
-
-<p>As mentioned in <a class="xref" href="#numerical-representations">Section 2.1</a>, the core challenge is to approximate 32-bit floating-point numbers using fewer bits while maintaining numerical fidelity and enabling efficient hardware implementation. This trade-off becomes especially critical in constrained environments such as microcontrollers and edge devices. While formats like FP16 are widely supported by modern FPUs, they may not offer the optimal balance between accuracy, performance, and computational cost. Fixed-point and integer arithmetic, though hardware-efficient and simple, often suffer from a limited dynamic range and reduced expressivity, making them less suitable for deeper or more sensitive models. As a result, new number systems have emerged that better match the distributional characteristics of DNN weights and activations, aiming to improve both memory and compute efficiency.</p>
 
 <h3 id="reduced-fp">5.1&ensp;Reduced Floating-Point Formats</h3>
 
