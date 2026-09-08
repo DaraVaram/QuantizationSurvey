@@ -1159,7 +1159,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>While QAT significantly improves robustness to quantization, the fake quantization operations it inserts in the forward pass add training overhead. A widely adopted strategy is therefore to apply QAT as a fine-tuning phase on top of a pre-trained FP32 model, which converges more quickly and achieves higher post-quantization accuracy than training from scratch under low-precision constraints <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>. Quantization noise from the outset can impair the model&#8217;s ability to learn robust features, whereas a fully converged FP32 model provides a stable initialization from which the network adapts smoothly, making this two-stage pipeline especially attractive in resource-constrained environments.</p>
 
-<p>From an MCU perspective, then, PTQ and QAT reflect a fundamental deployment trade-off. PTQ is easier, cheaper, and faster to apply, whereas QAT is more computationally demanding but often necessary when aggressive compression or strict accuracy retention is required. Accordingly, PTQ is typically the first option explored in embedded deployment pipelines, with QAT used when PTQ falls short.</p>
+<p>For MCU deployment, PTQ and QAT present a practical trade-off, since PTQ is easier, cheaper, and faster to apply, whereas QAT is more computationally demanding but often necessary when aggressive compression or strict accuracy retention is required. Embedded pipelines therefore tend to start with PTQ and turn to QAT only when PTQ falls short.</p>
 
 <h2 id="advanced">4&ensp;Advanced Quantization Techniques</h2>
 
