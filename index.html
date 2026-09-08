@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260910s">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260910t">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260910s"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260910s"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260910s"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260910t"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260910t"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260910t"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1235,7 +1235,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>where \(S\) is again the sign bit, \(c\) the characteristic, an integer whose sign and width follow from the direction and regime bits, and \(m\) the mantissa fraction as in \eqref{eq:posit}. The logarithmic value \(\ell\) is therefore confined to \((-255, 255)\) <d-cite key="hunhold2024beating"></d-cite>.</p>
 
-<p>This bounds the format in a way Posit is not. A takum reaches its full dynamic range at \(N = 12\) and holds it constant thereafter, spanning roughly \(4.2 \times 10^{-56}\) to \(2.4 \times 10^{55}\) in the standard logarithmic variant, so every additional bit buys precision rather than range <d-cite key="hunhold2024beating"></d-cite>. It bounds the decoder too: with the regime confined to eight states inside the first 12 bits, parsing reduces to a 16-byte lookup table (LUT) shared across all precisions, whereas a Posit regime may span the whole word and needs bit-counting logic on every input bit <d-cite key="hunhold2024beating"></d-cite>. Implemented on a field-programmable gate array (FPGA), an open-source codec reports lower latency and fewer LUTs than a comparable Posit codec on that basis <d-cite key="hunhold2024codec"></d-cite>.</p>
+<p>This bounds the format in a way Posit is not. A takum reaches its full dynamic range at \(N = 12\) and holds it constant thereafter, spanning roughly \(4.2 \times 10^{-56}\) to \(2.4 \times 10^{55}\) in the standard logarithmic variant, so every additional bit buys precision rather than range <d-cite key="hunhold2024beating"></d-cite>. It bounds the decoder too. With the regime confined to eight states inside the first 12 bits, parsing reduces to a 16-byte lookup table (LUT) shared across all precisions, whereas a Posit regime may span the whole word and needs bit-counting logic on every input bit <d-cite key="hunhold2024beating"></d-cite>. Implemented on a field-programmable gate array (FPGA), an open-source codec reports lower latency and fewer LUTs than a comparable Posit codec on that basis <d-cite key="hunhold2024codec"></d-cite>.</p>
 
 <p>For MCU deployment, however, takum is at an earlier stage than Posit. Its published evaluations are in numerical linear algebra rather than neural networks, covering sparse iterative solvers <d-cite key="hunhold2025sparse"></d-cite> and integer representability across the three formats <d-cite key="hunhold2024integer"></d-cite>, and no takum ASIC or instruction set extension has been reported. The format also matches or outperforms Posit and BFloat16 in every scenario its author tested <em>except</em> addition and subtraction <d-cite key="hunhold2024beating"></d-cite>, a consequence of the logarithmic significand that bears directly on the accumulate-heavy kernels of DNN inference, and the posit literature notes that its bounded range leaves it with a more limited tapered behavior than a Posit <d-cite key="mallasen2025navigating"></d-cite>. A balanced-ternary sibling, tekum <d-cite key="hunhold2025tekum"></d-cite>, carries the same tapered-precision idea into ternary logic, but remains an analytical design with no hardware or software implementation.</p>
 
@@ -1569,7 +1569,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260910s"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260910t"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1590,9 +1590,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260910s"></script>
-  <script src="assets/js/supplements.js?v=20260910s"></script>
-  <script src="assets/js/figs.js?v=20260910s"></script>
+  <script src="assets/js/data.js?v=20260910t"></script>
+  <script src="assets/js/supplements.js?v=20260910t"></script>
+  <script src="assets/js/figs.js?v=20260910t"></script>
 
   </body>
 
