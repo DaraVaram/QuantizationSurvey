@@ -8,7 +8,7 @@ window.DATA = {
 
 /* ----------------------------------------------------------------------
    TABLE I — Scope comparison of surveys (tab:survey-scope)
-   cells: "yes" | "partial" | ""  ;  hw: subset of ["arm","risc","hybrid"]
+   cells: "yes" | "partial" | ""  ;  hw: subset of ["arm","risc","npu"]
 ---------------------------------------------------------------------- */
 surveyScope: {
   columns: ["Primary Quantization","Advanced Quantization","Numeric Representations",
@@ -16,7 +16,7 @@ surveyScope: {
   rows: [
     {paper:"Gholami et al.",  key:"gholami2022survey",      year:2022, primary:"yes", advanced:"yes",     numeric:"",        hw:["arm","risc"],         software:"",    apps:""},
     {paper:"Orășan et al.",   key:"lucan2022brief",         year:2022, primary:"",    advanced:"",        numeric:"",        hw:["arm"],                software:"yes", apps:"yes"},
-    {paper:"Giordano et al.", key:"giordano2022survey",     year:2022, primary:"",    advanced:"",        numeric:"",        hw:["arm","risc","hybrid"],software:"",    apps:""},
+    {paper:"Giordano et al.", key:"giordano2022survey",     year:2022, primary:"",    advanced:"",        numeric:"",        hw:["arm","risc","npu"],software:"",    apps:""},
     {paper:"Saha et al.",     key:"saha2022",               year:2022, primary:"yes", advanced:"partial", numeric:"",        hw:[],                     software:"yes", apps:"yes"},
     {paper:"Ray",             key:"ray2022review",          year:2022, primary:"yes", advanced:"partial", numeric:"",        hw:["arm","risc"],         software:"yes", apps:"yes"},
     {paper:"Rokh et al.",     key:"rokh2023comprehensive",  year:2023, primary:"yes", advanced:"yes",     numeric:"",        hw:[],                     software:"",    apps:""},
@@ -27,9 +27,9 @@ surveyScope: {
     {paper:"Liu et al.",      key:"liu2025low",             year:2025, primary:"yes", advanced:"yes",     numeric:"yes",     hw:[],                     software:"",    apps:""},
     {paper:"Heydari and Mahmoud",key:"heydari2025tiny",     year:2025, primary:"",    advanced:"",        numeric:"",        hw:[],                     software:"",    apps:"yes"},
     {paper:"Wang and Jia",    key:"wang2025optimizing",     year:2025, primary:"yes", advanced:"partial", numeric:"",        hw:[],                     software:"yes", apps:"yes"},
-    {paper:"Somvanshi et al.",key:"somvanshi2025tiny",      year:2025, primary:"yes", advanced:"partial", numeric:"partial", hw:["arm","risc","hybrid"],software:"yes", apps:"yes"},
+    {paper:"Somvanshi et al.",key:"somvanshi2025tiny",      year:2025, primary:"yes", advanced:"partial", numeric:"partial", hw:["arm","risc","npu"],software:"yes", apps:"yes"},
     {paper:"Lê et al.",       key:"tri2026efficient",       year:2026, primary:"yes", advanced:"partial", numeric:"partial", hw:["arm","risc"],         software:"yes", apps:"partial"},
-    {paper:"Ours",            key:null,                     year:2026, primary:"yes", advanced:"yes",     numeric:"yes",     hw:["arm","risc","hybrid"],software:"yes", apps:"yes", ours:true}
+    {paper:"Ours",            key:null,                     year:2026, primary:"yes", advanced:"yes",     numeric:"yes",     hw:["arm","risc","npu"],software:"yes", apps:"yes", ours:true}
   ]
 },
 
@@ -115,6 +115,70 @@ apps: {
     {key:"crupi2025efficient", cat:"Drones", quant:"INT8, FP16 PTQ", devices:"GAP9", fw:"nntool", perf:"79.00% mAP, 80.00% mAP", power:"34–41 mW", lat:"147–462", mem:"1800–3600"},
     {key:"rashid2025hac", cat:"Agriculture", quant:"INT8 PTQ", devices:"GAP8", fw:"TFLM", perf:"95.00% Acc.", power:"378 mW", lat:"37.6", mem:"49.6"}
   ]
+},
+
+/* ----------------------------------------------------------------------
+   GUIDE — Figure 17. The recommended deployment path of each MCU family,
+   and which families suit which application. This is authored guidance,
+   the survey's own advice drawn from Section 7.4 and Table 7, not a tally
+   of the surveyed papers. Edit freely; figs.js only reads it.
+   Chip keys: q: path, s: precision strategy, r: refinement, d: design
+   choice, n: numerical representation, f: software tool, h: platform.
+---------------------------------------------------------------------- */
+guide: {
+  families: {
+    arm: {
+      name: "ARM-based", color: "#D81B60",
+      story: "<b>The mainstream path.</b> Uniform INT8 by PTQ, or QAT where always-on accuracy must survive, exported through TensorFlow Lite and run by TFLM with CMSIS-NN kernels on any Cortex-M board. Choose it when mature tooling and portability matter more than peak efficiency.",
+      light: { quant: ["q:PTQ", "q:QAT", "s:uniform", "d:asym", "d:sym", "d:pt", "d:pc", "d:static", "d:calib"],
+               repr: ["n:INT8"],
+               sw: ["f:tf", "f:pytorch", "f:ei", "f:onnx", "f:tflite", "f:cubeai", "f:tflm", "f:cmsis"] },
+      route: { quant: ["q:PTQ", "s:uniform"], repr: ["n:INT8"], sw: ["f:tf", "f:tflite", "f:tflm"], hw: "h:stm32" },
+      hw: ["h:stm32", "h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo", "h:cm4f"]
+    },
+    riscv: {
+      name: "RISC-V-based", color: "#F57C00",
+      story: "<b>The open-ISA path.</b> Uniform INT8 by PTQ, exported through TensorFlow Lite and run by TFLM with ESP-NN kernels on an ESP32-C3, C6, or P4. Choose it when a low-cost part suffices for a compact workload and a younger toolchain is acceptable.",
+      light: { quant: ["q:PTQ", "s:uniform", "d:asym", "d:pt", "d:static", "d:calib"],
+               repr: ["n:INT8"],
+               sw: ["f:tf", "f:pytorch", "f:tflite", "f:tflm", "f:espnn", "f:ariel"] },
+      route: { quant: ["q:PTQ", "s:uniform"], repr: ["n:INT8"], sw: ["f:tf", "f:tflite", "f:tflm"], hw: "h:c6" },
+      hw: ["h:c3", "h:c6", "h:p4"]
+    },
+    npu: {
+      name: "NPU-integrated", color: "#0288D1",
+      story: "<b>The accelerator path.</b> QAT to INT8, or lower where the accelerator accepts it, handed to the vendor toolchain (ai8x, GAPflow, Ethos-U, Neural-ART) whose runtime drives the accelerator. Choose it when hard latency or energy budgets dominate and the model fits the accelerator's operators and memory.",
+      light: { quant: ["q:PTQ", "q:QAT", "s:uniform", "d:static", "d:calib"],
+               repr: ["n:INT8"],
+               sw: ["f:pytorch", "f:tf", "f:ai8xt", "f:tflite", "f:ai8xs", "f:gapflow", "f:ethos", "f:neuralart", "f:accel"] },
+      route: { quant: ["q:QAT", "s:uniform"], repr: ["n:INT8"], sw: ["f:pytorch", "f:gapflow", "f:accel"], hw: "h:gap9" },
+      hw: ["h:max000", "h:max002", "h:gap8", "h:gap9", "h:ethos", "h:n6", "h:mcxn", "h:mspm0"]
+    }
+  },
+  // Per application: the families to recommend, most suitable first, and one sentence of guidance.
+  applications: {
+    "Speech":               { fams: ["arm", "npu"],  note: "Speech models run as always-on INT8 workloads on Cortex-M; move to an NPU-integrated part when the audio front end and the model together must meet a hard latency or energy budget." },
+    "Keyword Spotting":     { fams: ["arm", "npu"],  note: "Keyword spotting is small and always-on, so energy per inference decides. Cortex-M is the low-friction default; accelerators cut energy further when the rest of the pipeline can be duty-cycled around them." },
+    "Object Detection":     { fams: ["npu", "arm"],  note: "Detection is the workload where accelerators pay off most. On Cortex-M it is confined to tiny detectors at low frame rates." },
+    "Image Classification": { fams: ["npu", "arm"],  note: "Compact classifiers fit Cortex-M at modest input resolution; NPU-integrated parts extend resolution and frame rate at lower energy." },
+    "Face Recognition":     { fams: ["npu"],         note: "Face recognition is an accelerator workload: its input resolution and embedding networks exceed what Cortex-M cores handle in real time." },
+    "HAR":                  { fams: ["arm", "npu"],  note: "Inertial activity recognition is the archetypal Cortex-M workload. The GAP family suits fast, multi-sensor loops where reaction time matters." },
+    "Healthcare":           { fams: ["arm", "riscv", "npu"], note: "Physiological-signal models run on all three families. Choose by the signal's dimensionality, by certification and tooling constraints, and only then by raw efficiency." },
+    "Networking":           { fams: ["arm", "npu"],  note: "Packet- and flow-level classifiers are small and latency-tolerant, so Cortex-M is the default; an accelerator brings sub-millisecond, sub-microjoule inference when the whole network fits in it." },
+    "Environment":          { fams: ["arm", "npu"],  note: "Environmental sensing is long-duty-cycle and battery-bound, so the mature Cortex-M stack is the default; accelerators help once acoustic or image inputs are involved." },
+    "Education":            { fams: ["arm"],         note: "Teaching platforms favour the most reproducible path: Cortex-M boards with TFLM, STM32Cube.AI, or Edge Impulse." },
+    "Spectrum Sensing":     { fams: ["arm", "npu"],  note: "Spectrum sensing is a one-dimensional signal pipeline that Cortex-M handles at the sample rates reported; accelerators become relevant for wideband inputs or tightening latency budgets." },
+    "Industrial":           { fams: ["riscv", "arm"], note: "Vibration- and condition-monitoring classifiers are compact one-dimensional models. Low-cost RISC-V parts and Cortex-M both suffice; RISC-V is attractive where unit cost and an open ISA matter." },
+    "Robotics":             { fams: ["npu", "riscv"], note: "Reaction-critical control loops favour the GAP family; the dual-core ESP32-P4 handles lighter steering and throttle models." },
+    "Drones":               { fams: ["npu"],         note: "Drone perception is the canonical GAP8 and GAP9 workload: parallelisable, latency-bound, and power-limited." },
+    "Anomaly Detection":    { fams: ["npu", "arm"],  note: "Anomaly detectors are small but always-on, so energy per inference decides. Accelerators reach milliwatt operation; Cortex-M remains the low-friction alternative." },
+    "Agriculture":          { fams: ["arm", "npu"],  note: "Agricultural sensing spans low-rate environmental inputs, which suit Cortex-M, to camera-based monitoring, which wants an accelerator." },
+    "Segmentation":         { fams: ["npu"],         note: "Dense per-pixel output is an accelerator workload, and one that depends on operator coverage in the vendor toolchain." },
+    "VQA":                  { fams: ["npu"],         note: "Multimodal models need an accelerator and a toolchain that covers attention operators, which is exactly the gap challenges 8.1 and 8.2 describe." },
+    "Surveillance":         { fams: ["npu"],         note: "Always-on camera pipelines pair an accelerator with aggressive duty-cycling of the sensor and radio." },
+    "Wearables":            { fams: ["npu", "arm"],  note: "Wearables trade the accelerator's energy per inference against the simpler Cortex-M stack; hearing aids on the GAP9 show the accelerator side of that trade." },
+    "DSP":                  { fams: ["arm", "npu"],  note: "Classical DSP front ends run on Cortex-M with its DSP kernels; neural DSP pipelines move to the accelerator." }
+  }
 },
 
 /* ----------------------------------------------------------------------

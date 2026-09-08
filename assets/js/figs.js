@@ -751,52 +751,29 @@
   })();
 
   /* ---------- Figure 17: the deployment stack ----------
-     Read top-down, from the application to the hardware. The static figure
-     already shows the design space with section tags; this makes it a
-     practitioner's instrument. Every entry can be traced: the deployments in
-     Tables 4-6 that use it (from DATA.apps, so the tables stay the source of
-     truth) light their choices in every layer and draw one path each; Table 3
-     (DATA.hardware) says which platforms support a format even when no
-     surveyed deployment used it; and the panel closes with the Section 7.4
-     recommendation for the family the results fall into. Hovering a challenge
-     pin still brackets the layers it bridges. */
+     A practitioner's map, read top-down from the application to the
+     hardware. Selecting any entry traces the deployment path the survey
+     recommends for it, one coloured path per MCU family, from the guidance
+     authored in DATA.guide (Section 7.4 and Table 7 in data form). Table 3
+     (DATA.hardware) restricts the platforms a format or method can actually
+     run on. Tables 4-6 (DATA.apps) only help resolve free-text searches.
+     Hovering a challenge pin still brackets the layers it bridges. */
   (function () {
     var fig = $("#figure-17.stack-fig");
     if (!fig) return;
-    var D = window.DATA || {};
+    var D = window.DATA || {}, G = D.guide || { families: {}, applications: {} };
     var grid = $(".stk-grid", fig), layersEl = $(".stk-layers", fig), overlay = $(".stk-overlay", fig), panel = $(".stk-panel", fig);
     var input = $(".stk-search", fig), suggest = $("#stk-suggest"), clearBtn = $(".stk-clear", fig);
     var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
     var byKey = {};
     chips.forEach(function (c) { byKey[c.getAttribute("data-k")] = c; });
     var NS = "http://www.w3.org/2000/svg";
-    var FAMNAME = { arm: "ARM-based", riscv: "RISC-V-based", npu: "NPU-integrated" };
-    var FAMSEC = { arm: "apps-arm", riscv: "apps-riscv", npu: "apps-npu" };
-    var FAMTABLE = { arm: 4, riscv: 5, npu: 6 };
+    var FAMS = ["arm", "riscv", "npu"];
+    function famOf(hwKey) { for (var i = 0; i < FAMS.length; i++) if ((G.families[FAMS[i]] || { hw: [] }).hw.indexOf(hwKey) !== -1) return FAMS[i]; return hwKey === "h:pulp" ? "riscv" : null; }
+    function famsOf(hwKeys) { var out = []; hwKeys.forEach(function (k) { var f = famOf(k); if (f && out.indexOf(f) === -1) out.push(f); }); return out; }
 
-    /* ---- the deployments of Tables 4-6, mapped onto chip keys ---- */
-    function tokens(s) { return String(s || "").split(/,|\band\b/).map(function (t) { return t.trim(); }).filter(Boolean); }
-    function quantKeys(q) {
-      var Q = String(q).toUpperCase(), ks = [], fmts = [];
-      if (/QAT/.test(Q)) ks.push("q:QAT");
-      if (/PTQ/.test(Q)) ks.push("q:PTQ");
-      if (/U?INT8/.test(Q)) fmts.push("n:INT8");
-      if (/INT16/.test(Q)) fmts.push("n:INT16");
-      if (/FP16/.test(Q)) fmts.push("n:FP16");
-      if (/INT4/.test(Q)) fmts.push("n:INT4");
-      if (/INT2\b/.test(Q)) fmts.push("n:INT2");
-      var mixed = /MIXED/.test(Q) || fmts.length > 1;
-      ks.push(mixed ? "s:mixed" : "s:uniform");
-      if (mixed) fmts.push("n:mixed");
-      return ks.concat(fmts);
-    }
-    var FWMAP = [
-      [/ai8x-tools/i, ["f:ai8xt", "f:ai8xs"]], [/ai8x-synth/i, ["f:ai8xs"]], [/ai8x-train/i, ["f:ai8xt"]],
-      [/autotiler|nntool|gapflow/i, ["f:gapflow"]], [/tflm|lite for micro/i, ["f:tflm"]],
-      [/tflite|tensorflow lite|litert/i, ["f:tflite"]], [/^tensorflow$/i, ["f:tf"]], [/pytorch/i, ["f:pytorch"]],
-      [/cube/i, ["f:cubeai"]], [/onnx runtime/i, ["f:onnxrt"]], [/^onnx$/i, ["f:onnx"]], [/edge ?impulse/i, ["f:ei"]],
-      [/esp-nn/i, ["f:espnn"]], [/cmsis/i, ["f:cmsis"]], [/ethos/i, ["f:ethos"]], [/neural-art/i, ["f:neuralart"]]
-    ];
+    /* ---- names as the tables spell them, for free-text search only ---- */
+    function tokens(s) { return String(s || "").split(/,/).map(function (t) { return t.trim(); }).filter(Boolean); }
     var DEVMAP = [
       [/STM32N6/i, "h:n6"], [/STM32|Nucleo/i, "h:stm32"], [/Arduino|nRF52840/i, "h:nano33"], [/Spresense/i, "h:spresense"],
       [/OpenMV|H7 Plus/i, "h:openmv"], [/SparkFun/i, "h:sparkfun"], [/Apollo/i, "h:apollo"], [/Cortex-M4F/i, "h:cm4f"],
@@ -804,59 +781,72 @@
       [/MAX78000/i, "h:max000"], [/MAX78002/i, "h:max002"], [/GAP8/i, "h:gap8"], [/GAP9/i, "h:gap9"],
       [/Ethos|HX6538/i, "h:ethos"], [/MCXN/i, "h:mcxn"], [/MSPM0/i, "h:mspm0"]
     ];
-    function mapTokens(s, table, multi) {
+    function devKeys(s) {
       var out = [];
-      tokens(s).forEach(function (t) {
-        for (var i = 0; i < table.length; i++) {
-          if (table[i][0].test(t)) { (multi ? table[i][1] : [table[i][1]]).forEach(function (k) { if (out.indexOf(k) === -1) out.push(k); }); return; }
-        }
-      });
+      tokens(s).forEach(function (t) { for (var i = 0; i < DEVMAP.length; i++) if (DEVMAP[i][0].test(t)) { if (out.indexOf(DEVMAP[i][1]) === -1) out.push(DEVMAP[i][1]); return; } });
       return out;
     }
     var ROWS = [];
-    ["arm", "riscv", "npu"].forEach(function (fam) {
-      ((D.apps || {})[fam] || []).forEach(function (r) {
-        ROWS.push({ fam: fam, key: r.key, cat: r.cat, quant: r.quant, devices: r.devices, fw: r.fw,
-          keys: ["cat:" + r.cat].concat(quantKeys(r.quant), mapTokens(r.fw, FWMAP, true), mapTokens(r.devices, DEVMAP, false)) });
-      });
-    });
+    FAMS.forEach(function (fam) { ((D.apps || {})[fam] || []).forEach(function (r) { ROWS.push({ fam: fam, cat: r.cat, quant: r.quant, devices: r.devices, fw: r.fw, hw: devKeys(r.devices) }); }); });
 
-    /* ---- Table 3: which platforms support which formats ---- */
+    /* ---- Table 3: which platforms list which formats ---- */
     var FMTKEY = { INT1: "n:INT1", INT2: "n:INT2", INT4: "n:INT4", INT8: "n:INT8", INT16: "n:INT16" };
     var HW = (D.hardware || []).map(function (h) {
       var fk = [];
-      (h.formats || []).forEach(function (f) {
-        if (/INT2.INT8/.test(f)) { fk.push("n:INT2", "n:INT4", "n:INT8"); }
-        else if (FMTKEY[f]) fk.push(FMTKEY[f]);
-      });
-      return { platform: h.platform, chip: mapTokens(h.platform, DEVMAP, false)[0] || null, formats: h.formats || [], fkeys: fk };
+      (h.formats || []).forEach(function (f) { if (/INT2.INT8/.test(f)) fk.push("n:INT2", "n:INT4", "n:INT8"); else if (FMTKEY[f]) fk.push(FMTKEY[f]); });
+      return { platform: h.platform, chip: devKeys(h.platform)[0] || null, formats: h.formats || [], fkeys: fk };
     });
-    function capable(fkeys) {
-      return HW.filter(function (h) { return h.chip && fkeys.some(function (k) { return h.fkeys.indexOf(k) !== -1; }); });
-    }
-    var SUB8 = ["n:INT4", "n:INT2", "n:INT1"];
+    function platformsFor(fkeys) { return HW.filter(function (h) { return h.chip && fkeys.some(function (k) { return h.fkeys.indexOf(k) !== -1; }); }); }
+    function chipsOf(hs) { return hs.map(function (h) { return h.chip; }); }
+    function listNote(lead, hs) { return lead + " " + hs.map(function (h) { return h.platform + " (" + h.formats.join(", ") + ")"; }).join("; ") + "."; }
 
-    /* ---- Section 7.4, in its own words, keyed by what the results fall into ---- */
-    var REC = {
-      arm: "ARM Cortex-M remains the most practical baseline for modest-depth models and always-on sensing scenarios, where mature stacks such as TFLM or STM32Cube.AI reduce deployment effort and provide dependable performance. Choose it when mature tooling, portability, and low-friction integration matter more than peak efficiency.",
-      riscv: "Commercial RISC-V MCUs provide a viable alternative for compact workloads, as the ESP32-C3, ESP32-C6, and ESP32-P4 deployments demonstrate. Choose them when an open-ISA, low-cost part suffices and a younger toolchain is acceptable.",
-      npu: "For higher-throughput workloads or applications that need stronger latency and energy predictability, NPU-integrated MCUs become attractive whenever the model is compatible with a vendor-aligned toolchain. The GAP family is particularly well-suited to reaction-critical and parallelizable perception loops, including drones, robotics, and fast human activity recognition.",
-      uniform: "Most successful real deployments still rely on uniform INT8 through PTQ or QAT. This remains the best default because it offers the strongest balance between memory reduction, runtime simplicity, and accuracy retention.",
-      mixed: "Mixed precision becomes most useful when profiling reveals clear layer sensitivity or when the runtime can exploit finer-grained precision control, as seen in selected GAP-family and adaptive ARM deployments.",
-      extreme: "Extreme low-bit methods such as binary and ternary quantization remain more specialized and are most justifiable when flash memory or bandwidth is the dominant bottleneck.",
-      stack: "The strongest application results rarely follow from quantization alone. They emerge when quantization is aligned with operator libraries, memory layout, compiler support, and hardware scheduling."
+    /* ---- which platforms a tool targets ---- */
+    var TOOLHW = {
+      "f:ai8xt": ["h:max000", "h:max002"], "f:ai8xs": ["h:max000", "h:max002"], "f:gapflow": ["h:gap8", "h:gap9"], "f:ethos": ["h:ethos"],
+      "f:neuralart": ["h:n6"], "f:cubeai": ["h:stm32"], "f:espnn": ["h:c3", "h:c6", "h:p4"], "f:ariel": ["h:c3"], "f:pulpnn": ["h:pulp"], "f:xpulp": ["h:pulp"],
+      "f:accel": ["npu"], "f:cmsis": ["arm"], "f:ei": ["arm"], "f:minimal": ["arm"], "f:onnxrt": ["arm"], "f:tflm": ["arm", "riscv"],
+      "f:tflite": FAMS, "f:tf": FAMS, "f:pytorch": FAMS, "f:onnx": FAMS
     };
-    var STORY = {
-      "fam:arm": "<b>The mainstream path.</b> An INT8 model, from QAT or PTQ, exported through TensorFlow Lite and executed by TFLM, usually with CMSIS-NN kernels, on a Cortex-M core.",
-      "fam:riscv": "<b>The commercial RISC-V path.</b> Uniform INT8 PTQ on the ESP32-C and ESP32-P families running TFLM. Feasible, but so far confined to the lower tier of edge workloads.",
-      "fam:npu": "<b>The accelerator-backed path.</b> A vendor toolchain maps the quantized network onto the accelerator. The strongest latency and energy predictability, and the strongest dependence on hardware-specific tooling.",
-      "s:extreme": "<b>The research frontier.</b> Binary and sub-8-bit networks reach MCUs only through custom kernels and ISA-level optimizations, because mainstream runtimes stop at INT8. Several accelerators advertise the formats; none of the surveyed deployments uses them.",
-      "n:posit": "<b>An alternative format.</b> Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the path stops at the number layer. Research hardware such as PHEE (Section 5.3) is where it currently ends.",
-      "n:takum": "<b>An alternative format.</b> Takum keeps Posit's tapered precision with a bounded regime, and like Posit it has no MCU runtime or silicon beneath it yet (Section 5.3)."
-    };
-    STORY["n:INT4"] = STORY["n:INT2"] = STORY["n:INT1"] = STORY["s:extreme"];
+    var ROW_OF = {};                                   // software chip -> row index, keeps routes in process order
+    $$(".stk-layer[data-layer='sw'] .stk-row", fig).forEach(function (r, i) { $$(".mchip", r).forEach(function (c) { ROW_OF[c.getAttribute("data-k")] = i; }); });
 
-    /* ---- resolving a query to a spec ---- */
+    /* ---- what an entry means, in one or two lines ---- */
+    var NOTE = {
+      "d:uni": "Uniform grids are what integer kernels execute; every path below assumes one.",
+      "d:nonuni": "Non-uniform grids (logarithmic, Posit-like) need dedicated arithmetic, which is why none of the recommended paths uses them.",
+      "d:sym": "Symmetric quantization drops the zero-point term, which is why weights are usually symmetric.",
+      "d:asym": "Asymmetric quantization spends a zero-point to use the full range, which is why post-ReLU activations are usually asymmetric.",
+      "d:pt": "Per-tensor scales are the cheapest to execute and what activations normally use.",
+      "d:pc": "Per-channel weight scales cost almost nothing at inference and are the converter default on the TensorFlow Lite path.",
+      "d:pg": "Per-group scales are rare on MCUs; the runtimes in the stack do not expose them.",
+      "d:static": "Static ranges are fixed at calibration time and are what every MCU runtime in the stack supports.",
+      "d:dyn": "Dynamic quantization recomputes ranges at run time and is not available in the MCU runtimes in the stack.",
+      "d:calib": "Calibration data selects the clipping range; PTQ quality depends on it more than on anything else.",
+      "r:hwa": "Hardware-aware quantization matters most on the accelerator path, where operator and format support decide what the toolchain will accept (see also 8.7).",
+      "r:redis": "Redistribution reshapes weight or activation distributions before quantizing, which mostly pays off at low bit-widths.",
+      "r:dagn": "Data-agnostic methods matter when calibration data cannot leave the device or does not exist; they apply on every path.",
+      "s:inttrain": "Integer training and on-device adaptation are not yet supported by the runtimes in the stack (see 8.6).",
+      "n:fxp": "In practice the fixed-point format is INT8: an integer grid with a scale kept outside the kernel.",
+      "n:FP16": "No MCU platform lists FP16 among its formats; the one reported use ran on the GAP9 cluster cores. FP32 is available on the ARM boards and the ESP32-P4 for unquantized baselines.",
+      "n:INT16": "INT16 buys accuracy headroom at twice the memory of INT8, and is supported natively on the platforms shown.",
+      "s:mixed": "Mixed precision pays off when profiling reveals clear layer sensitivity and the runtime can exploit finer-grained precision control, which today means an accelerator whose toolchain accepts several widths. On Cortex-M it is reachable only through custom kernels and ISA-level work.",
+      "s:extreme": "Extreme low-bit networks are most justifiable when flash memory or bandwidth is the dominant bottleneck. They reach MCUs through accelerators whose toolchains accept the width, trained with QAT, or through custom kernels.",
+      "q:QAT": "QAT is the path where always-on accuracy must survive compression, and the only path to sub-8-bit widths on the accelerators that accept them.",
+      "q:PTQ": "Uniform INT8 through PTQ is the right default on every family: the strongest balance between memory reduction, runtime simplicity, and accuracy retention.",
+      "s:uniform": "One bit-width for the whole network, INT8 in practice, is the best default on every family.",
+      "n:INT8": "INT8 is the common denominator of every runtime and every platform in the stack."
+    };
+    var BROKEN = { "n:BF16": "8.4", "n:FP8": "8.4", "n:MSFP": "8.4", "n:afx": "8.4", "n:posit": "8.4", "n:takum": "8.4" };
+    var BROKEN_NOTE = {
+      "n:posit": "Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the path stops here. Research hardware such as PHEE is where it currently ends.",
+      "n:takum": "Takum keeps Posit's tapered precision with a bounded regime and, like Posit, has no MCU runtime or silicon beneath it yet.",
+      "n:BF16": "BF16 is a training-side format; no MCU runtime or platform in the stack executes it.",
+      "n:FP8": "FP8 has no MCU runtime or platform beneath it in the stack.",
+      "n:MSFP": "Block floating-point has no MCU runtime or platform beneath it in the stack.",
+      "n:afx": "Adaptive fixed-point formats need dedicated hardware support that no platform in the stack provides."
+    };
+
+    /* ---- resolving an entry to a spec ---- */
     var LABEL = {};
     chips.forEach(function (c) { LABEL[c.getAttribute("data-k")] = c.textContent.replace(/\s+/g, " ").trim(); });
     var ALIAS = {
@@ -865,9 +855,9 @@
       "npu": "fam:npu", "npu-integrated": "fam:npu", "accelerator": "fam:npu",
       "kws": "cat:Keyword Spotting", "keyword": "cat:Keyword Spotting", "har": "cat:HAR", "activity": "cat:HAR",
       "drone": "cat:Drones", "health": "cat:Healthcare", "medical": "cat:Healthcare", "industrial": "cat:Industrial",
-      "environment": "cat:Environment", "environmental": "cat:Environment", "vision": "cat:Image Classification",
-      "detection": "cat:Object Detection", "anomaly": "cat:Anomaly Detection", "network": "cat:Networking", "robot": "cat:Robotics",
-      "mpq": "s:mixed", "mixed": "s:mixed", "mixed-precision": "s:mixed",
+      "environment": "cat:Environment", "environmental": "cat:Environment", "vision": "cat:Image Classification", "classification": "cat:Image Classification",
+      "detection": "cat:Object Detection", "anomaly": "cat:Anomaly Detection", "network": "cat:Networking", "robot": "cat:Robotics", "vqa": "cat:VQA",
+      "mpq": "s:mixed", "mixed": "s:mixed", "mixed-precision": "s:mixed", "mixed precision": "s:mixed",
       "sub-8-bit": "s:extreme", "sub8": "s:extreme", "sub-8": "s:extreme", "low-bit": "s:extreme", "binary": "n:INT1", "ternary": "n:INT1", "bnn": "n:INT1",
       "int8": "n:INT8", "uint8": "n:INT8", "int16": "n:INT16", "int4": "n:INT4", "int2": "n:INT2", "fp16": "n:FP16", "bf16": "n:BF16", "fp8": "n:FP8",
       "msfp": "n:MSFP", "block floating-point": "n:MSFP", "posit": "n:posit", "takum": "n:takum", "fixed-point": "n:fxp",
@@ -881,102 +871,160 @@
       "stm32n6": "h:n6", "mcxn94": "h:mcxn", "nxp": "h:mcxn", "mspm0": "h:mspm0"
     };
     Object.keys(LABEL).forEach(function (k) { ALIAS[LABEL[k].toLowerCase()] = k; });
-    // free-text groups that are not single chips
-    var GROUP = { "esp32": /ESP32/i, "gap": /GAP[89]/i, "max78": /MAX78/i, "cortex-m4f": /Cortex-M4F/i };
+    var GROUP = { "esp32": ["h:c3", "h:c6", "h:p4"], "gap": ["h:gap8", "h:gap9"], "max78": ["h:max000", "h:max002"], "esp32-c": ["h:c3", "h:c6"] };
 
-    function specFromKey(k) {
+    // A spec: which family paths to draw, how each is restricted or re-routed, what else to light, and what to say.
+    function famPath(f, opts) {
+      var F = G.families[f]; opts = opts || {};
+      return { fam: f, hwOnly: opts.hwOnly || null, route: Object.assign({}, F.route, opts.route || {}), swVia: opts.swVia || null };
+    }
+    function base(k) {
       var t = k.split(":")[0], val = k.slice(t.length + 1);
-      var spec = { key: k, label: LABEL[k] || val, rows: [], extra: [k], cap: [], pin: null, broken: false, recs: [], notes: [] };
-      var chip = byKey[k];
-      if (chip) spec.sec = { id: chip.getAttribute("data-sec"), term: chip.getAttribute("data-term") };
+      return { key: k, label: LABEL[k] || val, paths: [], light: [k], pin: null, broken: BROKEN[k] || null, notes: [], guide: null };
+    }
+    function specFromKey(k) {
+      var spec = base(k), t = k.split(":")[0], val = k.slice(t.length + 1);
       if (t === "fam") {
-        spec.label = FAMNAME[val]; spec.rows = ROWS.filter(function (r) { return r.fam === val; });
-        spec.sec = { id: FAMSEC[val] }; spec.recs = [val]; spec.famRow = val;
-      } else if (t === "cat" || t === "q" || t === "s" || t === "n" || t === "f" || t === "h") {
-        spec.rows = ROWS.filter(function (r) { return r.keys.indexOf(k) !== -1; });
+        spec.label = G.families[val].name; spec.paths = [famPath(val)];
+      } else if (t === "cat") {
+        var A = G.applications[val] || { fams: ["arm"], note: "" };
+        spec.paths = A.fams.map(function (f) { return famPath(f); }); spec.guide = A.note;
+      } else if (t === "h") {
+        var f = famOf(k);
+        if (f) spec.paths = [famPath(f, { hwOnly: [k], route: { hw: k } })];
+        var h3 = HW.filter(function (x) { return x.chip === k; })[0];
+        if (h3) spec.notes.push("Supported formats on this platform: " + h3.formats.join(", ") + ".");
+        if (k === "h:pulp") spec.notes.push("A research platform, where low-bit and mixed-precision RISC-V kernels (PULP-NN, XpulpNN) have been demonstrated, rather than a commercial part.");
+      } else if (t === "f") {
+        var tgt = TOOLHW[k] || FAMS, hwOnly = null, fams;
+        if (/^h:/.test(tgt[0])) { hwOnly = tgt; fams = famsOf(tgt); } else fams = tgt;
+        spec.paths = fams.map(function (f) { return famPath(f, { hwOnly: hwOnly, swVia: k }); });
+        if (k === "f:cmsis") spec.notes.push("CMSIS-NN sits underneath TFLM on most Cortex-M deployments and is rarely mentioned separately.");
+      } else if (t === "q" || k === "s:uniform" || k === "n:INT8" || k === "n:fxp") {
+        spec.paths = FAMS.map(function (f) { return famPath(f, { route: t === "q" ? { quant: [k, "s:uniform"] } : (k === "n:fxp" ? { repr: ["n:fxp"] } : {}) }); });
+        if (k === "n:fxp") spec.light.push("n:INT8");
+        spec.guide = NOTE[k];
+      } else if (k === "s:mixed" || k === "n:mixed") {
+        var caps = platformsFor(["n:INT4", "n:INT2", "n:INT1"]);
+        spec.paths = [famPath("npu", { hwOnly: chipsOf(caps), route: { quant: ["q:QAT", "s:mixed"], repr: ["n:mixed"], hw: chipsOf(caps)[chipsOf(caps).length - 1] } })];
+        spec.light.push("s:mixed", "n:mixed", "n:INT8", "n:INT4");
+        spec.guide = NOTE["s:mixed"];
+        spec.notes.push(listNote("Platforms whose supported formats go below 8 bits, which is what a mixed-precision network needs:", caps));
+      } else if (k === "s:extreme" || k === "n:INT4" || k === "n:INT2" || k === "n:INT1") {
+        var want = k === "s:extreme" ? ["n:INT2", "n:INT1"] : [k], caps2 = platformsFor(want), reprKey = k === "s:extreme" ? "n:INT2" : k;
+        if (caps2.length) spec.paths = [famPath("npu", { hwOnly: chipsOf(caps2), route: { quant: ["q:QAT", "s:extreme"], repr: [reprKey], sw: ["f:pytorch", "f:ai8xs", "f:accel"], hw: chipsOf(caps2)[0] } })];
+        spec.light.push("s:extreme", "q:QAT", reprKey);
+        spec.pin = "8.3";
+        spec.guide = NOTE["s:extreme"];
+        spec.notes.push(listNote("Platforms whose supported formats include this width:", caps2));
+      } else if (k === "n:INT16") {
+        var caps3 = platformsFor(["n:INT16"]);
+        spec.paths = famsOf(chipsOf(caps3)).map(function (f) {
+          var hs = chipsOf(caps3).filter(function (h) { return famOf(h) === f; });
+          return famPath(f, { hwOnly: hs, route: { repr: ["n:INT16"], hw: hs[0] } });
+        });
+        spec.guide = NOTE[k];
+        spec.notes.push(listNote("Platforms listing INT16 among their supported formats:", caps3));
+      } else if (k === "n:FP16") {
+        spec.paths = [famPath("npu", { hwOnly: ["h:gap9"], route: { repr: ["n:FP16"], quant: ["q:PTQ", "s:uniform"], hw: "h:gap9" } })];
+        spec.guide = NOTE[k];
+      } else if (k === "s:inttrain") {
+        spec.pin = "8.6"; spec.guide = NOTE[k];
+      } else if (t === "r" || t === "d") {
+        spec.paths = FAMS.map(function (f) { return famPath(f); });
+        spec.guide = NOTE[k];
       }
-      if (k === "s:mixed" || k === "n:mixed") { spec.extra.push("s:mixed", "n:mixed"); spec.cap = capable(SUB8); spec.recs.push("mixed"); }
-      if (k === "s:extreme" || SUB8.indexOf(k) !== -1) { spec.extra.push("s:extreme"); if (SUB8.indexOf(k) === -1) spec.extra.push("n:INT1", "n:INT2", "n:INT4"); spec.cap = capable(k === "s:extreme" ? SUB8 : [k]); spec.recs.push("extreme"); spec.pin = "8.3"; spec.broken = "8.3"; }
-      if (k === "n:INT8" || k === "n:INT16") spec.cap = capable([k]);
-      if (k === "s:uniform" || k === "q:PTQ" || k === "q:QAT") spec.recs.push("uniform");
-      if (k === "n:posit" || k === "n:takum" || k === "n:BF16" || k === "n:FP8" || k === "n:MSFP" || k === "n:afx") { spec.pin = "8.4"; spec.broken = "8.4"; }
-      if (k === "s:inttrain") spec.pin = "8.6";
-      if (t === "h") {
-        var h = HW.filter(function (x) { return x.chip === k; })[0];
-        if (h) spec.notes.push("<b>Table 3.</b> " + h.platform + " lists supported formats " + h.formats.join(", ") + ".");
-      }
-      if (t === "x") spec.notes.push("Discussed in Section 7.3, but none of the deployments tabulated in Tables 4&#8211;6 targets it.");
-      if (t === "d") spec.notes.push("A design choice of the quantizer (Section 2.3). The tables do not record it because the converter of each toolchain fixes it; TensorFlow Lite, for instance, uses asymmetric per-tensor activations and symmetric per-channel weights.");
-      if (t === "r") spec.notes.push("A refinement of Section 4 that none of the tabulated deployments reports using; it appears in the research literature the section reviews.");
-      if (t === "f" && !spec.rows.length) spec.notes.push("Named in Section 6.2, but no deployment in Tables 4&#8211;6 lists it explicitly. CMSIS-NN, for example, sits underneath TFLM on most Cortex-M deployments without being reported separately.");
-      if (t === "n" && !spec.rows.length && !spec.cap.length && k !== "n:mixed") spec.notes.push("Reviewed in Section 5, but no surveyed MCU deployment uses it and no platform in Table 3 lists it among its supported formats.");
+      if (spec.broken) { spec.pin = spec.broken; spec.guide = BROKEN_NOTE[k]; }
       return spec;
     }
-    function specFromRows(label, rows) {
-      return { key: null, label: label, rows: rows, extra: [], cap: [], pin: null, broken: false, recs: [], notes: [] };
+    function specFromGroup(label, hwKeys) {
+      var spec = { key: null, label: label, paths: [], light: [], pin: null, broken: null, notes: [], guide: null };
+      spec.paths = famsOf(hwKeys).map(function (f) { var hs = hwKeys.filter(function (h) { return famOf(h) === f; }); return famPath(f, { hwOnly: hs, route: { hw: hs[0] } }); });
+      return spec;
     }
     function resolveText(q) {
       var t = q.trim().toLowerCase().replace(/\s+/g, " ");
       if (!t) return null;
-      var spec = resolveCore(q, t);
+      var spec = null;
+      if (ALIAS[t]) spec = specFromKey(ALIAS[t]);
+      else if (GROUP[t]) spec = specFromGroup(q.trim(), GROUP[t]);
+      else {
+        var hit = Object.keys(ALIAS).filter(function (a) { return a.length >= 3 && (a.indexOf(t) !== -1 || t.indexOf(a) !== -1); })
+                        .sort(function (a, b) { return Math.abs(a.length - t.length) - Math.abs(b.length - t.length); })[0];
+        if (hit) spec = specFromKey(ALIAS[hit]);
+        else {
+          var hws = [];
+          ROWS.filter(function (r) { return [r.cat, r.devices, r.fw, r.quant].join(" ").toLowerCase().indexOf(t) !== -1; })
+              .forEach(function (r) { r.hw.forEach(function (k) { if (hws.indexOf(k) === -1) hws.push(k); }); });
+          spec = hws.length ? specFromGroup(q.trim(), hws)
+               : { key: null, label: q.trim(), paths: [], light: [], pin: null, broken: null, guide: null,
+                   notes: ["Nothing in the stack matches this. Try an application, a method, a format, a tool, or a platform."] };
+        }
+      }
       if (spec) spec.q = q.trim();
       return spec;
     }
-    function resolveCore(q, t) {
-      if (ALIAS[t]) return specFromKey(ALIAS[t]);
-      if (GROUP[t]) return specFromRows(q.trim(), ROWS.filter(function (r) { return GROUP[t].test(r.devices); }));
-      var hit = Object.keys(ALIAS).filter(function (a) { return a.length >= 3 && (a.indexOf(t) !== -1 || t.indexOf(a) !== -1); })
-                      .sort(function (a, b) { return Math.abs(a.length - t.length) - Math.abs(b.length - t.length); })[0];
-      if (hit) return specFromKey(ALIAS[hit]);
-      var rows = ROWS.filter(function (r) { return [r.cat, r.devices, r.fw, r.quant].join(" ").toLowerCase().indexOf(t) !== -1; });
-      return rows.length ? specFromRows(q.trim(), rows) : { key: null, label: q.trim(), rows: [], extra: [], cap: [], notes: ["Nothing in the stack, in Tables 4&#8211;6, or in Table 3 matches this. Try an application, a method, a format, a tool, or a platform."], recs: [] };
-    }
 
     /* ---- rendering ---- */
-    var active = null, pathOf = [];
+    var active = null;
     function rel(el) {
       var g = grid.getBoundingClientRect(), b = el.getBoundingClientRect();
       return { x: b.left - g.left, y: b.top - g.top, w: b.width, h: b.height, cx: b.left - g.left + b.width / 2, cy: b.top - g.top + b.height / 2 };
     }
     function mk(tag, attrs) { var e = document.createElementNS(NS, tag); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); return e; }
     function pinByLabel(t) { for (var i = 0; i < pins.length; i++) if (pins[i].textContent.trim() === t) return pins[i]; return null; }
-    function clearPaths() { $$(".stk-path, .stk-path-halo, .stk-path-broken", overlay).forEach(function (e) { e.parentNode.removeChild(e); }); overlay.classList.remove("stk-focus"); }
-    function routeFor(keys) {
-      var pts = [], prevX = null;
+    function clearPaths() { $$(".stk-path, .stk-path-halo, .stk-path-broken, .stk-arrow", overlay).forEach(function (e) { e.parentNode.removeChild(e); }); overlay.classList.remove("stk-focus"); }
+    function routeKeys(p) {
+      // the chips the line passes through, top-down; software rows in process order
+      var sw = (p.route.sw || []).slice();
+      if (p.swVia && sw.indexOf(p.swVia) === -1) { sw = sw.filter(function (k) { return ROW_OF[k] !== ROW_OF[p.swVia]; }); sw.push(p.swVia); }
+      sw.sort(function (a, b) { return (ROW_OF[a] || 0) - (ROW_OF[b] || 0); });
+      return [].concat(p.route.quant || [], p.route.repr || [], sw, p.route.hw ? [p.route.hw] : []);
+    }
+    function pathD(keys, dx, startKey) {
+      var pts = [], prevX = null, all = (startKey ? [startKey] : []).concat(keys);
       layers.forEach(function (L) {
-        var sel = keys.map(function (k) { return byKey[k]; }).filter(function (c) { return c && c.closest(".stk-layer") === L; });
-        if (!sel.length) return;
-        var ps = sel.map(rel).sort(function (a, b) { return a.cx - b.cx; });
-        if (prevX !== null && Math.abs(prevX - ps[ps.length - 1].cx) < Math.abs(prevX - ps[0].cx)) ps.reverse();
-        ps.forEach(function (p) { pts.push(p); });
-        prevX = ps[ps.length - 1].cx;
+        var bands = {};
+        all.map(function (k) { return byKey[k]; }).filter(function (c) { return c && c.closest(".stk-layer") === L; }).forEach(function (c) {
+          var r = rel(c); r.cx += dx; var band = Math.round(r.cy / 8); (bands[band] = bands[band] || []).push(r);
+        });
+        Object.keys(bands).sort(function (a, b) { return a - b; }).forEach(function (band) {
+          var ps = bands[band].sort(function (a, b) { return a.cx - b.cx; });
+          if (prevX !== null && Math.abs(prevX - ps[ps.length - 1].cx) < Math.abs(prevX - ps[0].cx)) ps.reverse();
+          ps.forEach(function (p) { pts.push(p); }); prevX = ps[ps.length - 1].cx;
+        });
       });
       if (pts.length < 2) return null;
-      var d = "M" + pts[0].cx + "," + pts[0].cy;
+      var d = "M" + pts[0].cx + "," + pts[0].cy, arrows = [];
       for (var i = 1; i < pts.length; i++) {
         var a = pts[i - 1], b = pts[i];
         if (Math.abs(b.cy - a.cy) < 4) d += " L" + b.cx + "," + b.cy;
-        else { var my = (a.cy + b.cy) / 2; d += " C" + a.cx + "," + my + " " + b.cx + "," + my + " " + b.cx + "," + b.cy; }
+        else {
+          var my = (a.cy + b.cy) / 2;
+          d += " C" + a.cx + "," + my + " " + b.cx + "," + my + " " + b.cx + "," + b.cy;
+          if (b.cy - a.cy > 40) arrows.push({ x: (a.cx + b.cx) / 2, y: my, ang: Math.atan2(0.75 * (b.cy - a.cy), 1.5 * (b.cx - a.cx)) * 180 / Math.PI });
+        }
       }
-      return d;
+      return { d: d, arrows: arrows };
     }
     function draw() {
       clearPaths();
-      pathOf = [];
       if (!active) return;
-      var rows = active.rows.length <= 14 ? active.rows : [];
-      overlay.toggleAttribute("data-many", rows.length > 5);
-      rows.forEach(function (r, i) {
-        var d = routeFor(r.keys);
-        if (!d) return;
-        var halo = mk("path", { d: d, "class": "stk-path-halo" }), p = mk("path", { d: d, "class": "stk-path", "data-i": i });
-        overlay.appendChild(halo); overlay.appendChild(p);
-        pathOf[i] = [halo, p];
+      var n = active.paths.length, startKey = active.key && /^cat:/.test(active.key) ? active.key : null;
+      active.paths.forEach(function (p, i) {
+        var col = G.families[p.fam].color, dx = (i - (n - 1) / 2) * 9;
+        var R = pathD(routeKeys(p), dx, startKey);
+        if (!R) return;
+        var halo = mk("path", { d: R.d, "class": "stk-path-halo" }), path = mk("path", { d: R.d, "class": "stk-path", stroke: col, "data-i": i });
+        overlay.appendChild(halo); overlay.appendChild(path);
+        R.arrows.forEach(function (ar) {
+          overlay.appendChild(mk("path", { d: "M-6,-4.5 L1.5,0 L-6,4.5 Z", "class": "stk-arrow", fill: col, "data-i": i, transform: "translate(" + ar.x + "," + ar.y + ") rotate(" + ar.ang + ")" }));
+        });
         if (!reduced) {
-          var len = p.getTotalLength();
-          [halo, p].forEach(function (e) {
+          var len = path.getTotalLength();
+          [halo, path].forEach(function (e) {
             e.style.strokeDasharray = len; e.style.strokeDashoffset = len; e.getBoundingClientRect();
-            e.style.transition = "stroke-dashoffset " + Math.min(1.6, 0.3 + len / 1000) + "s ease-out " + (i * 0.08) + "s";
+            e.style.transition = "stroke-dashoffset " + Math.min(1.6, 0.3 + len / 1000) + "s ease-out " + (i * 0.1) + "s";
             e.style.strokeDashoffset = "0";
           });
         }
@@ -989,106 +1037,53 @@
         }
       }
     }
-    function focusRow(i) {
+    function focusPath(i) {
       overlay.classList.toggle("stk-focus", i !== null);
-      $$(".stk-path", overlay).forEach(function (p) { p.classList.toggle("stk-path-hi", i !== null && +p.getAttribute("data-i") === i); });
-    }
-    function refNum(key) { return (window.QSRefs && window.QSRefs.number(key)) || "?"; }
-    function tableRowFor(key) {
-      var c = document.querySelector("#table-4 tbody d-cite[key='" + key + "'], #table-5 tbody d-cite[key='" + key + "'], #table-6 tbody d-cite[key='" + key + "']");
-      return c ? c.closest("tr") : null;
-    }
-    function flash(el) {
-      el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
-      el.classList.remove("flash-fade"); el.classList.add("flash-p");
-      setTimeout(function () { el.classList.add("flash-fade"); el.classList.remove("flash-p"); }, 1600);
-      setTimeout(function () { el.classList.remove("flash-fade"); }, 3400);
-    }
-    function navTo(sec) {
-      var heading = document.getElementById(sec.id);
-      if (!heading) return;
-      if (/^table-/.test(sec.id)) { flash(heading); return; }
-      var target = null, node = heading.nextElementSibling, term = sec.term || "";
-      while (term && node && !/^H[234]$/.test(node.tagName)) {
-        if (node.tagName === "P" && node.textContent.indexOf(term.replace(/\)$/, "")) !== -1) { target = node; break; }
-        node = node.nextElementSibling;
-      }
-      if (target) flash(target); else heading.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    }
-    function secLabel(id) {
-      if (/^table-(\d+)$/.test(id)) return "Table " + id.slice(6);
-      var h = document.getElementById(id);
-      return h ? h.textContent.replace(/\s+/g, " ").trim().replace(/^(\d+(\.\d+)*)\s+.*/, "Section $1") : "";
+      $$(".stk-path, .stk-arrow", overlay).forEach(function (p) { p.classList.toggle("stk-path-hi", i !== null && +p.getAttribute("data-i") === i); });
     }
     function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
     function renderPanel(spec) {
-      var n = spec.rows.length, fams = {};
-      spec.rows.forEach(function (r) { fams[r.fam] = (fams[r.fam] || 0) + 1; });
-      var famOrder = Object.keys(fams).sort(function (a, b) { return fams[b] - fams[a]; });
-      var h = '<div class="stk-ph"><b>' + esc(spec.label) + "</b><span>" +
-        (n ? n + (n === 1 ? " deployment" : " deployments") + " in Tables 4&#8211;6" : "no tabulated deployment") +
-        (famOrder.length ? " (" + famOrder.map(function (f) { return fams[f] + " " + FAMNAME[f]; }).join(", ") + ")" : "") + "</span>";
-      if (spec.sec && spec.sec.id) h += '<a href="#' + spec.sec.id + '" class="stk-read" data-sec="' + spec.sec.id + '" data-term="' + esc(spec.sec.term || "") + '">Read ' + secLabel(spec.sec.id) + "</a>";
-      h += "</div>";
-      h += '<div class="stk-pbody">';
-      var story = spec.key && STORY[spec.key] || (spec.famRow && STORY["fam:" + spec.famRow]);
-      if (story) h += '<div class="stk-story">' + story + "</div>";
-      if (n) {
-        h += '<ul class="stk-list">' + spec.rows.map(function (r, i) {
-          return '<li tabindex="0" data-i="' + i + '" data-key="' + r.key + '" title="Jump to this row in Table ' + FAMTABLE[r.fam] + '">' +
-            '<span class="stk-ref">[' + refNum(r.key) + "]</span>" +
-            '<span class="stk-li-fam ' + r.fam + '">' + FAMNAME[r.fam].replace("-based", "").replace("-integrated", "") + "</span>" +
-            "<span>" + esc(r.cat) + " &#183; " + esc(r.quant) + " &#183; " + esc(r.devices) + " &#183; " + esc(r.fw) + "</span></li>";
-        }).join("") + "</ul>";
-        if (spec.rows.length > 14) h += '<div class="stk-note">Paths are drawn for up to fourteen deployments; here the chips carry counts instead.</div>';
-      }
-      if (spec.cap.length) {
-        h += '<div class="stk-note"><b>Table 3.</b> ' + (spec.key && (spec.key === "s:mixed" || spec.key === "n:mixed" || spec.key === "s:extreme" || SUB8.indexOf(spec.key) !== -1)
-          ? "Platforms whose supported formats go below 8 bits, shown dashed in the hardware layer: " : "Platforms listing this format among their supported formats, shown dashed in the hardware layer: ") +
-          spec.cap.map(function (c) { return c.platform + " (" + c.formats.join(", ") + ")"; }).join("; ") + "." +
-          (spec.key === "s:mixed" || spec.key === "n:mixed" ? " The hardware advertises it; in Tables 4&#8211;6 only one deployment reports a mixed-precision pipeline, and Section 7.3 adds NeuralAids on the GAP9." : "") +
-          (spec.key === "s:extreme" || SUB8.indexOf(spec.key) !== -1 ? " None of the surveyed deployments uses them, which is the gap Section 8.3 describes." : "") + "</div>";
-      }
+      var h = '<div class="stk-ph"><b>' + esc(spec.label) + "</b>";
+      if (spec.paths.length) h += '<span class="stk-legend">' + spec.paths.map(function (p, i) {
+        return '<span class="stk-leg" data-i="' + i + '"><i class="stk-dot" style="background:' + G.families[p.fam].color + '"></i>' + G.families[p.fam].name + "</span>";
+      }).join("") + "</span>";
+      else h += "<span>no path to recommend yet</span>";
+      h += '</div><div class="stk-pbody">';
+      if (spec.guide) h += '<div class="stk-guide">' + spec.guide + "</div>";
+      if (spec.paths.length) h += '<ul class="stk-fams">' + spec.paths.map(function (p, i) {
+        var F = G.families[p.fam];
+        return '<li data-i="' + i + '"><i class="stk-dot" style="background:' + F.color + '"></i><span>' + F.story + "</span></li>";
+      }).join("") + "</ul>";
       spec.notes.forEach(function (t) { h += '<div class="stk-note">' + t + "</div>"; });
-      var recs = spec.recs.slice();
-      if (famOrder.length && recs.indexOf(famOrder[0]) === -1 && !spec.famRow) recs.unshift(famOrder[0]);
-      if (spec.famRow && recs.indexOf(spec.famRow) === -1) recs.unshift(spec.famRow);
-      if (n && !recs.some(function (r) { return r === "uniform" || r === "mixed" || r === "extreme"; }) && spec.rows.every(function (r) { return r.keys.indexOf("s:uniform") !== -1; })) recs.push("uniform");
-      recs = recs.filter(function (r, i) { return REC[r] && recs.indexOf(r) === i; }).slice(0, 2);
-      if (recs.length) h += '<div class="stk-rec"><b>Section 7.4 recommends.</b> ' + recs.map(function (r) { return REC[r]; }).join(" ") + "</div>";
       h += "</div>";
       panel.innerHTML = h;
-      $$(".stk-list li", panel).forEach(function (li) {
-        li.addEventListener("mouseenter", function () { focusRow(+li.getAttribute("data-i")); });
-        li.addEventListener("mouseleave", function () { focusRow(null); });
-        li.addEventListener("focus", function () { focusRow(+li.getAttribute("data-i")); });
-        li.addEventListener("blur", function () { focusRow(null); });
-        function go() { var tr = tableRowFor(li.getAttribute("data-key")); if (tr) flash(tr); else if (window.QSRefs) window.QSRefs.jump(li.getAttribute("data-key")); }
-        li.addEventListener("click", go);
-        li.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+      $$(".stk-fams li, .stk-leg", panel).forEach(function (li) {
+        li.addEventListener("mouseenter", function () { focusPath(+li.getAttribute("data-i")); });
+        li.addEventListener("mouseleave", function () { focusPath(null); });
       });
-      var read = $(".stk-read", panel);
-      if (read) read.addEventListener("click", function (e) { e.preventDefault(); navTo({ id: read.getAttribute("data-sec"), term: read.getAttribute("data-term") }); });
     }
     function apply(spec, fromText) {
       active = spec;
-      chips.forEach(function (c) { c.classList.remove("stk-on", "stk-cap"); var b = $(".stk-cnt", c); if (b) c.removeChild(b); });
+      chips.forEach(function (c) { c.classList.remove("stk-on"); });
       $$(".stk-rowlabel", fig).forEach(function (l) { l.classList.remove("stk-on"); });
       pins.forEach(function (p) { p.classList.remove("stk-pin-on", "stk-pulse"); });
       $$(".stk-quick", fig).forEach(function (b) { var v = b.getAttribute("data-q").toLowerCase(); b.classList.toggle("stk-active", !!spec && (v === (spec.q || "").toLowerCase() || v === (spec.label || "").toLowerCase())); });
       fig.classList.toggle("stk-tracing", !!spec);
       clearBtn.hidden = !spec;
       if (!spec) { panel.innerHTML = ""; if (!fromText) input.value = ""; draw(); return; }
-      var count = {};
-      spec.rows.forEach(function (r) { r.keys.forEach(function (k) { count[k] = (count[k] || 0) + 1; }); });
-      spec.extra.forEach(function (k) { count[k] = count[k] || 0; });
-      Object.keys(count).forEach(function (k) {
+      var on = {};
+      spec.light.forEach(function (k) { on[k] = 1; });
+      spec.paths.forEach(function (p) {
+        var F = G.families[p.fam];
+        ["quant", "repr", "sw"].forEach(function (L) { (F.light[L] || []).forEach(function (k) { on[k] = 1; }); });
+        routeKeys(p).forEach(function (k) { on[k] = 1; });
+        (p.hwOnly || F.hw).forEach(function (k) { on[k] = 1; });
+      });
+      Object.keys(on).forEach(function (k) {
         var c = byKey[k]; if (!c) return;
         c.classList.add("stk-on");
-        if (count[k] > 1) { var b = document.createElement("i"); b.className = "stk-cnt"; b.textContent = "×" + count[k]; c.appendChild(b); }
         var lbl = c.closest(".stk-row") && $(".stk-rowlabel", c.closest(".stk-row")); if (lbl) lbl.classList.add("stk-on");
       });
-      spec.cap.forEach(function (h) { var c = byKey[h.chip]; if (c && !c.classList.contains("stk-on")) { c.classList.add("stk-cap"); var lbl = c.closest(".stk-row") && $(".stk-rowlabel", c.closest(".stk-row")); if (lbl) lbl.classList.add("stk-on"); } });
       if (spec.pin) { var pin = pinByLabel(spec.pin); if (pin) { pin.classList.add("stk-pin-on"); if (spec.broken && !reduced) pin.classList.add("stk-pulse"); } }
       renderPanel(spec);
       if (!fromText) input.value = spec.label;
@@ -1117,11 +1112,10 @@
     input.addEventListener("change", runText);
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); runText(); } if (e.key === "Escape") { input.value = ""; apply(null); } });
     input.addEventListener("search", runText);
-    // suggestions: every chip label plus the categories, platforms and tools as the tables spell them
     var seen = {};
     function addOpt(v) { if (!v || seen[v.toLowerCase()]) return; seen[v.toLowerCase()] = 1; var o = document.createElement("option"); o.value = v; suggest.appendChild(o); }
-    Object.keys(FAMNAME).forEach(function (f) { addOpt(FAMNAME[f]); });
-    chips.forEach(function (c) { if (!c.classList.contains("stk-hollow")) addOpt(LABEL[c.getAttribute("data-k")]); });
+    FAMS.forEach(function (f) { addOpt(G.families[f].name); });
+    chips.forEach(function (c) { addOpt(LABEL[c.getAttribute("data-k")]); });
     ROWS.forEach(function (r) { tokens(r.devices).forEach(addOpt); tokens(r.fw).forEach(addOpt); });
     ["Mixed precision", "Sub-8-bit", "INT4", "Binary", "ESP32", "GAP", "MAX78"].forEach(addOpt);
 
@@ -1145,6 +1139,6 @@
     });
     if (window.ResizeObserver) new ResizeObserver(function () { draw(); }).observe(grid);
     else window.addEventListener("resize", draw);
-    window.QSStack = { resolve: resolveText, rows: ROWS, hw: HW, apply: function (q) { apply(resolveText(q)); } };
+    window.QSStack = { resolve: resolveText, guide: G, hw: HW, apply: function (q) { apply(resolveText(q)); }, applyKey: function (k) { apply(specFromKey(k)); } };
   })();
 })();
