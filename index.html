@@ -188,7 +188,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .t1-legend .sw-part { background: #D8EBF2; border-color: #b9d7e2; }
       .t1-legend .sw-none { background: transparent; }
       .t1-legend .t1-legend-note { color: #8a94a0; font-style: italic; }
-      /* ---- Table 7: clause lists inside cells ---- */
+      /* ---- clause lists inside table cells (Table 7, parked) ---- */
       table.ptable ul.cell-list { margin: 0; padding-left: 1.05em; }
       table.ptable ul.cell-list li { margin: 0 0 0.28rem; padding-left: 0.1em; }
       table.ptable ul.cell-list li:last-child { margin-bottom: 0; }
@@ -1639,9 +1639,12 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>The NPU-integrated deployments show the clearest latency and energy advantages of any family considered here <d-cite key="millar2025benchmarking"></d-cite>, but also the strongest dependence on hardware-specific toolchains <d-cite key="gapflow,ethosu"></d-cite>. Most reported systems still use INT8 even when the underlying accelerator advertises lower-precision capability, which suggests that practical adoption is limited by operator support, mapping constraints, memory partitioning, and deployment tooling rather than by arithmetic capability alone <d-cite key="gong2024dex,jeon2025tinymem"></d-cite>. For quantization research, this distinction matters, since accelerator-backed MCUs can make low-precision inference highly predictable, but only when the model architecture and quantization format are compatible with the accelerator&#8217;s supported execution path <d-cite key="moosmann2023tinyissimoyolo,tran2025facets"></d-cite>.</p>
 
-<p>Taken together, these three hardware families reveal a consistent pattern. ARM-based MCUs offer the most established and portable deployment path and dominate when mature tooling and low-friction integration matter most <d-cite key="cmsis,tensorflow,xcube_ai"></d-cite>. Commercial RISC-V MCUs show that quantized inference is feasible on a fully programmable open-ISA CPU, although their application base is smaller and more recent and their software stack less standardized <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>. NPU-integrated MCUs, which include the clustered RISC-V GAP8 and GAP9 <d-cite key="flamand2018gap,gap9"></d-cite> alongside dedicated CNN and operator accelerators, provide the strongest latency and energy predictability and now represent the leading edge of on-device inference, but only when the deployment flow is tightly matched to the accelerator. Across all three families, uniform INT8 remains the practical default <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>, while mixed precision and more aggressive quantization appear only when the surrounding runtime and hardware stack can actually exploit them <d-cite key="rusci2020,bruschi2020,capotondi2020cmix"></d-cite>. <a class="xref" href="#table-7">Table 7</a> summarizes these observations by linking each family to its dominant execution path, software mapping flow, and quantization practice, together with their application-level implications, and motivates the cross-case recommendations that follow.</p>
+<p>Taken together, these three hardware families reveal a consistent pattern. ARM-based MCUs offer the most established and portable deployment path and dominate when mature tooling and low-friction integration matter most <d-cite key="cmsis,tensorflow,xcube_ai"></d-cite>. Commercial RISC-V MCUs show that quantized inference is feasible on a fully programmable open-ISA CPU, although their application base is smaller and more recent and their software stack less standardized <d-cite key="rattanasak2025lightweight,banerjee2026device,roy2026tinynav"></d-cite>. NPU-integrated MCUs, which include the clustered RISC-V GAP8 and GAP9 <d-cite key="flamand2018gap,gap9"></d-cite> alongside dedicated CNN and operator accelerators, provide the strongest latency and energy predictability and now represent the leading edge of on-device inference, but only when the deployment flow is tightly matched to the accelerator. Across all three families, uniform INT8 remains the practical default <d-cite key="jacob2018quantization,krishnamoorthi2018quantizing"></d-cite>, while mixed precision and more aggressive quantization appear only when the surrounding runtime and hardware stack can actually exploit them <d-cite key="rusci2020,bruschi2020,capotondi2020cmix"></d-cite>. These patterns motivate the cross-case recommendations that follow.</p>
 
-<!-- Table 7 (tab:deployment_stack_summary) — the Section 6/7 synthesis, closing Section 7.3 -->
+<!-- Table 7 (tab:deployment_stack_summary) was the Section 6 and 7 synthesis. Figure 17 now carries
+     the same guidance as a traceable deployment stack, so the table is commented out here rather than
+     deleted. Its toolbar wiring in assets/js/supplements.js is commented out alongside it. -->
+<!--
 <div class="ptable-wrap l-page" id="table-7">
 <table class="ptable">
 <caption><b>Table 7:</b> Synthesis of the MCU deployment studies reviewed in <a class="xref" href="#applications">Section 7</a>, linking each family&#8217;s dominant hardware execution path and software mapping path to the quantization practice observed across studies and its application-level implications. Bold lines carry the cross-case guidance developed in <a class="xref" href="#cross-case">Section 7.4</a>.</caption>
@@ -1671,6 +1674,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 </tbody>
 </table>
 </div>
+-->
 
 <h3 id="cross-case">7.4&ensp;Cross-Case Recommendations</h3>
 

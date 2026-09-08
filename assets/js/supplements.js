@@ -284,15 +284,16 @@
   });
   // Table 5 — all three rows are INT8 PTQ: search and sorting only, no chips
   enhanceTable("table-5", { sortable: [5, 6, 7, 8] });
-  // Table 7 — the synthesis: one row per MCU family, so filter by family and search
-  // the prose. Nothing here is numeric, so no sortable columns.
-  enhanceTable("table-7", {
-    chips: [
-      { key: "ARM-Based", label: "ARM" }, { key: "RISC-V-Based", label: "RISC-V" },
-      { key: "NPU-Integrated", label: "NPU" }
-    ],
-    match: function (tr, key) { return cellText(tr.cells[0]).indexOf(key) !== -1; }
-  });
+  // Table 7 is commented out in index.html: Figure 17 now carries the synthesis.
+  // enhanceTable already no-ops on a missing id, but the wiring is parked here so
+  // the two stay in step if the table ever comes back.
+  // enhanceTable("table-7", {
+  //   chips: [
+  //     { key: "ARM-Based", label: "ARM" }, { key: "RISC-V-Based", label: "RISC-V" },
+  //     { key: "NPU-Integrated", label: "NPU" }
+  //   ],
+  //   match: function (tr, key) { return cellText(tr.cells[0]).indexOf(key) !== -1; }
+  // });
 
   /* =======================================================================
      Deployment landscape scatter (Tables 4–6)
