@@ -854,7 +854,15 @@
     function viable(q) { return q.dead ? [] : TIDS.filter(function (t) { return fits(t, q); }).sort(order(q)); }
     function order(q) {
       var pref = (q.app && (G.applications[q.app] || {}).prefer) || [];
+      /* Once the reader picks a specific part, that vendor's own flow for it leads:
+         Cube.AI is ST's path for an STM32. An application's default board does not
+         trigger this, so the recommendations still follow what the surveyed work did. */
+      var hw = q.sel && q.sel.hw;
       return function (a, b) {
+        if (hw) {
+          var va = (TC[a].vendorFor || []).indexOf(hw) !== -1, vb = (TC[b].vendorFor || []).indexOf(hw) !== -1;
+          if (va !== vb) return va ? -1 : 1;
+        }
         var ia = pref.indexOf(a), ib = pref.indexOf(b);
         if (ia !== -1 || ib !== -1) { if (ia === -1) return 1; if (ib === -1) return -1; if (ia !== ib) return ia - ib; }
         return (TC[a].rank || 99) - (TC[b].rank || 99);

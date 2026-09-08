@@ -150,6 +150,7 @@ guide: {
     },
     "ai8x": {
       rank: 2, name: "ai8x on MAX78000/78002", fam: "npu", color: "#5E35B1",
+      vendorFor: ["h:max000", "h:max002"],
       story: "The tightly coupled CNN-accelerator route, and the accelerator path we would start from today. ai8x-training is a PyTorch fork that trains with the accelerator's constraints in the loop; ai8x-synthesis maps the network into it. This is how sub-8-bit and mixed widths actually reach a shipping device.",
       steps: { path: "q:QAT", strat: "s:uniform", repr: "n:INT8", dev: "f:ai8xt", conv: "f:ai8xs", run: "f:accel" },
       can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform", "s:mixed", "s:extreme"],
@@ -160,6 +161,7 @@ guide: {
     },
     "cube": {
       rank: 3, name: "STM32Cube.AI", fam: "arm", color: "#AD1457",
+      vendorFor: ["h:stm32"],
       story: "The vendor route on STM32. Cube.AI converts the trained model straight into embedded C and brings its own runtime, so there is no separate inference engine to choose. That trades portability for a shorter path to working firmware.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: null },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
@@ -169,6 +171,7 @@ guide: {
     },
     "esp": {
       rank: 4, name: "TFLM + ESP-NN on ESP32", fam: "riscv", color: "#EF6C00",
+      vendorFor: ["h:c3", "h:c6", "h:p4"],
       story: "The commercial RISC-V route. The same TensorFlow Lite export as on Cortex-M, run by TFLM with ESP-NN kernels. Take it when a low-cost open-ISA part suffices and a younger toolchain is acceptable.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:tflite", run: "f:tflm" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
@@ -178,6 +181,7 @@ guide: {
     },
     "ethos": {
       rank: 5, name: "Ethos-U toolchain", fam: "npu", color: "#00838F",
+      vendorFor: ["h:ethos"],
       story: "The microNPU route. The Ethos-U compiler maps whatever of the network it supports onto the accelerator and leaves the rest on the Cortex-M core, so operator coverage decides how much you actually gain.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:ethos", run: "f:accel" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
@@ -187,6 +191,7 @@ guide: {
     },
     "neuralart": {
       rank: 6, name: "Neural-ART on STM32N6", fam: "npu", color: "#455A64",
+      vendorFor: ["h:n6"],
       story: "ST's accelerator route, deployed through the same Cube tooling as the Cortex-M parts, which makes it the shortest move from an existing STM32 product to an accelerated one.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:neuralart", run: "f:accel" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
@@ -196,6 +201,7 @@ guide: {
     },
     "nxp": {
       rank: 7, name: "TFLite on NXP MCXN", fam: "npu", color: "#6D4C41",
+      vendorFor: ["h:mcxn"],
       story: "A middle route: a standard TensorFlow Lite export, executed by the vendor runtime on an integrated NPU, so the accelerator arrives without a bespoke toolchain.",
       steps: { path: "q:QAT", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:tflite", run: "f:accel" },
       can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform"], repr: ["n:INT8"],
@@ -205,6 +211,7 @@ guide: {
     },
     "tinyengine": {
       rank: 8, name: "TinyEngine NPU on MSPM0", fam: "npu", color: "#827717",
+      vendorFor: ["h:mspm0"],
       story: "The smallest accelerator route here, on a Cortex-M0+ part with only tens of kilobytes of SRAM. Its NPU carries widths down to INT2, so it suits a model small enough to be co-designed with the memory rather than fitted to it afterwards. TinyEngine comes out of the MCUNet line of work, so this is a PyTorch flow, and conversion happens inside the vendor tooling rather than as a step you pick.",
       steps: { path: "q:QAT", strat: "s:uniform", repr: "n:INT8", dev: "f:pytorch", conv: null, run: "f:accel" },
       can: { path: ["q:QAT", "q:PTQ"], strat: ["s:uniform", "s:mixed", "s:extreme"],
@@ -224,6 +231,7 @@ guide: {
     },
     "gapflow": {
       rank: 10, name: "GAPflow on GAP8/GAP9", fam: "npu", color: "#0288D1",
+      vendorFor: ["h:gap8", "h:gap9"],
       caveat: "only if you already have the hardware",
       story: "The clustered-accelerator route, and the one much of the surveyed literature runs on. GAPflow tiles the graph, orchestrates DMA, and generates code for the convolution engine. Treat it as a reference point rather than a starting point, since the GAP parts are no longer generally available: take it only if you already have the hardware and toolchain.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:pytorch", conv: "f:gapflow", run: "f:accel" },
