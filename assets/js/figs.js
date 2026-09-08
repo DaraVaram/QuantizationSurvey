@@ -772,8 +772,8 @@
     var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
     var NS = "http://www.w3.org/2000/svg";
     var TC = G.toolchains, TIDS = Object.keys(TC), COUPLES = G.couples || {}, FREE = G.free || [];
-    var byKey = {}, LABEL = {}, SLOT = {};
-    chips.forEach(function (c) { var k = c.getAttribute("data-k"); byKey[k] = c; LABEL[k] = c.textContent.replace(/\s+/g, " ").trim(); });
+    var byKey = {}, LABEL = {}, SLOT = {}, IDX = {};
+    chips.forEach(function (c, i) { var k = c.getAttribute("data-k"); byKey[k] = c; IDX[k] = i; LABEL[k] = c.textContent.replace(/\s+/g, " ").trim(); });
 
     /* ---- which step of the stack each chip belongs to, read off the figure itself ---- */
     var SW_SLOTS = ["dev", "conv", "run"], QUANT_SLOTS = ["path", "strat", "free", "design"];
@@ -876,10 +876,12 @@
         var k = full[s] && canDo(tid, s, full[s]) ? full[s]
               : base[s] && canDo(tid, s, base[s]) ? base[s]           // the surveyed step, where this route allows it
               : T.steps[s];
-        if (k) out.push(k);
         /* A tool the route fixes for you still sits on the path: ai8x-training is a
-           PyTorch fork, and TFLM calls CMSIS-NN, so the line runs through both. */
-        (T.implies || []).forEach(function (im) { if (SLOT[im] === s && out.indexOf(im) === -1) out.push(im); });
+           PyTorch fork, and TFLM calls CMSIS-NN, so the line runs through both. Order
+           them as they are laid out, so PyTorch comes before ai8x-training. */
+        var group = (k ? [k] : []).concat((T.implies || []).filter(function (im) { return SLOT[im] === s; }));
+        group.sort(function (x, y) { return IDX[x] - IDX[y]; });
+        group.forEach(function (g) { if (out.indexOf(g) === -1) out.push(g); });
       });
       return out;
     }
