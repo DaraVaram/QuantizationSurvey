@@ -984,59 +984,55 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>From an MCU perspective, then, PTQ and QAT reflect a fundamental deployment trade-off. PTQ is easier, cheaper, and faster to apply, whereas QAT is more computationally demanding but often necessary when aggressive compression or strict accuracy retention is required. Accordingly, PTQ is typically the first option explored in embedded deployment pipelines, with QAT used when PTQ falls short.</p>
 
-<!-- Figure 10 (fig:quant-taxonomy) — interactive taxonomy at its source position,
-     before Section 4. The d-cites below anchor the citation numbering for the
-     taxonomy methods in exact manuscript order. -->
-<!-- Figure 10 (fig:quant-taxonomy) — interactive taxonomy at its source position,
-     before Section 4. The d-cites below anchor the citation numbering for the
-     taxonomy methods in exact manuscript order. -->
+<h2 id="advanced">4&ensp;Advanced Quantization Techniques</h2>
+
+<p>Beyond standard PTQ and QAT, recent research has introduced advanced quantization methods that aim to recover accuracy, reduce training or calibration cost, exploit hardware-specific precision support, or make tensor distributions easier to represent at low precision. While many MCU deployments today still rely primarily on INT8 PTQ and QAT, these advanced methods are included because they expose the algorithmic mechanisms, numerical trade-offs, and hardware limitations that may shape future MCU-class inference. <a class="xref" href="#figure-10">Fig. 10</a> provides an overview of the methods discussed, categorizing them into major groups based on their core methodological innovations. Accordingly, each family is discussed not only in terms of compression potential, but also in terms of the practical barriers that currently limit adoption on MCU platforms.</p>
+
+<!-- Figure 10 (fig:quant-taxonomy) — interactive taxonomy, following the
+     paragraph in Section 4 that introduces it. The d-cites below anchor the
+     citation numbering for the taxonomy methods in exact manuscript order. -->
 <figure class="pfig tax-fig" id="figure-10">
   <div class="fig-hint">Click a group to expand or collapse it &#183; click a method to jump to where it is discussed &#183; hover a citation number for the reference.</div>
 <details open>
-    <summary>3. Advanced Quantization Techniques</summary>
+    <summary>4. Advanced Quantization Techniques</summary>
     <div class="tax-branch">
-      <div class="tax-leaf-label">3.1. Integer and Quantized Training</div>
+      <div class="tax-leaf-label">4.1. Integer and Quantized Training</div>
       <span class="mchip" data-nav="int-training" data-term="AQT">AQT <d-cite key="lewt2023aqt"></d-cite></span><span class="mchip" data-nav="int-training" data-term="Zhu et al.">Zhu et al. <d-cite key="zhu2020"></d-cite></span><span class="mchip" data-nav="int-training" data-term="Octo">Octo <d-cite key="zhou2021octo"></d-cite></span><span class="mchip" data-nav="int-training" data-term="Wang et al.">DDQS &amp; UDPS <d-cite key="wang2023"></d-cite></span>
-      <div class="tax-leaf-label">3.2. Extreme Low-Bit Quantization &#8212; Binarization</div>
+      <div class="tax-leaf-label">4.2. Extreme Low-Bit Quantization &#8212; Binarization</div>
       <span class="mchip" data-nav="extreme-low-bit" data-term="BinaryConnect">BinaryConnect <d-cite key="courbariaux2015binaryconnect"></d-cite></span><span class="mchip" data-nav="extreme-low-bit" data-term="Binarized Neural Networks">BNNs <d-cite key="hubara2018"></d-cite></span><span class="mchip" data-nav="extreme-low-bit" data-term="eBNNs">eBNNs <d-cite key="mcdanel2017,Geiger2020"></d-cite></span><span class="mchip" data-nav="extreme-low-bit" data-term="XNOR-Net">XNOR-Net <d-cite key="rastegari2016xnor"></d-cite></span>
-      <div class="tax-leaf-label">3.2. Extreme Low-Bit Quantization &#8212; Ternarization</div>
+      <div class="tax-leaf-label">4.2. Extreme Low-Bit Quantization &#8212; Ternarization</div>
       <span class="mchip" data-nav="extreme-low-bit" data-term="Ternary Weight Networks">TWNs <d-cite key="lin2015neural,li2016ternary"></d-cite></span><span class="mchip" data-nav="extreme-low-bit" data-term="Ternary-Binary Networks">TBNs <d-cite key="wan2018tbn"></d-cite></span>
-      <div class="tax-leaf-label">3.3. Mixed Precision Quantization &#8212; Rough Allocation</div>
+      <div class="tax-leaf-label">4.3. Mixed Precision Quantization &#8212; Rough Allocation</div>
       <span class="mchip" data-nav="rough-allocation" data-term="HAWQ)">HAWQ <d-cite key="hawq"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="HAWQ-v2">HAWQ-v2 <d-cite key="hawqv2"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="HTQ">HTQ <d-cite key="htq"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="MPQCO">MPQCO <d-cite key="chen2021towards"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="LIMPQ">LIMPQ <d-cite key="tang2022mixed"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="InfoQ">InfoQ <d-cite key="akbulut2026infoq"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="CherryQ">CherryQ <d-cite key="cherryq"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="REx">REx <d-cite key="rex"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="OWQ">OWQ <d-cite key="owq"></d-cite></span><span class="mchip" data-nav="rough-allocation" data-term="HAQ">HAQ <d-cite key="wang2019haq"></d-cite></span>
-      <div class="tax-leaf-label">3.3. Mixed Precision Quantization &#8212; Adaptive Allocation</div>
+      <div class="tax-leaf-label">4.3. Mixed Precision Quantization &#8212; Adaptive Allocation</div>
       <span class="mchip" data-nav="adaptive-allocation" data-term="NIPQ">NIPQ <d-cite key="NIPQ"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="MEBQAT">MEBQAT <d-cite key="meta-learning"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="MetaMix">MetaMix <d-cite key="kim2024metamix"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="CADyQ">CADyQ <d-cite key="cadyq"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="CABM">CABM <d-cite key="cabm"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="AdaBM">AdaBM <d-cite key="hong2024adabm"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="CoQuant">CoQuant <d-cite key="coquant"></d-cite></span><span class="mchip" data-nav="adaptive-allocation" data-term="ALPS">ALPS <d-cite key="langroudi2021alps"></d-cite></span>
-      <div class="tax-leaf-label">3.4. Hardware-Aware Quantization</div>
+      <div class="tax-leaf-label">4.4. Hardware-Aware Quantization</div>
       <span class="mchip" data-nav="hw-aware" data-term="HAQ">HAQ <d-cite key="wang2019haq"></d-cite></span><span class="mchip" data-nav="hw-aware" data-term="Rusci et al.">Rusci et al. <d-cite key="rusci2020"></d-cite></span><span class="mchip" data-nav="hw-aware" data-term="HAWQ-v3">HAWQ-v3 <d-cite key="yao2021hawq"></d-cite></span><span class="mchip" data-nav="hw-aware" data-term="OHQ">OHQ <d-cite key="huang2023chip"></d-cite></span>
-      <div class="tax-leaf-label">3.5. Redistribution &#8212; Distribution Uniformization</div>
+      <div class="tax-leaf-label">4.5. Redistribution &#8212; Distribution Uniformization</div>
       <span class="mchip" data-nav="uniformization" data-term="GDRQ">GDRQ <d-cite key="yu2020low"></d-cite></span><span class="mchip" data-nav="uniformization" data-term="KURE">KURE <d-cite key="chmiel2020robust"></d-cite></span><span class="mchip" data-nav="uniformization" data-term="SqWQ">SqWQ <d-cite key="strom2022squashed"></d-cite></span><span class="mchip" data-nav="uniformization" data-term="EQ-Net">EQ-Net <d-cite key="xu2023eq"></d-cite></span><span class="mchip" data-nav="uniformization" data-term="KurTail">KurTail <d-cite key="akhondzadeh2025kurtail"></d-cite></span>
-      <div class="tax-leaf-label">3.5. Redistribution &#8212; Distribution Reshaping</div>
+      <div class="tax-leaf-label">4.5. Redistribution &#8212; Distribution Reshaping</div>
       <span class="mchip" data-nav="reshaping" data-term="Bin Regularization">BR <d-cite key="han2021improving"></d-cite></span><span class="mchip" data-nav="reshaping" data-term="Range Restriction Loss">\(R^2\) Loss <d-cite key="kundu2023r2"></d-cite></span>
-      <div class="tax-leaf-label">3.5. Redistribution &#8212; Outlier Redistribution</div>
+      <div class="tax-leaf-label">4.5. Redistribution &#8212; Outlier Redistribution</div>
       <span class="mchip" data-nav="outlier" data-term="SmoothQuant">SmoothQuant <d-cite key="xiao2023smoothquant"></d-cite></span><span class="mchip" data-nav="outlier" data-term="OmniQuant">OmniQuant <d-cite key="shao2024omniquant"></d-cite></span><span class="mchip" data-nav="outlier" data-term="FQ-ViT">FQ-ViT <d-cite key="lin2021fq"></d-cite></span><span class="mchip" data-nav="outlier" data-term="OS+">OS+ <d-cite key="wei2023outlier"></d-cite></span><span class="mchip" data-nav="outlier" data-term="DuQuant">DuQuant <d-cite key="lin2024duquant"></d-cite></span><span class="mchip" data-nav="outlier" data-term="AdderQuant">AdderQuant <d-cite key="nie2022redistribution"></d-cite></span><span class="mchip" data-nav="outlier" data-term="MagR">MagR <d-cite key="zhang2024magr"></d-cite></span>
-      <div class="tax-leaf-label">3.5. Redistribution &#8212; Bias Redistribution</div>
+      <div class="tax-leaf-label">4.5. Redistribution &#8212; Bias Redistribution</div>
       <span class="mchip" data-nav="bias" data-term="QuantSR">QuantSR <d-cite key="qin2023quantsr"></d-cite></span><span class="mchip" data-nav="bias" data-term="NoisyQuant">NoisyQuant <d-cite key="liu2023noisyquant"></d-cite></span><span class="mchip" data-nav="bias" data-term="RAOQ">RAOQ <d-cite key="zhang2024reshape"></d-cite></span>
-      <div class="tax-leaf-label">3.6. Data-Agnostic Free Quantization</div>
+      <div class="tax-leaf-label">4.6. Data-Agnostic Free Quantization</div>
       <span class="mchip" data-nav="data-agnostic" data-term="DFQ)">DFQ <d-cite key="nagel2019data"></d-cite></span><span class="mchip" data-nav="data-agnostic" data-term="SQuant">SQuant <d-cite key="squant"></d-cite></span><span class="mchip" data-nav="data-agnostic" data-term="REx">REx <d-cite key="rex"></d-cite></span><span class="mchip" data-nav="data-agnostic" data-term="PNMQ">PNMQ <d-cite key="data-free-non-uniform"></d-cite></span><span class="mchip" data-nav="data-agnostic" data-term="UDFC">UDFC <d-cite key="udfc"></d-cite></span>
     </div>
   </details>
   <details open>
-    <summary>4. Alternative Numerical Representations</summary>
+    <summary>5. Alternative Numerical Representations</summary>
     <div class="tax-branch">
-      <div class="tax-leaf-label">4.1. Reduced Floating-Point Formats</div>
+      <div class="tax-leaf-label">5.1. Reduced Floating-Point Formats</div>
       <span class="mchip" data-nav="reduced-fp" data-term="FP16">FP16 <d-cite key="kahan1996ieee"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="BF16">BF16 <d-cite key="guntoro2020next"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="TF32">TF32 <d-cite key="choquette2021nvidia"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="CFloat8">CFloat8 &amp; CFloat16 <d-cite key="tesla_dojo_2025"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="MSFP">MSFP <d-cite key="darvish2020pushing"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="BSFP">BSFP <d-cite key="lo2023block"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="AdaptiveFloat">AdaptiveFloat <d-cite key="tambe2020algorithm"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="DFloat">DFloat <d-cite key="zhang202570"></d-cite></span><span class="mchip" data-nav="reduced-fp" data-term="ANT">ANT <d-cite key="guo2022ant"></d-cite></span>
-      <div class="tax-leaf-label">4.2. Adaptive Fixed-Point Formats</div>
+      <div class="tax-leaf-label">5.2. Adaptive Fixed-Point Formats</div>
       <span class="mchip" data-nav="adaptive-fixed" data-term="Zero-Skew">Zero-Skew <d-cite key="jacob2018quantization"></d-cite></span><span class="mchip" data-nav="adaptive-fixed" data-term="F8Net">F8Net <d-cite key="jin2022f8net"></d-cite></span><span class="mchip" data-nav="adaptive-fixed" data-term="VS-Quant">Vs-Quant <d-cite key="dai2021vs"></d-cite></span>
-      <div class="tax-leaf-label">4.3. Tapered-Accuracy Formats</div>
+      <div class="tax-leaf-label">5.3. Tapered-Accuracy Formats</div>
       <span class="mchip" data-nav="tapered" data-term="Posit">Posit <d-cite key="gustafson2017beating,gustafson2"></d-cite></span>
     </div>
   </details>
   <figcaption><b>Figure 10:</b> Taxonomy of quantization techniques and numerical formats organized by deployment role. The map separates standard low-precision paths, accuracy-recovery methods, hardware-aware allocation, distribution repair, data-agnostic deployment, and alternative formats, clarifying which ideas are closest to practical MCU execution and which remain primarily research directions.</figcaption>
 </figure>
-
-
-<h2 id="advanced">4&ensp;Advanced Quantization Techniques</h2>
-
-<p>Beyond standard PTQ and QAT, recent research has introduced advanced quantization methods that aim to recover accuracy, reduce training or calibration cost, exploit hardware-specific precision support, or make tensor distributions easier to represent at low precision. While many MCU deployments today still rely primarily on INT8 PTQ and QAT, these advanced methods are included because they expose the algorithmic mechanisms, numerical trade-offs, and hardware limitations that may shape future MCU-class inference. <a class="xref" href="#figure-10">Fig. 10</a> provides an overview of the methods discussed, categorizing them into major groups based on their core methodological innovations. Accordingly, each family is discussed not only in terms of compression potential, but also in terms of the practical barriers that currently limit adoption on MCU platforms.</p>
 
 <h3 id="int-training">4.1&ensp;Integer and Quantized Training</h3>
 
