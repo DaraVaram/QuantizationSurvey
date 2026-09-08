@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260909t">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260909v">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260909t"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260909t"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260909t"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260909v"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260909v"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260909v"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1165,7 +1165,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <figcaption><b>Figure 15:</b> Taxonomy of the alternative numerical representations reviewed in this section, grouped into reduced floating-point, adaptive fixed-point, and tapered-accuracy formats.</figcaption>
 </figure>
 
-<p>As mentioned in <a class="xref" href="#numerical-representations">Section 2.1</a>, the core challenge is to approximate 32-bit floating-point numbers using fewer bits while maintaining numerical fidelity and enabling efficient hardware implementation. This trade-off becomes especially critical in constrained environments such as microcontrollers and edge devices. While formats like FP16 are widely supported by modern FPUs, they may not offer the optimal balance between accuracy, performance, and computational cost. Fixed-point and integer arithmetic, though hardware-efficient and simple, often suffer from a limited dynamic range and reduced expressivity&#8212;making them less suitable for deeper or more sensitive models. As a result, new number systems have emerged that better match the distributional characteristics of DNN weights and activations, aiming to improve both memory and compute efficiency.</p>
+<p>As mentioned in <a class="xref" href="#numerical-representations">Section 2.1</a>, the core challenge is to approximate 32-bit floating-point numbers using fewer bits while maintaining numerical fidelity and enabling efficient hardware implementation. This trade-off becomes especially critical in constrained environments such as microcontrollers and edge devices. While formats like FP16 are widely supported by modern FPUs, they may not offer the optimal balance between accuracy, performance, and computational cost. Fixed-point and integer arithmetic, though hardware-efficient and simple, often suffer from a limited dynamic range and reduced expressivity, making them less suitable for deeper or more sensitive models. As a result, new number systems have emerged that better match the distributional characteristics of DNN weights and activations, aiming to improve both memory and compute efficiency.</p>
 
 <h3 id="reduced-fp">5.1&ensp;Reduced Floating-Point Formats</h3>
 
@@ -1190,7 +1190,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h3 id="adaptive-fixed">5.2&ensp;Adaptive Fixed-Point Formats</h3>
 
-<p>A second direction extends fixed-point quantization itself. Fixed-point representations, most commonly realized as integer quantization (e.g., INT8), remain a practical choice for efficient DNN inference due to their hardware simplicity and low memory footprint. However, conventional low-precision fixed-point suffers from limited dynamic range and bias around zero, making it best suited for narrow-support distributions and often requiring careful calibration to avoid overflow or underflow. To overcome these limitations, several alternative fixed-point schemes have been proposed that better align numerical resolution with the statistics of the target data while retaining the efficiency of integer arithmetic.</p>
+<p>A second direction extends fixed-point quantization itself. Conventional low-precision fixed-point suffers from limited dynamic range and bias around zero, making it best suited for narrow-support distributions and often requiring careful calibration to avoid overflow or underflow. To overcome these limitations, several alternative fixed-point schemes have been proposed that better align numerical resolution with the statistics of the target data.</p>
 
 <p>A notable generalization of \eqref{eq:fixedpoint} is TFLite&#8217;s Zero-Skew format <d-cite key="jacob2018quantization"></d-cite>, a uniform fixed-point representation with zero-centered bins. In this scheme, a real number \(n\) is represented as:</p>
 
@@ -1209,9 +1209,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h3 id="tapered">5.3&ensp;Tapered-Accuracy Formats</h3>
 
-<p>A third direction explores tapered-accuracy formats such as Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>. It offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
+<p>A third direction explores tapered-accuracy formats such as Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>. Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
 
-<p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered accuracy</em>&#8212;a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
+<p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered accuracy</em>, a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
 
 <p>The numerical value of a real number \(n\) is represented in the Posit format (by \(\hat{n}\)) as follows:</p>
 
@@ -1220,7 +1220,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     \label{eq:posit}
 \end{equation}
 
-<p>where \(s\) is the sign bit, \(e\) the exponent, \(m\) the mantissa, and \(u = 2^{2^{es}}\) is the so-called <em>useed</em>. The regime value \(k\) is computed from the run of repeated bits in the regime field: for a run of \(d\) identical bits, \(k = -d\) when those bits are 0 and \(k = d - 1\) when they are 1. Unlike floating-point, which maintains fixed-length fields, the Posit dynamically adjusts the mantissa length based on the magnitude of the number. This leads to higher relative precision near 1 and lower near the extremes.</p>
+<p>where \(s\) is the sign bit, \(e\) the exponent, \(m\) the mantissa, and \(u = 2^{2^{es}}\) is the so-called <em>useed</em>. The regime value \(k\) is computed from the run of repeated bits in the regime field: for a run of \(d\) identical bits, \(k = -d\) when those bits are 0 and \(k = d - 1\) when they are 1. Unlike floating-point, which maintains fixed-length fields, the Posit dynamically adjusts the mantissa length based on the magnitude of the number, which is what produces its tapered precision profile.</p>
 
 <p>This tapered-accuracy behavior makes Posit attractive for low-precision DNN inference from a numerical perspective, and Posit arithmetic has been shown to run effectively on MCUs with minimal accuracy loss <d-cite key="cococcioni2019fast"></d-cite> and is also being explored for approximate computing at the edge <d-cite key="guntoro2020next"></d-cite>. Nevertheless, Posit has not become a mainstream format in MCU deployment due to limited hardware and software support.</p>
 
@@ -1552,7 +1552,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260909t"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260909v"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1573,9 +1573,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260909t"></script>
-  <script src="assets/js/supplements.js?v=20260909t"></script>
-  <script src="assets/js/figs.js?v=20260909t"></script>
+  <script src="assets/js/data.js?v=20260909v"></script>
+  <script src="assets/js/supplements.js?v=20260909v"></script>
+  <script src="assets/js/figs.js?v=20260909v"></script>
 
   </body>
 
