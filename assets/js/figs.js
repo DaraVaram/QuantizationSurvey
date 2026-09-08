@@ -21,7 +21,7 @@
   function showTip(el, x, y) {
     var t = ensureTip();
     if (!el) { tipTxt = null; t.style.opacity = "0"; return; }
-    // keyed on the text, not the element: Figure 6 reuses one cube group and
+    // keyed on the text, not the element: Figure 7 reuses one cube group and
     // rewrites its [data-tip] per region, so caching the element goes stale
     var txt = el.getAttribute("data-tip");
     if (txt !== tipTxt) {                    // only re-render and re-measure when the hint changes
@@ -69,14 +69,14 @@
   });
 
 
-  /* ---------- Figure 9: sweep the loss landscape ----------
+  /* ---------- Figure 10: sweep the loss landscape ----------
      The static figure already makes the point: after PTQ the converged weight
      sits in a narrow minimum and rounding to the integer grid costs a lot of
      loss, while after QAT it sits in a flat one and rounding costs almost
      nothing. Sweeping a probe across either panel lets the reader check that
      for any w, not just the one the figure happens to draw. */
   (function () {
-    var panels = $$("#figure-9 .fl-panel");
+    var panels = $$("#figure-10 .fl-panel");
     if (!panels.length) return;
     // the same landscape the figure is drawn from: an exact parabolic basin,
     // joined C1 to a cubic-Hermite left structure with slope 0 at the extrema
@@ -129,13 +129,13 @@
   })();
 
 
-  /* ---------- Figure 12: the bit controller picks a policy per input ----------
+  /* ---------- Figure 13: the bit controller picks a policy per input ----------
      Adaptive allocation means the bit-widths are not fixed offline: a controller
      reads the input and chooses a precision for each layer. Activating one of the
      four inputs shows the policy that input would get, which is the whole point
      of content-aware allocation and is hard to convey in a static drawing. */
   (function () {
-    var fig = $("#figure-12");
+    var fig = $("#figure-13");
     if (!fig) return;
     var ins = $$(".f12-in", fig), cells = $$(".f12-cell", fig), read = $(".f12-read", fig);
     if (!ins.length || !cells.length) return;
@@ -168,12 +168,12 @@
     fig.addEventListener("pointerleave", clear);
   })();
 
-  /* ---------- Figure 6: granularity hints ----------
+  /* ---------- Figure 7: granularity hints ----------
      Per-tensor, per-channel and per-group behave identically: the hovered cube
      receives [data-tip], so the shared tooltip above shows and positions the
      hint the same way for every granularity, on hover and on tap. */
   (function () {
-    var svg = $("#figure-6 svg");
+    var svg = $("#figure-7 svg");
     if (!svg) return;
     var TIP = {
       t: function () { return "Per-tensor: a single scale (s, z) is shared by every value in the tensor."; },
@@ -248,9 +248,9 @@
     });
   })();
 
-  /* ---------- Figure 8: traveling marker + forward/backward isolation ---------- */
+  /* ---------- Figure 9: traveling marker + forward/backward isolation ---------- */
   (function () {
-    var svg = $("#figure-8 svg");
+    var svg = $("#figure-9 svg");
     if (!svg) return;
     var path = $("#f4-loop", svg), dot = $("#f4-dot", svg);
     var L = path ? path.getTotalLength() : 0;   // segment lengths: 677|1972|1477|1972|665
@@ -325,7 +325,7 @@
       isolate(locked);
     });
     document.addEventListener("click", function (e) {
-      if (locked && !(e.target.closest && e.target.closest("#figure-8"))) { locked = null; isolate(null); }
+      if (locked && !(e.target.closest && e.target.closest("#figure-9"))) { locked = null; isolate(null); }
     });
 
     if ("IntersectionObserver" in window) {
@@ -343,9 +343,9 @@
     window.addEventListener("afterprint", checkVis);
   })();
 
-  /* ---------- Figure 11: clickable bit selector ---------- */
+  /* ---------- Figure 12: clickable bit selector ---------- */
   (function () {
-    var svg = $("#figure-11 svg");
+    var svg = $("#figure-12 svg");
     if (!svg) return;
     var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
     var DEFAULT = { "1": "2", "2": "3", "n": "b" };
@@ -465,9 +465,9 @@
     render();
   })();
 
-  /* ---------- Figure 14: continuously looping step-through (gif-style) ---------- */
+  /* ---------- Figure 15: continuously looping step-through (gif-style) ---------- */
   (function () {
-    var fig = $("#figure-14");
+    var fig = $("#figure-15");
     if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
@@ -688,15 +688,15 @@
   })();
 
   /* ---------- Keyboard and focus parity for the remaining controls ----------
-     Figure 16's stages, Figure 10's method chips, Table 3's platforms and the
+     Figure 17's stages, Figure 11's method chips, Table 3's platforms and the
      citations inside the tables all explained themselves on hover only. Each
      now takes focus and reveals the same thing there. */
   (function () {
-    // Figure 16: every pipeline stage, including the inspection icon
-    $$("#figure-16 .f9-node").forEach(function (n) {
+    // Figure 17: every pipeline stage, including the inspection icon
+    $$("#figure-17 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
-    // Taxonomy (Figures 10 and 15) and supplement method chips navigate into the prose. They contain
+    // Taxonomy (Figures 11 and 16) and supplement method chips navigate into the prose. They contain
     // <d-cite> children, so they stay spans with button semantics rather than
     // nesting one interactive element inside another.
     $$(".mchip[data-nav]").forEach(function (chip) {
@@ -748,5 +748,152 @@
         setTimeout(function () { target.classList.remove("flash-fade"); }, 3400);
       }
     });
+  })();
+
+  /* ---------- Figure 2: the deployment stack ----------
+     The static figure already reads as a stack with section tags. This adds
+     three things: hovering a challenge pin shows which layers it bridges, the
+     recipe buttons trace a representative deployment from Section 7 through
+     one choice per layer, and an SVG overlay draws that path behind the
+     chips (the chips sit above it, so the line visibly enters and leaves
+     each one). */
+  (function () {
+    var fig = $("#figure-2.stack-fig");
+    if (!fig) return;
+    var grid = $(".stk-grid", fig), layersEl = $(".stk-layers", fig), overlay = $(".stk-overlay", fig), story = $(".stk-story", fig);
+    var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
+    var byKey = {};
+    chips.forEach(function (c) { byKey[c.getAttribute("data-k")] = c; });
+    var NS = "http://www.w3.org/2000/svg";
+    function rel(el) {
+      var g = grid.getBoundingClientRect(), b = el.getBoundingClientRect();
+      return { x: b.left - g.left, y: b.top - g.top, w: b.width, h: b.height, cx: b.left - g.left + b.width / 2, cy: b.top - g.top + b.height / 2 };
+    }
+    function mk(tag, attrs) {
+      var e = document.createElementNS(NS, tag);
+      Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+      return e;
+    }
+    function pinByLabel(t) {
+      for (var i = 0; i < pins.length; i++) if (pins[i].textContent.trim() === t) return pins[i];
+      return null;
+    }
+
+    // One representative deployment per MCU family in Section 7, plus the two
+    // paths that show where the stack currently breaks.
+    var RECIPES = {
+      arm: {
+        keys: ["env", "cnn", "qat", "uni", "sym", "pc", "int8", "fe", "rt", "kern", "cm", "mem"],
+        story: "<b>The mainstream path.</b> An INT8 model, from QAT or PTQ, exported through TensorFlow Lite and executed by TFLM with CMSIS-NN kernels on a Cortex-M core. Most of the deployments in <a class=\"xref\" href=\"#table-4\">Table 4</a> follow it."
+      },
+      riscv: {
+        keys: ["health", "kd", "ptq", "uni", "asym", "pt", "calib", "int8", "fe", "rt", "rv", "mem"],
+        story: "<b>A commercial RISC-V path.</b> Post-training INT8 quantization, here paired with knowledge distillation, on an ESP32-C6 running TFLM, as in <a class=\"xref\" href=\"#table-5\">Table 5</a>. Feasible, but so far confined to the lower tier of edge workloads."
+      },
+      npu: {
+        keys: ["anom", "cnn", "qat", "uni", "sym", "pc", "int8", "fe", "vendor", "npu", "mem"],
+        story: "<b>The accelerator-backed path.</b> QAT in PyTorch, then the vendor toolchain (ai8x) maps the network onto the MAX78000 CNN accelerator, as in <a class=\"xref\" href=\"#table-6\">Table 6</a>. The strongest latency and energy predictability, and the strongest dependence on hardware-specific tooling."
+      },
+      sub8: {
+        keys: ["cnn", "xlb", "uni", "sym", "pt", "bin", "int4", "custom", "cm", "isa"], pin: "8.1",
+        story: "<b>The research frontier.</b> Binary and sub-8-bit networks reach MCUs only through custom kernels and ISA-level optimizations, because mainstream runtimes stop at INT8. That gap is <a class=\"xref\" href=\"#ch-sub8\">challenge 8.1</a>."
+      },
+      posit: {
+        keys: ["qat", "nonuni", "posit"], pin: "8.6", broken: true,
+        story: "<b>An alternative format.</b> Posit widens dynamic range at the same bit-width, but no mainstream runtime or MCU silicon executes it, so the path stops at the number system. Research hardware such as PHEE (Section 5.3) is where it currently ends, which is <a class=\"xref\" href=\"#ch-formats\">challenge 8.6</a>."
+      }
+    };
+    var active = null;
+
+    function clearPaths() { $$(".stk-path, .stk-path-halo, .stk-path-broken", overlay).forEach(function (e) { e.parentNode.removeChild(e); }); }
+    function draw() {
+      clearPaths();
+      if (!active) return;
+      var r = RECIPES[active], pts = [], prevX = null;
+      layers.forEach(function (L) {
+        var sel = r.keys.map(function (k) { return byKey[k]; }).filter(function (c) { return c && c.closest(".stk-layer") === L; });
+        if (!sel.length) return;
+        var ps = sel.map(rel).sort(function (a, b) { return a.cx - b.cx; });
+        // enter the layer at whichever end is nearer to where the previous one was left
+        if (prevX !== null && Math.abs(prevX - ps[ps.length - 1].cx) < Math.abs(prevX - ps[0].cx)) ps.reverse();
+        ps.forEach(function (p) { pts.push(p); });
+        prevX = ps[ps.length - 1].cx;
+      });
+      if (!pts.length) return;
+      var d = "M" + pts[0].cx + "," + pts[0].cy;
+      for (var i = 1; i < pts.length; i++) {
+        var a = pts[i - 1], b = pts[i];
+        if (Math.abs(b.cy - a.cy) < 4) d += " L" + b.cx + "," + b.cy;                       // same layer: straight run behind the chips
+        else { var my = (a.cy + b.cy) / 2; d += " C" + a.cx + "," + my + " " + b.cx + "," + my + " " + b.cx + "," + b.cy; } // S-curve to the next layer
+      }
+      var halo = mk("path", { d: d, "class": "stk-path-halo" }), path = mk("path", { d: d, "class": "stk-path" });
+      overlay.appendChild(halo);
+      overlay.appendChild(path);
+      if (!reduced) {
+        var len = path.getTotalLength();
+        [halo, path].forEach(function (p) {
+          p.style.strokeDasharray = len;
+          p.style.strokeDashoffset = len;
+          p.getBoundingClientRect();                                                           // flush, so the transition runs
+          p.style.transition = "stroke-dashoffset " + Math.min(1.8, 0.3 + len / 900) + "s ease-out";
+          p.style.strokeDashoffset = "0";
+        });
+      }
+      if (r.broken && r.pin) {
+        var pin = pinByLabel(r.pin);
+        if (pin) {
+          var p = rel(pin), last = pts[pts.length - 1], my2 = (last.cy + p.cy) / 2;
+          overlay.appendChild(mk("path", { d: "M" + last.cx + "," + last.cy + " C" + last.cx + "," + my2 + " " + p.cx + "," + my2 + " " + p.cx + "," + (p.y - 2), "class": "stk-path-broken" }));
+        }
+      }
+    }
+    function apply(name) {
+      active = name;
+      var r = name ? RECIPES[name] : null;
+      fig.classList.toggle("stk-tracing", !!r);
+      chips.forEach(function (c) { c.classList.toggle("stk-on", !!r && r.keys.indexOf(c.getAttribute("data-k")) !== -1); });
+      pins.forEach(function (p) { p.classList.remove("stk-pin-on", "stk-pulse"); });
+      if (r && r.pin) {
+        var pin = pinByLabel(r.pin);
+        if (pin) { pin.classList.add("stk-pin-on"); if (r.broken && !reduced) pin.classList.add("stk-pulse"); }
+      }
+      $$(".stk-recipe", fig).forEach(function (b) {
+        var on = b.getAttribute("data-recipe") === name;
+        b.classList.toggle("stk-active", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      $(".stk-clear", fig).hidden = !r;
+      story.innerHTML = r ? r.story : "";
+      draw();
+    }
+    $$(".stk-recipe", fig).forEach(function (b) {
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function () { var k = b.getAttribute("data-recipe"); apply(k === active ? null : k); });
+    });
+    $(".stk-clear", fig).addEventListener("click", function () { apply(null); });
+
+    // Hovering (or focusing) a pin lights the layers it bridges and brackets them.
+    function bridge(pin) {
+      var set = pin ? pin.getAttribute("data-bridge").split(" ") : null;
+      layers.forEach(function (L) {
+        var on = !!set && set.indexOf(L.getAttribute("data-layer")) !== -1;
+        L.classList.toggle("stk-bridge", on);
+        L.classList.toggle("stk-dim", !!set && !on);
+      });
+      $$(".stk-bracket", overlay).forEach(function (e) { e.parentNode.removeChild(e); });
+      if (!set) return;
+      var rs = layers.filter(function (L) { return set.indexOf(L.getAttribute("data-layer")) !== -1; }).map(rel);
+      var top = Math.min.apply(null, rs.map(function (p) { return p.y; })), bot = Math.max.apply(null, rs.map(function (p) { return p.y + p.h; }));
+      var lr = rel(layersEl), x = lr.x + lr.w + 6;
+      overlay.appendChild(mk("path", { d: "M" + (x - 5) + "," + top + " L" + x + "," + top + " L" + x + "," + bot + " L" + (x - 5) + "," + bot, "class": "stk-bracket" }));
+    }
+    pins.forEach(function (p) {
+      p.addEventListener("mouseenter", function () { bridge(p); });
+      p.addEventListener("focus", function () { bridge(p); });
+      p.addEventListener("mouseleave", function () { bridge(null); });
+      p.addEventListener("blur", function () { bridge(null); });
+    });
+    if (window.ResizeObserver) new ResizeObserver(function () { draw(); }).observe(grid);
+    else window.addEventListener("resize", draw);
   })();
 })();
