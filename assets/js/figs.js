@@ -103,6 +103,16 @@
       var pv = $(".fl-pv", p), pd = $(".fl-pd", p), po = $(".fl-po", p),
           pq = $(".fl-pq", p), read = $(".fl-read", p);
       var svg = p.ownerSVGElement, pt = svg.createSVGPoint();
+      // the weight the panel actually draws, so the readout says something true
+      // before anyone sweeps it and again once they stop
+      var W0 = d.w0 !== undefined ? +d.w0 : null;
+      function say(w) {
+        var wq = Math.round(w), dl = loss(wq) - loss(w);
+        read.textContent = "w = " + w.toFixed(2) + "  \u2192  w_q = " + wq +
+                           "   \u0394loss = " + (dl >= 0 ? "+" : "") + dl.toFixed(3);
+      }
+      function rest() { if (W0 !== null && read) say(W0); }
+      rest();
       function move(e) {
         pt.x = e.clientX; pt.y = e.clientY;
         var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -116,11 +126,10 @@
         pq.setAttribute("cx", px(wq)); pq.setAttribute("cy", py(loss(wq)));
         pd.setAttribute("x1", px(wq)); pd.setAttribute("y1", py(loss(w)));
         pd.setAttribute("x2", px(wq)); pd.setAttribute("y2", py(loss(wq)));
-        read.textContent = "w = " + w.toFixed(2) + "  \u2192  w_q = " + wq +
-                           "   \u0394loss = " + (dl >= 0 ? "+" : "") + dl.toFixed(3);
+        say(w);
         p.classList.add("fl-live");
       }
-      function leave() { p.classList.remove("fl-live"); }
+      function leave() { p.classList.remove("fl-live"); rest(); }
       hit.addEventListener("pointermove", move);
       hit.addEventListener("pointerdown", move);
       hit.addEventListener("pointerleave", leave);
