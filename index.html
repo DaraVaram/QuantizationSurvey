@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260910c">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260910d">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260910c"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260910c"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260910c"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260910d"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260910d"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260910d"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1209,9 +1209,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h3 id="tapered">5.3&ensp;Tapered-Precision Formats</h3>
 
-<p>A third direction explores tapered-precision formats, which vary the number of mantissa bits with the magnitude of the value being encoded rather than fixing the field widths in advance. Two are relevant here: (1) Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>, and (2) takum <d-cite key="hunhold2024beating,hunhold2025tekum"></d-cite>. Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>.</p>
+<p>A third direction explores tapered-precision formats, which vary the number of mantissa bits with the magnitude of the value being encoded rather than fixing the field widths in advance. Two are relevant here: (1) Posit, also known as Type III Universal Number (Unum) <d-cite key="gustafson2017beating,gustafson2,carmichael2019deep,lu2020evaluations"></d-cite>, and (2) takum <d-cite key="hunhold2024beating,hunhold2025tekum"></d-cite>.</p>
 
-<p>Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits, although the 2022 posit standard fixes \(es\) at 2 and parameterizes a posit by its bit-width alone <d-cite key="mallasen2025navigating"></d-cite>. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered precision</em>, a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
+<p>On the one hand, Posit offers superior dynamic range and precision with the same or fewer bits than traditional floating-point, using a format designed to allocate bits more effectively <d-cite key="cococcioni2019fast,romanov2021analysis"></d-cite>. Posit numbers are parameterized by \((w, es)\), where \(w\) is the total bit-width and \(es\) is the number of exponent bits, although the 2022 posit standard fixes \(es\) at 2 and parameterizes a posit by its bit-width alone <d-cite key="mallasen2025navigating"></d-cite>. Internally, a Posit number is composed of four fields: sign bit, variable-length regime, exponent (of fixed length \(es\)), and a variable-length mantissa. The regime field enables Posit&#8217;s <em>tapered precision</em>, a core feature where more precision is allocated to values close to 1 and less to extreme values <d-cite key="langroudi2021alps"></d-cite>. This is especially well-suited to deep neural networks, where parameters and activations typically follow zero-centered Gaussian-like distributions <d-cite key="lu2020evaluations"></d-cite>.</p>
 
 <p>The numerical value of a real number \(n\) is represented in the Posit format (by \(\hat{n}\)) as follows:</p>
 
@@ -1224,7 +1224,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>This tapered-precision behavior makes Posit attractive for low-precision DNN inference from a numerical perspective, and Posit arithmetic has been shown to run effectively on MCUs with minimal accuracy loss <d-cite key="cococcioni2019fast"></d-cite> and is also being explored for approximate computing at the edge <d-cite key="guntoro2020next,langroudi2019positnn"></d-cite>. Posit coprocessors have since been integrated into microcontroller-class RISC-V systems on chip and characterized in silicon-realistic terms, reporting a 38% smaller area and up to 42.3% lower functional-unit power than an equivalent single-precision FPU in 16 nm, on wearable biomedical workloads <d-cite key="mallasen2026increasing"></d-cite>. Nevertheless, Posit has not become a mainstream format in MCU deployment due to limited hardware and software support <d-cite key="mallasen2025navigating"></d-cite>: no commercial MCU ships a posit unit, and the embedded inference runtimes surveyed in <a class="xref" href="#software-frameworks">Section 6.2</a> remain integer-centric.</p>
 
-<p>Takum <d-cite key="hunhold2024beating"></d-cite> keeps this variable mantissa length but replaces the mechanism that encodes the exponent. Where a Posit spends a unary run of bits on the regime, bounded only by the word size, a takum uses a one-bit direction flag and a fixed three-bit regime that states how many characteristic bits follow. The prefix is therefore never longer than 12 bits, so an \(n\)-bit takum always retains at least \(n - 12\) mantissa bits, whereas a Posit can in principle be left with none. That floor bounds the relative approximation error, which for a Posit is unbounded from below and so resists the standard numerical-analysis techniques developed for floating-point <d-cite key="hunhold2024beating"></d-cite>.</p>
+<p>Takum <d-cite key="hunhold2024beating"></d-cite>, on the other hand, keeps this variable mantissa length but replaces the mechanism that encodes the exponent. Where a Posit spends a unary run of bits on the regime, bounded only by the word size, a takum uses a one-bit direction flag and a fixed three-bit regime that states how many characteristic bits follow. The prefix is therefore never longer than 12 bits, so an \(n\)-bit takum always retains at least \(n - 12\) mantissa bits, whereas a Posit can in principle be left with none. That floor bounds the relative approximation error, which for a Posit is unbounded from below and so resists the standard numerical-analysis techniques developed for floating-point <d-cite key="hunhold2024beating"></d-cite>.</p>
 
 <p>This bounds the format in a way Posit is not. A takum reaches its full dynamic range at \(n = 12\) and holds it constant thereafter, spanning roughly \(4.2 \times 10^{-56}\) to \(2.4 \times 10^{55}\) in the standard logarithmic variant, so every additional bit buys precision rather than range <d-cite key="hunhold2024beating"></d-cite>. The name records the property, from the Icelandic <em>takmarka&#240; umfang</em>, or limited range. Because the decoder never inspects more than the first 12 bits, and the regime has only eight states, parsing reduces to a 16-byte lookup table that is shared across all precisions rather than rebuilt per word length <d-cite key="hunhold2024beating"></d-cite>; a Posit regime, by contrast, may span the whole word and needs bit-counting logic attached to every input bit. An open-source FPGA codec reports lower latency and fewer LUTs than a comparable Posit codec on that basis <d-cite key="hunhold2024codec"></d-cite>.</p>
 
@@ -1560,7 +1560,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260910c"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260910d"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1581,9 +1581,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260910c"></script>
-  <script src="assets/js/supplements.js?v=20260910c"></script>
-  <script src="assets/js/figs.js?v=20260910c"></script>
+  <script src="assets/js/data.js?v=20260910d"></script>
+  <script src="assets/js/supplements.js?v=20260910d"></script>
+  <script src="assets/js/figs.js?v=20260910d"></script>
 
   </body>
 
