@@ -173,7 +173,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       }
       #table-1 .hw.arm  { color: #155F8F; background: #E4F0F9; border-color: #1F77B4; }
       #table-1 .hw.risc { color: #8F4A06; background: #FBEBDA; border-color: #D9760C; }
-      #table-1 .hw.hyb  { color: #64408C; background: #EEE7F7; border-color: #9467BD; }
+      #table-1 .hw.npu  { color: #64408C; background: #EEE7F7; border-color: #9467BD; }
       .t1-legend {
         display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 0.6rem;
         padding-top: 0.55rem; border-top: 1px dashed #d5dbe2;
@@ -294,52 +294,66 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .tax-fig figcaption { border-top: 1px dashed #d5dbe2; padding-top: 0.6rem; margin-top: 0.8rem; }
       /* Figure 17: the deployment stack */
       figure.stack-fig { text-align: left; }
-      .stk-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin: 0 0 0.7rem; font-size: 0.72rem; color: #556; }
-      .stk-tb-label { font-weight: 700; margin-right: 0.3rem; letter-spacing: 0.02em; text-transform: uppercase; font-size: 0.64rem; color: #667; }
-      .stk-recipe, .stk-clear {
-        font-size: 0.7rem; border: 1px solid #b9c2cc; background: #fff; border-radius: 999px;
-        padding: 0.2rem 0.75rem; cursor: pointer; color: #223; transition: 0.12s; line-height: 1.4;
+      .stk-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; margin: 0 0 0.75rem; font-size: 0.72rem; color: #556; }
+      .stk-tb-label { font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.64rem; color: #667; margin: 0; }
+      .stk-search {
+        flex: 1 1 260px; min-width: 200px; font: inherit; font-size: 0.76rem; padding: 0.3rem 0.65rem; border: 1px solid #b9c2cc;
+        border-radius: 999px; background: #fff; color: #1f2430; outline: none;
       }
-      .stk-recipe:hover, .stk-clear:hover { border-color: #223; }
-      .stk-recipe.stk-active { background: #1f2430; border-color: #1f2430; color: #fff; }
+      .stk-search:focus { border-color: #1f2430; box-shadow: 0 0 0 2px rgba(31, 36, 48, 0.12); }
+      .stk-quick-wrap { display: flex; flex-wrap: wrap; gap: 0.3rem; flex-basis: 100%; }
+      .stk-quick, .stk-clear {
+        font: inherit; font-size: 0.68rem; border: 1px solid #c8cfd8; background: #fff; border-radius: 999px;
+        padding: 0.16rem 0.65rem; cursor: pointer; color: #223; transition: 0.12s; line-height: 1.4;
+      }
+      .stk-quick:hover, .stk-clear:hover { border-color: #1f2430; }
+      .stk-quick.stk-active { background: #1f2430; border-color: #1f2430; color: #fff; }
       .stk-clear { color: #778; }
       .stk-grid { display: grid; grid-template-columns: 34px minmax(0, 1fr) 34px; gap: 12px; position: relative; }
-      .stk-layers { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+      .stk-layers { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
       .stk-layer {
         --spine: #3A414F; --tint: #E8EAEE;
-        position: relative; display: grid; grid-template-columns: 160px minmax(0, 1fr); align-items: stretch;
-        background: var(--tint); border-radius: 9px; box-shadow: 0 2px 6px rgba(20, 24, 40, 0.10);
-        transition: box-shadow 0.15s;
+        position: relative; display: grid; grid-template-columns: 168px minmax(0, 1fr); align-items: stretch;
+        background: var(--tint); border-radius: 9px; box-shadow: 0 2px 6px rgba(20, 24, 40, 0.10); transition: box-shadow 0.15s;
       }
-      .stk-layer[data-layer="app"] { --spine: #6D4C9F; --tint: #EFEAF7; }
-      .stk-layer[data-layer="alg"] { --spine: #3F5FBF; --tint: #E8ECF8; }
-      .stk-layer[data-layer="qzr"] { --spine: #2D7DAB; --tint: #E3F0F7; }
-      .stk-layer[data-layer="num"] { --spine: #C4922A; --tint: #FBF3DF; }
-      .stk-layer[data-layer="sw"]  { --spine: #2A8A7A; --tint: #E1F2EF; }
-      .stk-layer[data-layer="hw"]  { --spine: #3A414F; --tint: #E8EAEE; }
+      .stk-layer[data-layer="app"]   { --spine: #6D4C9F; --tint: #EFEAF7; }
+      .stk-layer[data-layer="quant"] { --spine: #3F5FBF; --tint: #E8ECF8; }
+      .stk-layer[data-layer="repr"]  { --spine: #C4922A; --tint: #FBF3DF; }
+      .stk-layer[data-layer="sw"]    { --spine: #2A8A7A; --tint: #E1F2EF; }
+      .stk-layer[data-layer="hw"]    { --spine: #3A414F; --tint: #E8EAEE; }
       .stk-layer:hover, .stk-layer.stk-bridge { box-shadow: 0 0 0 2.5px var(--spine), 0 2px 6px rgba(20, 24, 40, 0.10); }
       .stk-label {
         display: flex; flex-direction: column; justify-content: center; gap: 0.15rem; padding: 0.6rem 0.85rem;
-        background: var(--spine); color: #fff; border-radius: 9px 0 0 9px; text-decoration: none; border: none;
-        transition: filter 0.12s, opacity 0.2s;
+        background: var(--spine); color: #fff; border-radius: 9px 0 0 9px; text-decoration: none; border: none; transition: filter 0.12s, opacity 0.2s;
       }
       .stk-label:hover { text-decoration: none; filter: brightness(1.12); color: #fff; }
       .stk-name { font-weight: 700; font-size: 0.92rem; line-height: 1.15; color: #fff; letter-spacing: 0.01em; }
       .stk-sec { font-size: 0.7rem; color: rgba(255, 255, 255, 0.78); font-style: italic; }
-      .stk-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.28rem 0.32rem; min-width: 0; padding: 0.6rem 0.9rem 0.65rem; }
+      .stk-chips { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; padding: 0.55rem 0.9rem 0.6rem; }
+      .stk-row { display: flex; align-items: baseline; gap: 0.5rem; min-width: 0; }
+      .stk-rowlabel {
+        flex: 0 0 150px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+        color: var(--spine); line-height: 1.3; padding-top: 0.22rem; transition: opacity 0.2s;
+      }
+      .stk-rowlabel[data-q] { cursor: pointer; border-bottom: 1px dotted transparent; }
+      .stk-rowlabel[data-q]:hover { border-bottom-color: var(--spine); }
+      .stk-rowchips { display: flex; flex-wrap: wrap; gap: 0.26rem 0.3rem; min-width: 0; }
       .stack-fig .mchip {
-        position: relative; z-index: 2; display: inline-block; padding: 0.14rem 0.5rem; margin: 0;
+        position: relative; z-index: 2; display: inline-block; padding: 0.13rem 0.48rem; margin: 0;
         background: #fff; border: 1px solid color-mix(in srgb, var(--spine) 38%, #fff); border-radius: 5px;
-        font-size: 0.7rem; line-height: 1.45; color: #223; cursor: pointer;
+        font-size: 0.69rem; line-height: 1.45; color: #223; cursor: pointer;
         transition: opacity 0.2s, border-color 0.12s, color 0.12s, background 0.12s, box-shadow 0.12s;
       }
-      .stack-fig .mchip:hover { border-color: var(--spine); color: var(--spine); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10); }
-      .stack-fig .mchip.stk-alt { background: rgba(255, 255, 255, 0.55); }
-      .stk-sep { display: inline-block; width: 1px; height: 1.05rem; background: color-mix(in srgb, var(--spine) 45%, transparent); margin: 0 0.3rem; }
-      .stk-tracing .mchip { opacity: 0.28; }
+      .stack-fig .mchip:hover, .stack-fig .mchip:focus-visible { border-color: var(--spine); color: var(--spine); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10); outline: none; }
+      .stack-fig .mchip.stk-hollow { background: transparent; border-style: dashed; color: #556; }
+      .stk-cnt { font-style: normal; font-weight: 700; font-size: 0.6rem; margin-left: 0.3rem; opacity: 0.85; }
+      .stk-tracing .mchip { opacity: 0.26; }
       .stk-tracing .mchip.stk-on { opacity: 1; background: var(--spine); border-color: var(--spine); color: #fff; font-weight: 600; }
-      .stk-dim .stk-label, .stk-dim .mchip, .stk-dim .stk-sep { opacity: 0.3; }
-      .stk-seam { position: absolute; right: 14px; bottom: 0; transform: translateY(calc(50% + 4.5px)); display: flex; gap: 6px; z-index: 3; }
+      .stk-tracing .mchip.stk-cap { opacity: 1; background: #fff; border: 1.5px dashed var(--spine); color: var(--spine); font-weight: 600; }
+      .stk-tracing .stk-rowlabel { opacity: 0.5; }
+      .stk-tracing .stk-rowlabel.stk-on { opacity: 1; }
+      .stk-dim .stk-label, .stk-dim .mchip, .stk-dim .stk-rowlabel { opacity: 0.3; }
+      .stk-seam { position: absolute; right: 14px; bottom: 0; transform: translateY(calc(50% + 5px)); display: flex; gap: 6px; z-index: 3; }
       .stk-pin {
         display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 20px; padding: 0 7px;
         border-radius: 999px; background: #fff; border: 1.5px solid #C0392B; color: #A93226; font-size: 0.66rem; font-weight: 700;
@@ -358,22 +372,40 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-rail-r .stk-rail-cell { color: #A93226; background: #fbeceb; border-color: #efc4bf; cursor: pointer; text-transform: none; letter-spacing: 0.02em; }
       .stk-rail-r .stk-rail-cell:hover { border-color: #C0392B; color: #fff; background: #C0392B; }
       .stk-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
-      .stk-path-halo { fill: none; stroke: #fff; stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
-      .stk-path { fill: none; stroke: #1f2430; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+      .stk-path-halo { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+      .stk-path { fill: none; stroke: #1f2430; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55; transition: opacity 0.15s, stroke-width 0.15s; }
+      .stk-overlay[data-many] .stk-path { opacity: 0.36; stroke-width: 2; }
+      .stk-overlay.stk-focus .stk-path { opacity: 0.12; }
+      .stk-overlay.stk-focus .stk-path.stk-path-hi { opacity: 1; stroke-width: 3; }
       .stk-path-broken { fill: none; stroke: #C0392B; stroke-width: 2.2; stroke-dasharray: 5 5; stroke-linecap: round; }
       .stk-bracket { fill: none; stroke: #C0392B; stroke-width: 2; stroke-linecap: round; }
-      .stk-story {
-        font-size: 0.76rem; line-height: 1.5; color: #223; margin: 0.7rem 0 0; padding: 0.5rem 0.8rem;
-        border-left: 3px solid #1f2430; background: #f3f4f7; border-radius: 0 6px 6px 0;
-      }
-      .stk-story:empty { display: none; }
+      .stk-panel { margin: 0.75rem 0 0; font-size: 0.75rem; line-height: 1.5; color: #223; }
+      .stk-panel:empty { display: none; }
+      .stk-ph { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.7rem; padding: 0.45rem 0.8rem; background: #1f2430; color: #fff; border-radius: 6px 6px 0 0; }
+      .stk-ph b { font-size: 0.82rem; }
+      .stk-ph a { color: #cfe3ff; border-bottom: 1px dotted #cfe3ff; text-decoration: none; }
+      .stk-ph a:hover { color: #fff; border-bottom-style: solid; }
+      .stk-pbody { border: 1px solid #d5dbe2; border-top: none; border-radius: 0 0 6px 6px; padding: 0.55rem 0.8rem 0.6rem; background: #fff; }
+      .stk-story { margin: 0 0 0.5rem; padding: 0.4rem 0.7rem; border-left: 3px solid #1f2430; background: #f3f4f7; border-radius: 0 6px 6px 0; }
+      .stk-list { list-style: none; margin: 0 0 0.5rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.25rem 1rem; }
+      .stk-list li { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.22rem 0.4rem; border-radius: 4px; cursor: pointer; transition: background 0.12s; }
+      .stk-list li:hover, .stk-list li:focus-visible { background: #eef1f6; outline: none; }
+      .stk-ref { flex: 0 0 auto; font-weight: 700; color: #2698BA; font-variant-numeric: tabular-nums; }
+      .stk-li-fam { flex: 0 0 auto; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.05rem 0.4rem; border-radius: 3px; color: #fff; }
+      .stk-li-fam.arm { background: #4a6fa5; } .stk-li-fam.riscv { background: #2A8A7A; } .stk-li-fam.npu { background: #C4922A; }
+      .stk-note { margin: 0.35rem 0 0; color: #445; }
+      .stk-note b, .stk-rec b { color: #1f2430; }
+      .stk-rec { margin: 0.5rem 0 0; padding: 0.4rem 0.7rem; background: #f7f2e4; border-left: 3px solid #C4922A; border-radius: 0 6px 6px 0; }
+      .stk-panel .xref { border-bottom: 1px dotted #97b6c6; color: inherit; }
       .stack-fig .fig-hint { text-align: left; }
       @media (max-width: 720px) {
         .stk-grid { grid-template-columns: 26px minmax(0, 1fr) 26px; gap: 8px; }
         .stk-layer { grid-template-columns: 1fr; }
         .stk-label { flex-direction: row; align-items: baseline; gap: 0.5rem; border-radius: 9px 9px 0 0; padding: 0.4rem 0.8rem; }
-        .stk-name br { display: none; }
+        .stk-row { flex-direction: column; gap: 0.15rem; }
+        .stk-rowlabel { flex-basis: auto; }
         .stk-rail-cell { font-size: 0.56rem; }
+        .stk-list { grid-template-columns: 1fr; }
       }
       /* end Figure 17 */
       .flash-p { background: #fff3c4 !important; }
@@ -668,7 +700,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
 <p>Algorithm-centered surveys, such as those by Liu et al. <d-cite key="liu2025low"></d-cite> and Gholami et al. <d-cite key="gholami2022survey"></d-cite>, focus primarily on software-level advances in quantization, including low-bit quantization algorithms and training techniques across different applications and domains. Related works include Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite>, who evaluate quantization methods for image classification, and Liu et al. <d-cite key="liu2024lightweight"></d-cite>, who discuss lightweight model design and hardware acceleration. Although extensive, these surveys give limited attention to hardware constraints and practical deployment concerns, particularly for MCUs and comparable edge-class devices.</p>
 
-<!-- Table 1 (tab:survey-scope) --><p>Conversely, hardware-centered deployment surveys tend to emphasize platforms and architectures while giving less attention to quantization as a deployment methodology. For instance, Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite> examine ARM Cortex-M-based MCUs with DNN deployment examples, but do not substantially explore quantization. Similarly, Liu et al. <d-cite key="liu2024exploring"></d-cite>, Akkad et al. <d-cite key="akkad2023embedded"></d-cite>, and Giordano et al. <d-cite key="giordano2022survey"></d-cite> analyze RISC-V, hybrid, and low-power MCU platforms, but provide limited discussion of compression and quantization methods.</p>
+<!-- Table 1 (tab:survey-scope) --><p>Conversely, hardware-centered deployment surveys tend to emphasize platforms and architectures while giving less attention to quantization as a deployment methodology. For instance, Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite> examine ARM Cortex-M-based MCUs with DNN deployment examples, but do not substantially explore quantization. Similarly, Liu et al. <d-cite key="liu2024exploring"></d-cite>, Akkad et al. <d-cite key="akkad2023embedded"></d-cite>, and Giordano et al. <d-cite key="giordano2022survey"></d-cite> analyze RISC-V, NPU-integrated, and low-power MCU platforms, but provide limited discussion of compression and quantization methods.</p>
 
 <p>Broader TinyML and edge-AI surveys provide ecosystem-level overviews, but often lack depth on quantization as a deployment methodology. For example, Saha et al. <d-cite key="saha2022"></d-cite> cover MCU hardware and deployments, while Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite>, Ray <d-cite key="ray2022review"></d-cite>, and Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite> focus more broadly on TinyML/TinyDL systems, applications, toolchains, and deployment challenges rather than quantization methodology as the central organizing theme.</p>
 
@@ -691,7 +723,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 <tbody>
 <tr><td>Gholami et al. <d-cite key="gholami2022survey"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
 <tr><td>Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Giordano et al. <d-cite key="giordano2022survey"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw hyb">Hybrid</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Giordano et al. <d-cite key="giordano2022survey"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
 <tr><td>Saha et al. <d-cite key="saha2022"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
 <tr><td>Ray <d-cite key="ray2022review"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
 <tr><td>Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite></td><td>2023</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
@@ -702,9 +734,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 <tr><td>Liu et al. <d-cite key="liu2025low"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
 <tr><td>Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite></td><td>2025</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
 <tr><td>Wang and Jia <d-cite key="wang2025optimizing"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw hyb">Hybrid</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
 <tr><td>L&#234; et al. <d-cite key="tri2026efficient"></d-cite></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td></tr>
-<tr class="ours"><td><strong>Ours</strong></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw hyb">Hybrid</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr class="ours"><td><strong>Ours</strong></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
 </tbody>
 </table>
 <div class="t1-legend"><span><i class="sw sw-full"></i>surveyed</span><span><i class="sw sw-part"></i>partially surveyed</span><span><i class="sw sw-none"></i>not covered</span><span class="t1-legend-note">Hardware Landscape lists the architectures each survey covers</span></div>
@@ -1332,7 +1364,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h3 id="hardware-platforms">6.1&ensp;Hardware Platforms</h3>
 
-<p>At the hardware level, MCU deployment targets can be grouped into three main families, namely general-purpose ARM Cortex-M MCUs, RISC-V-based MCUs, and hybrid MCUs augmented with neural network accelerators. These families differ not only in compute capability, but also in the maturity and flexibility of the software ecosystems built around them. <a class="xref" href="#table-3">Table 3</a> summarizes representative devices and their deployment-relevant constraints. The following subsections discuss each hardware family in more detail.</p>
+<p>At the hardware level, MCU deployment targets can be grouped into three main families, namely general-purpose ARM Cortex-M MCUs, RISC-V-based MCUs, and NPU-integrated MCUs augmented with dedicated neural processing units (NPUs). These families differ not only in compute capability, but also in the maturity and flexibility of the software ecosystems built around them. <a class="xref" href="#table-3">Table 3</a> summarizes representative devices and their deployment-relevant constraints. The following subsections discuss each hardware family in more detail.</p>
 
 <!-- Table 3 (tab:deployment_hw_summary) -->
 <div class="ptable-wrap l-page" id="table-3">
@@ -1381,7 +1413,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <h4 id="npu-mcus">6.1.3&ensp;NPU-Integrated MCUs</h4>
 
-<p>In recent years, hybrid MCU platforms that combine traditional CPUs with dedicated neural processing units (NPUs) have emerged as a promising class of devices for ultra-low-power edge AI. These MCU-scale NPUs, often referred to as micro-NPUs (\(\mu\)NPUs) <d-cite key="millar2025benchmarking"></d-cite>, help fill the gap between power-hungry GPUs and standalone MCUs that lack sufficient compute capacity for real-time neural inference <d-cite key="kim2023hardware,lin2020mcunet"></d-cite>. By tightly integrating acceleration into MCU-class devices, NPUs target operations such as convolution and matrix multiplication while preserving low-power operation <d-cite key="manor2022custom,wang2022bed,song2024tada"></d-cite>.</p>
+<p>In recent years, NPU-integrated MCU platforms that combine traditional CPUs with dedicated NPUs have emerged as a promising class of devices for ultra-low-power edge AI. These MCU-scale NPUs, often referred to as micro-NPUs (\(\mu\)NPUs) <d-cite key="millar2025benchmarking"></d-cite>, help fill the gap between power-hungry GPUs and standalone MCUs that lack sufficient compute capacity for real-time neural inference <d-cite key="kim2023hardware,lin2020mcunet"></d-cite>. By tightly integrating acceleration into MCU-class devices, NPUs target operations such as convolution and matrix multiplication while preserving low-power operation <d-cite key="manor2022custom,wang2022bed,song2024tada"></d-cite>.</p>
 
 <p>Since CNNs <d-cite key="sekanina2021neural"></d-cite> remain among the most common neural architectures deployed at the edge, many NPUs are designed primarily as CNN accelerators and rely on quantization, pruning, and related compression methods to meet memory, latency, and energy constraints <d-cite key="akkad2023embedded"></d-cite>.</p>
 
@@ -1506,7 +1538,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 </table>
 </div>
 
-<!-- Interactive supplement: deployment landscape explorer -->
+<!-- Interactive supplement: deployment landscape explorer &#8212; disabled, kept for reference
 <div class="supplement" id="scatter-supp">
   <div class="supp-label">Interactive supplement &#8212; deployment landscape across Tables 4&#8211;6 (not part of the manuscript)</div>
   <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:6px">
@@ -1527,6 +1559,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <div id="viz-count" class="visually-hidden" aria-live="polite"></div>
   <div style="font-size:0.68rem;color:#888;margin-top:4px">Each point is one deployment from Tables 4&#8211;6. Every value is parsed from the table cell itself: the marker sits at the midpoint of the full reported range and the whisker spans that range end to end, so the tables remain the source of truth. Hover or focus a point for details; click it to open that study in the reference list.</div>
 </div>
+-->
 
 <p>Although these platforms explicitly support extreme low-bit and mixed-precision arithmetic, the great majority of the works we surveyed still default to INT8. The few exceptions, such as the INT16 vision model of Zemlyanikin et al. <d-cite key="zemlyanikin2019512kib"></d-cite> and the mixed-precision pipelines of Itani et al. <d-cite key="itani2025wireless"></d-cite> and Crupi et al. <d-cite key="crupi2025efficient"></d-cite>, remain uncommon. We therefore focus on their most distinctive and emerging uses rather than on precision choices alone.</p>
 
@@ -1581,16 +1614,14 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p><strong>3) Optimize the full deployment stack, not the model alone.</strong> The strongest application results rarely follow from quantization alone. Rather, they emerge when quantization is aligned with operator libraries, memory layout, compiler support, and hardware scheduling. Toolchain-aware deployment frameworks such as Autotiler, <code>nntool</code>, and <code>ai8x-tools</code> show that practical gains often depend as much on data movement and execution orchestration as on the nominal precision of the model itself <d-cite key="zhou2023solving,balbi2024ultra,crupi2025efficient"></d-cite>. From an energy perspective, this also implies that deployment strategy should follow the operating profile of the task: always-on systems benefit most from minimizing energy per useful inference, whereas episodic or safety-critical workloads may justify more conservative quantization in exchange for stronger robustness <d-cite key="itani2025wireless,busia2025endoscopy"></d-cite>.</p>
 
-<p>Overall, the application literature reinforces the central argument of this survey: on MCU-class devices, the outcome of quantized deployment is determined not by compression in isolation, but by the co-design of the model, the runtime, and the target hardware. <a class="xref" href="#figure-17">Fig. 17</a> draws this argument as a deployment stack, from the hardware substrate to the application, with the choices reviewed in each section arranged by layer and the challenges of <a class="xref" href="#challenges">Section 8</a> located at the seams where one layer meets the next.</p>
+<p>Overall, the application literature reinforces the central argument of this survey: on MCU-class devices, the outcome of quantized deployment is determined not by compression in isolation, but by the co-design of the model, the runtime, and the target hardware. <a class="xref" href="#figure-17">Fig. 17</a> draws this argument as a deployment stack, read from the application down to the hardware, with the choices reviewed in each section arranged by layer and the challenges of <a class="xref" href="#challenges">Section 8</a> located at the seams where one layer meets the next.</p>
 
 <figure class="pfig stack-fig l-page" id="figure-17">
-  <div class="stk-toolbar" role="group" aria-label="Trace a representative deployment through the stack">
-    <span class="stk-tb-label">Trace a deployment</span>
-    <button type="button" class="stk-recipe" data-recipe="arm">INT8 on Cortex-M</button>
-    <button type="button" class="stk-recipe" data-recipe="riscv">INT8 on RISC-V</button>
-    <button type="button" class="stk-recipe" data-recipe="npu">INT8 on an NPU</button>
-    <button type="button" class="stk-recipe" data-recipe="sub8">Sub-8-bit</button>
-    <button type="button" class="stk-recipe" data-recipe="posit">Posit</button>
+  <div class="stk-toolbar" role="search">
+    <label class="stk-tb-label" for="stk-q">Trace a deployment</label>
+    <input class="stk-search" id="stk-q" type="search" list="stk-suggest" placeholder="an application, a method, a format, a tool, or a platform" autocomplete="off" spellcheck="false">
+    <datalist id="stk-suggest"></datalist>
+    <span class="stk-quick-wrap"><button type="button" class="stk-quick" data-q="Drones">Drones</button><button type="button" class="stk-quick" data-q="Healthcare">Healthcare</button><button type="button" class="stk-quick" data-q="Keyword spotting">Keyword spotting</button><button type="button" class="stk-quick" data-q="Human activity recognition">HAR</button><button type="button" class="stk-quick" data-q="Mixed precision">Mixed precision</button><button type="button" class="stk-quick" data-q="Sub-8-bit">Sub-8-bit</button><button type="button" class="stk-quick" data-q="Posit">Posit</button><button type="button" class="stk-quick" data-q="QAT">QAT</button><button type="button" class="stk-quick" data-q="GAP9">GAP9</button><button type="button" class="stk-quick" data-q="ESP32">ESP32</button><button type="button" class="stk-quick" data-q="STM32">STM32</button><button type="button" class="stk-quick" data-q="NPU-integrated">NPU-integrated</button></span>
     <button type="button" class="stk-clear" hidden>Clear</button>
   </div>
   <div class="stk-grid">
@@ -1601,56 +1632,32 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
       <span class="stk-rail-cell" data-tip="<b>Accuracy.</b> What every reduction below trades against, and the reason PTQ, QAT, and the advanced techniques exist.">Accuracy</span>
     </div>
     <div class="stk-layers">
-
-      <div class="stk-layer stk-blue" data-layer="app">
-        <a class="stk-label" href="#applications" data-tip="<b>Application &amp; model.</b> What the network must do and which architecture does it. Section 7 reviews real deployments through the three MCU families and shows that the feasible model is set as much by the layers below as by the task."><span class="stk-name">Application <br>&amp; Model</span><span class="stk-sec">&#167;&#8202;7</span></a>
-        <div class="stk-chips">
-          <span class="mchip" data-k="kws" data-nav="apps-npu" data-term="keyword spotting">Speech &amp; keyword spotting</span><span class="mchip" data-k="vis" data-nav="apps-npu" data-term="image classification">Vision</span><span class="mchip" data-k="har" data-nav="apps-arm" data-term="human activity recognition">Human activity recognition</span><span class="mchip" data-k="health" data-nav="apps-arm" data-term="healthcare">Healthcare</span><span class="mchip" data-k="anom" data-nav="apps-npu" data-term="anomaly detection">Industrial &amp; anomaly detection</span><span class="mchip" data-k="env" data-nav="apps-arm" data-term="environmental monitoring">Environmental sensing</span><span class="mchip" data-k="robo" data-nav="apps-npu" data-term="drone navigation">Robotics &amp; drones</span><span class="mchip" data-k="net" data-nav="apps-arm" data-term="network security">Networking</span>
-          <span class="stk-sep" aria-hidden="true"></span>
-          <span class="mchip stk-alt" data-k="cnn" data-nav="apps-npu" data-term="CNN">CNN</span><span class="mchip stk-alt" data-k="tfm" data-nav="apps-npu" data-term="transformer">Transformer</span><span class="mchip stk-alt" data-k="kd" data-nav="apps-riscv" data-term="knowledge distillation">Knowledge distillation</span>
-        </div>
-        <div class="stk-seam"><a class="stk-pin" href="#ch-operator" data-bridge="app sw" data-tip="<b>8.1 Operator support.</b> Converting a whole network exposes operators the quantization toolchain does not cover, so the model and the software stack disagree about what can run.">8.1</a><a class="stk-pin" href="#ch-arch" data-bridge="app sw" data-tip="<b>8.2 Emerging architectures.</b> Transformers and diffusion models reach the edge faster than quantization frameworks learn to support their operations and memory patterns.">8.2</a></div>
+      <div class="stk-layer stk-app" data-layer="app">
+        <a class="stk-label" href="#applications" data-tip="Application. What the network must do. Section 7 reviews real deployments through the three MCU families and shows that the feasible model is set as much by the layers below as by the task."><span class="stk-name">Application</span><span class="stk-sec">&#167;&#8202;7</span></a>
+        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel">Tabulated in Tables 4&#8211;6</span><span class="stk-rowchips"><span class="mchip" data-k="cat:Speech" data-sec="apps-arm" data-term="speech">Speech</span><span class="mchip" data-k="cat:Keyword Spotting" data-sec="apps-npu" data-term="keyword spotting">Keyword spotting</span><span class="mchip" data-k="cat:Object Detection" data-sec="apps-arm" data-term="object detection">Object detection</span><span class="mchip" data-k="cat:Image Classification" data-sec="apps-npu" data-term="image classification">Image classification</span><span class="mchip" data-k="cat:Face Recognition" data-sec="apps-npu" data-term="face recognition">Face recognition</span><span class="mchip" data-k="cat:HAR" data-sec="apps-arm" data-term="human activity recognition">Human activity recognition</span><span class="mchip" data-k="cat:Healthcare" data-sec="apps-arm" data-term="healthcare">Healthcare</span><span class="mchip" data-k="cat:Networking" data-sec="apps-arm" data-term="network security">Networking</span><span class="mchip" data-k="cat:Environment" data-sec="apps-arm" data-term="environmental monitoring">Environmental sensing</span><span class="mchip" data-k="cat:Education" data-sec="apps-arm" data-term="education">Education</span><span class="mchip" data-k="cat:Spectrum Sensing" data-sec="apps-arm" data-term="spectrum sensing">Spectrum sensing</span><span class="mchip" data-k="cat:Industrial" data-sec="apps-riscv" data-term="condition monitoring">Industrial monitoring</span><span class="mchip" data-k="cat:Robotics" data-sec="apps-riscv" data-term="robotics">Robotics</span><span class="mchip" data-k="cat:Drones" data-sec="apps-npu" data-term="drone navigation">Drones</span><span class="mchip" data-k="cat:Anomaly Detection" data-sec="apps-npu" data-term="anomaly detection">Anomaly detection</span><span class="mchip" data-k="cat:Agriculture" data-sec="apps-arm" data-term="agriculture">Agriculture</span></span></div><div class="stk-row"><span class="stk-rowlabel">Discussed only in prose</span><span class="stk-rowchips"><span class="mchip stk-hollow" data-k="x:Segmentation" data-sec="apps-npu" data-term="segmentation" data-tip="Discussed in Section 7.3, but none of the deployments tabulated in Tables 4&amp;#8211;6 targets it.">Segmentation</span><span class="mchip stk-hollow" data-k="x:VQA" data-sec="apps-npu" data-term="visual question answering" data-tip="Discussed in Section 7.3, but none of the deployments tabulated in Tables 4&amp;#8211;6 targets it.">Visual question answering</span><span class="mchip stk-hollow" data-k="x:Surveillance" data-sec="apps-npu" data-term="surveillance" data-tip="Discussed in Section 7.3, but none of the deployments tabulated in Tables 4&amp;#8211;6 targets it.">Surveillance</span><span class="mchip stk-hollow" data-k="x:Wearables" data-sec="apps-npu" data-term="wearable" data-tip="Discussed in Section 7.3, but none of the deployments tabulated in Tables 4&amp;#8211;6 targets it.">Wearables</span><span class="mchip stk-hollow" data-k="x:DSP" data-sec="apps-npu" data-term="DSP" data-tip="Discussed in Section 7.3, but none of the deployments tabulated in Tables 4&amp;#8211;6 targets it.">DSP</span></span></div></div>
+        <div class="stk-seam"><a class="stk-pin" href="#ch-operator" data-bridge="app sw" data-tip="&lt;b&gt;8.1 Operator support.&lt;/b&gt; Converting a whole network exposes operators the quantization toolchain does not cover, so the application and the software stack disagree about what can run.">8.1</a><a class="stk-pin" href="#ch-arch" data-bridge="app sw" data-tip="&lt;b&gt;8.2 Emerging architectures.&lt;/b&gt; Transformers and diffusion models reach the edge faster than quantization frameworks learn to support their operations and memory patterns.">8.2</a></div>
       </div>
 
-      <div class="stk-layer stk-tan" data-layer="alg">
-        <a class="stk-label" href="#ptq-qat" data-tip="<b>Quantization algorithm.</b> How the network is brought to low precision. PTQ and QAT are the primary paths (Section 3); the advanced techniques of Section 4 extend them in bit-width, allocation, and data requirements."><span class="stk-name">Quantization <br>Algorithm</span><span class="stk-sec">&#167;&#8202;3 &#183; &#167;&#8202;4</span></a>
-        <div class="stk-chips">
-          <span class="mchip" data-k="ptq" data-nav="ptq" data-term="PTQ">PTQ</span><span class="mchip" data-k="qat" data-nav="qat" data-term="QAT">QAT</span>
-          <span class="stk-sep" aria-hidden="true"></span>
-          <span class="mchip stk-alt" data-k="inttr" data-nav="int-training" data-term="training">Integer training</span><span class="mchip stk-alt" data-k="xlb" data-nav="extreme-low-bit" data-term="binar">Extreme low-bit</span><span class="mchip stk-alt" data-k="mpq" data-nav="mixed-precision" data-term="precision">Mixed precision</span><span class="mchip stk-alt" data-k="hwa" data-nav="hw-aware" data-term="hardware">Hardware-aware</span><span class="mchip stk-alt" data-k="redis" data-nav="redistribution" data-term="distribution">Redistribution</span><span class="mchip stk-alt" data-k="dagn" data-nav="data-agnostic" data-term="data">Data-agnostic</span>
-        </div>
+      <div class="stk-layer stk-quant" data-layer="quant">
+        <a class="stk-label" href="#ptq-qat" data-tip="Quantization. How the network is brought to low precision. A path (PTQ or QAT), a precision strategy, the refinements of Section 4, and the design choices of Section 2.3 that the converter usually fixes."><span class="stk-name">Quantization</span><span class="stk-sec">&#167;&#8202;2.3 &#183; &#167;&#8202;3 &#183; &#167;&#8202;4</span></a>
+        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel">Path (&#167;&#8202;3)</span><span class="stk-rowchips"><span class="mchip" data-k="q:PTQ" data-sec="ptq" data-term="PTQ">PTQ</span><span class="mchip" data-k="q:QAT" data-sec="qat" data-term="QAT">QAT</span></span></div><div class="stk-row"><span class="stk-rowlabel">Precision strategy (&#167;&#8202;4)</span><span class="stk-rowchips"><span class="mchip" data-k="s:uniform" data-sec="cross-case" data-term="uniform INT8" data-tip="One bit-width for every layer, INT8 in nearly every surveyed deployment.">Uniform precision</span><span class="mchip" data-k="s:mixed" data-sec="mixed-precision" data-term="precision" data-tip="Choosing a bit-width per part of the network (Section 4.3), by rough or adaptive allocation.">Mixed-precision allocation</span><span class="mchip" data-k="s:extreme" data-sec="extreme-low-bit" data-term="binar">Extreme low-bit</span><span class="mchip" data-k="s:inttrain" data-sec="int-training" data-term="training">Integer training</span></span></div><div class="stk-row"><span class="stk-rowlabel">Refinements (&#167;&#8202;4)</span><span class="stk-rowchips"><span class="mchip" data-k="r:hwa" data-sec="hw-aware" data-term="hardware">Hardware-aware</span><span class="mchip" data-k="r:redis" data-sec="redistribution" data-term="distribution">Redistribution</span><span class="mchip" data-k="r:dagn" data-sec="data-agnostic" data-term="data">Data-agnostic</span></span></div><div class="stk-row"><span class="stk-rowlabel">Design choices (&#167;&#8202;2.3)</span><span class="stk-rowchips"><span class="mchip" data-k="d:uni" data-sec="uniform-nonuniform" data-term="uniform">Uniform / non-uniform</span><span class="mchip" data-k="d:sym" data-sec="sym-asym" data-term="symmetric">Symmetric / asymmetric</span><span class="mchip" data-k="d:gran" data-sec="granularity" data-term="per-channel">Per-tensor / per-channel</span><span class="mchip" data-k="d:sd" data-sec="static-dynamic" data-term="static">Static / dynamic</span><span class="mchip" data-k="d:calib" data-sec="calibration" data-term="clipping">Calibration &amp; clipping</span></span></div></div>
       </div>
 
-      <div class="stk-layer stk-tan" data-layer="qzr">
-        <a class="stk-label" href="#formalization" data-tip="<b>Quantizer.</b> The mapping from real values to a discrete grid. Uniform or non-uniform, symmetric or asymmetric, static or dynamic, with a granularity and a clipping range (Sections 2.2 and 2.3)."><span class="stk-name">Quantizer</span><span class="stk-sec">&#167;&#8202;2.2 &#183; &#167;&#8202;2.3</span></a>
-        <div class="stk-chips">
-          <span class="mchip" data-k="uni" data-nav="uniform-nonuniform" data-term="uniform">Uniform</span><span class="mchip" data-k="nonuni" data-nav="uniform-nonuniform" data-term="non-uniform">Non-uniform</span><span class="mchip" data-k="sym" data-nav="sym-asym" data-term="symmetric">Symmetric</span><span class="mchip" data-k="asym" data-nav="sym-asym" data-term="asymmetric">Asymmetric</span><span class="mchip" data-k="stat" data-nav="static-dynamic" data-term="static">Static</span><span class="mchip" data-k="dyn" data-nav="static-dynamic" data-term="dynamic">Dynamic</span><span class="mchip" data-k="calib" data-nav="calibration" data-term="clipping">Calibration &amp; clipping</span><span class="mchip" data-k="pt" data-nav="granularity" data-term="per-tensor">Per-tensor</span><span class="mchip" data-k="pc" data-nav="granularity" data-term="per-channel">Per-channel</span><span class="mchip" data-k="pg" data-nav="granularity" data-term="per-group">Per-group</span>
-        </div>
+      <div class="stk-layer stk-repr" data-layer="repr">
+        <a class="stk-label" href="#numerical-representations" data-tip="Numerical representations. What the bits mean once quantized. Integers dominate MCU deployment; reduced floating-point, adaptive fixed-point, and tapered-precision formats widen the space (Section 5)."><span class="stk-name">Numerical Representations</span><span class="stk-sec">&#167;&#8202;2.1 &#183; &#167;&#8202;5</span></a>
+        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel">Integer (&#167;&#8202;2.1)</span><span class="stk-rowchips"><span class="mchip" data-k="n:INT16" data-sec="numerical-representations" data-term="integer">INT16</span><span class="mchip" data-k="n:INT8" data-sec="numerical-representations" data-term="INT8">INT8</span><span class="mchip" data-k="n:INT4" data-sec="ch-sub8" data-term="4-bit">INT4</span><span class="mchip" data-k="n:INT2" data-sec="extreme-low-bit" data-term="2-bit">INT2</span><span class="mchip" data-k="n:INT1" data-sec="extreme-low-bit" data-term="binar">Binary &amp; ternary</span><span class="mchip" data-k="n:mixed" data-sec="mixed-precision" data-term="precision" data-tip="Several bit-widths in one deployed network, assigned per layer, per channel, per group, or separately to weights and activations.">Mixed precision</span><span class="mchip" data-k="n:fxp" data-sec="numerical-representations" data-term="fixed-point">Generic fixed-point</span></span></div><div class="stk-row"><span class="stk-rowlabel">Floating-point (&#167;&#8202;5.1)</span><span class="stk-rowchips"><span class="mchip" data-k="n:FP16" data-sec="reduced-fp" data-term="FP16">FP16</span><span class="mchip" data-k="n:BF16" data-sec="reduced-fp" data-term="BF16">BF16</span><span class="mchip" data-k="n:FP8" data-sec="reduced-fp" data-term="FP8">FP8</span><span class="mchip" data-k="n:MSFP" data-sec="reduced-fp" data-term="MSFP">Block floating-point (MSFP)</span></span></div><div class="stk-row"><span class="stk-rowlabel">Adaptive &amp; tapered (&#167;&#8202;5)</span><span class="stk-rowchips"><span class="mchip" data-k="n:afx" data-sec="adaptive-fixed" data-term="fixed-point">Adaptive fixed-point</span><span class="mchip" data-k="n:posit" data-sec="tapered" data-term="Posit">Posit</span><span class="mchip" data-k="n:takum" data-sec="tapered" data-term="takum">Takum</span></span></div></div>
+        <div class="stk-seam"><a class="stk-pin" href="#ch-sub8" data-bridge="quant repr sw" data-tip="&lt;b&gt;8.3 Sub-8-bit and QAT support.&lt;/b&gt; Mainstream frameworks stop at 8 bits, so sub-8-bit and QAT flows fall back to device-specific toolchains with limited portability.">8.3</a><a class="stk-pin" href="#ch-formats" data-bridge="repr sw hw" data-tip="&lt;b&gt;8.4 Alternative numerical formats.&lt;/b&gt; Posit and other emerging formats widen the design space on paper, but no mainstream runtime or MCU silicon executes them.">8.4</a></div>
       </div>
 
-      <div class="stk-layer stk-tan" data-layer="num">
-        <a class="stk-label" href="#numerical-representations" data-tip="<b>Number system.</b> What the bits mean. Integers and fixed-point dominate MCU deployment (Section 2.1); reduced floating-point, adaptive fixed-point, and tapered-precision formats widen the space (Section 5)."><span class="stk-name">Number <br>System</span><span class="stk-sec">&#167;&#8202;2.1 &#183; &#167;&#8202;5</span></a>
-        <div class="stk-chips">
-          <span class="mchip" data-k="int8" data-nav="numerical-representations" data-term="INT8">INT8</span><span class="mchip" data-k="int4" data-nav="ch-sub8" data-term="sub-8-bit">INT4 &amp; below</span><span class="mchip" data-k="bin" data-nav="extreme-low-bit" data-term="binar">Binary &amp; ternary</span><span class="mchip" data-k="fxp" data-nav="numerical-representations" data-term="fixed-point">Fixed-point</span>
-          <span class="stk-sep" aria-hidden="true"></span>
-          <span class="mchip stk-alt" data-k="fp" data-nav="reduced-fp" data-term="BF16">FP16 &#183; BF16 &#183; TF32</span><span class="mchip stk-alt" data-k="fp8" data-nav="reduced-fp" data-term="FP8">FP8 &#183; MSFP</span><span class="mchip stk-alt" data-k="afx" data-nav="adaptive-fixed" data-term="fixed-point">Adaptive fixed-point</span><span class="mchip stk-alt" data-k="posit" data-nav="tapered" data-term="Posit">Posit</span><span class="mchip stk-alt" data-k="takum" data-nav="tapered" data-term="takum">Takum</span>
-        </div>
-        <div class="stk-seam"><a class="stk-pin" href="#ch-sub8" data-bridge="alg num sw" data-tip="<b>8.3 Sub-8-bit and QAT support.</b> Mainstream frameworks stop at 8 bits, so sub-8-bit and QAT flows fall back to device-specific toolchains with limited portability.">8.3</a><a class="stk-pin" href="#ch-formats" data-bridge="num sw hw" data-tip="<b>8.4 Alternative numerical formats.</b> Posit and other emerging formats widen the design space on paper, but no mainstream runtime or MCU silicon executes them.">8.4</a></div>
+      <div class="stk-layer stk-sw" data-layer="sw">
+        <a class="stk-label" href="#software-frameworks" data-tip="Software stack. The three layers of Section 6.2, from the development front end through conversion and code generation to the inference runtime and its kernels. Most of the friction in the stack surfaces here."><span class="stk-name">Software Stack</span><span class="stk-sec">&#167;&#8202;6.2</span></a>
+        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel">Development front end</span><span class="stk-rowchips"><span class="mchip" data-k="f:tf" data-sec="software-frameworks" data-term="TensorFlow">TensorFlow</span><span class="mchip" data-k="f:pytorch" data-sec="software-frameworks" data-term="PyTorch">PyTorch</span><span class="mchip" data-k="f:ei" data-sec="software-frameworks" data-term="Edge Impulse">Edge Impulse</span><span class="mchip" data-k="f:ai8xt" data-sec="software-frameworks" data-term="ai8x-training">ai8x-training</span></span></div><div class="stk-row"><span class="stk-rowlabel">Conversion &amp; codegen</span><span class="stk-rowchips"><span class="mchip" data-k="f:tflite" data-sec="software-frameworks" data-term="LiteRT">TensorFlow Lite / LiteRT</span><span class="mchip" data-k="f:onnx" data-sec="software-frameworks" data-term="ONNX">ONNX</span><span class="mchip" data-k="f:cubeai" data-sec="software-frameworks" data-term="STM32Cube.AI">STM32Cube.AI</span><span class="mchip" data-k="f:ai8xs" data-sec="software-frameworks" data-term="ai8x-synthesis">ai8x-synthesis</span><span class="mchip" data-k="f:gapflow" data-sec="software-frameworks" data-term="GAPFlow">GAPflow &#183; nntool &#183; Autotiler</span><span class="mchip" data-k="f:ethos" data-sec="software-frameworks" data-term="Ethos-U">Ethos-U toolchain</span><span class="mchip" data-k="f:neuralart" data-sec="software-frameworks" data-term="Neural-ART">Neural-ART</span></span></div><div class="stk-row"><span class="stk-rowlabel">Runtime &amp; kernels</span><span class="stk-rowchips"><span class="mchip" data-k="f:tflm" data-sec="software-frameworks" data-term="TFLM">TFLM</span><span class="mchip" data-k="f:cmsis" data-sec="software-frameworks" data-term="CMSIS-NN">CMSIS-NN</span><span class="mchip" data-k="f:espnn" data-sec="apps-riscv" data-term="ESP32-P4">ESP-NN</span><span class="mchip" data-k="f:pulpnn" data-sec="software-frameworks" data-term="PULP-NN">PULP-NN</span><span class="mchip" data-k="f:xpulp" data-sec="software-frameworks" data-term="XpulpNN">XpulpNN (ISA extension)</span><span class="mchip" data-k="f:ariel" data-sec="software-frameworks" data-term="Ariel-ML">Ariel-ML</span><span class="mchip" data-k="f:onnxrt" data-sec="software-frameworks" data-term="ONNX">ONNX Runtime</span><span class="mchip" data-k="f:minimal" data-sec="software-frameworks" data-term="TinyMaix">TinyMaix &#183; NNoM</span></span></div></div>
+        <div class="stk-seam"><a class="stk-pin" href="#ch-memory" data-bridge="quant sw hw" data-tip="&lt;b&gt;8.5 Static memory allocation.&lt;/b&gt; A fixed tensor arena on KB-scale SRAM leaves little room for mixed-precision layers or variable-shaped tensors.">8.5</a><a class="stk-pin" href="#ch-training" data-bridge="quant sw hw" data-tip="&lt;b&gt;8.6 On-device training.&lt;/b&gt; Training on the device asks for memory, energy, and kernels that MCUs and their runtimes rarely provide.">8.6</a></div>
       </div>
 
-      <div class="stk-layer stk-blue" data-layer="sw">
-        <a class="stk-label" href="#software-frameworks" data-tip="<b>Software stack.</b> Front-end frameworks, the inference runtime, and hardware-specific code generation (Section 6.2). Most of the friction in the stack surfaces here."><span class="stk-name">Software <br>Stack</span><span class="stk-sec">&#167;&#8202;6.2</span></a>
-        <div class="stk-chips">
-          <span class="mchip" data-k="fe" data-nav="software-frameworks" data-term="front end">Front end &#183; TensorFlow/LiteRT &#183; PyTorch &#183; ONNX</span><span class="mchip" data-k="rt" data-nav="software-frameworks" data-term="TFLM">Runtime &#183; TFLM</span><span class="mchip" data-k="kern" data-nav="software-frameworks" data-term="CMSIS-NN">Kernels &#183; CMSIS-NN &#183; PULP-NN</span><span class="mchip" data-k="vendor" data-nav="software-frameworks" data-term="STM32Cube.AI">Vendor toolchains &#183; STM32Cube.AI &#183; ai8x &#183; nntool</span><span class="mchip" data-k="e2e" data-nav="software-frameworks" data-term="Edge Impulse">Edge Impulse</span><span class="mchip" data-k="custom" data-nav="software-frameworks" data-term="ISA-level">Co-designed kernels &amp; ISA extensions</span>
-        </div>
-        <div class="stk-seam"><a class="stk-pin" href="#ch-memory" data-bridge="alg sw hw" data-tip="<b>8.5 Static memory allocation.</b> A fixed tensor arena on KB-scale SRAM leaves little room for mixed-precision layers or variable-shaped tensors.">8.5</a><a class="stk-pin" href="#ch-training" data-bridge="alg sw hw" data-tip="<b>8.6 On-device training.</b> Training on the device asks for memory, energy, and kernels that MCUs and their runtimes rarely provide.">8.6</a></div>
-      </div>
-
-      <div class="stk-layer stk-blue" data-layer="hw">
-        <a class="stk-label" href="#hardware-platforms" data-tip="<b>Hardware.</b> The silicon that executes the arithmetic (Section 6.1). Cortex-M and RISC-V cores, their ISA extensions, integrated NPUs, and KB-scale memory."><span class="stk-name">Hardware</span><span class="stk-sec">&#167;&#8202;6.1</span></a>
-        <div class="stk-chips">
-          <span class="mchip" data-k="cm" data-nav="arm-mcus" data-term="Cortex-M">ARM Cortex-M</span><span class="mchip" data-k="rv" data-nav="riscv-mcus" data-term="RISC-V">RISC-V cores</span><span class="mchip" data-k="isa" data-nav="riscv-mcus" data-term="SIMD">ISA extensions &#183; packed SIMD</span><span class="mchip" data-k="npu" data-nav="npu-mcus" data-term="NPU">Integrated NPUs &#183; Ethos-U &#183; MAX78000 &#183; GAP8/9</span><span class="mchip" data-k="mem" data-nav="npu-mcus" data-term="SRAM">KB-scale SRAM &amp; Flash</span>
-        </div>
+      <div class="stk-layer stk-hw" data-layer="hw">
+        <a class="stk-label" href="#hardware-platforms" data-tip="Hardware. The platforms of Section 6.1 and Table 3 in the three families the survey uses throughout: ARM-based, RISC-V-based, and NPU-integrated."><span class="stk-name">Hardware</span><span class="stk-sec">&#167;&#8202;6.1</span></a>
+        <div class="stk-chips"><div class="stk-row"><span class="stk-rowlabel" data-q="fam:arm" role="button" tabindex="0" title="Trace every ARM-based deployment">ARM-based</span><span class="stk-rowchips"><span class="mchip" data-k="h:stm32" data-sec="table-3" data-term="">STM32 F4 &#183; F7 &#183; H7 &#183; L4</span><span class="mchip" data-k="h:nano33" data-sec="table-3" data-term="">Arduino Nano 33 BLE Sense</span><span class="mchip" data-k="h:spresense" data-sec="table-3" data-term="">Sony Spresense</span><span class="mchip" data-k="h:openmv" data-sec="table-3" data-term="">OpenMV Cam H7</span><span class="mchip" data-k="h:sparkfun" data-sec="table-3" data-term="">SparkFun Edge</span><span class="mchip" data-k="h:apollo" data-sec="table-4" data-term="">Apollo4</span><span class="mchip" data-k="h:cm4f" data-sec="arm-mcus" data-term="Cortex-M4F">Cortex-M4F, board unspecified</span></span></div><div class="stk-row"><span class="stk-rowlabel" data-q="fam:riscv" role="button" tabindex="0" title="Trace every RISC-V-based deployment">RISC-V-based</span><span class="stk-rowchips"><span class="mchip" data-k="h:c3" data-sec="riscv-mcus" data-term="ESP32-C3">ESP32-C3</span><span class="mchip" data-k="h:c6" data-sec="riscv-mcus" data-term="ESP32-C6">ESP32-C6</span><span class="mchip" data-k="h:p4" data-sec="riscv-mcus" data-term="ESP32-P4">ESP32-P4</span><span class="mchip" data-k="h:pulp" data-sec="riscv-mcus" data-term="PULP">PULP &#183; PULPissimo</span></span></div><div class="stk-row"><span class="stk-rowlabel" data-q="fam:npu" role="button" tabindex="0" title="Trace every NPU-integrated deployment">NPU-integrated</span><span class="stk-rowchips"><span class="mchip" data-k="h:max000" data-sec="table-6" data-term="">MAX78000</span><span class="mchip" data-k="h:max002" data-sec="table-3" data-term="">MAX78002</span><span class="mchip" data-k="h:gap8" data-sec="npu-mcus" data-term="GAP8">GAP8</span><span class="mchip" data-k="h:gap9" data-sec="npu-mcus" data-term="GAP9">GAP9</span><span class="mchip" data-k="h:ethos" data-sec="npu-mcus" data-term="Ethos-U">Ethos-U55 (HX6538-WE2)</span><span class="mchip" data-k="h:n6" data-sec="npu-mcus" data-term="STM32N6">STM32N6 (Neural-ART)</span><span class="mchip" data-k="h:mcxn" data-sec="table-6" data-term="">NXP MCXN94</span><span class="mchip" data-k="h:mspm0" data-sec="table-3" data-term="">MSPM0G5187</span></span></div></div>
       </div>
 
     </div>
@@ -1660,15 +1667,15 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     </div>
     <svg class="stk-overlay" aria-hidden="true"></svg>
   </div>
-  <div class="stk-story" aria-live="polite"></div>
-  <div class="fig-hint">Hover a layer, a rail, or a numbered pin for its role &#183; click any chip to jump to where it is discussed &#183; use the buttons above to trace a representative deployment through the stack.</div>
-  <figcaption><b>Figure 17:</b> The design space of quantized inference on MCUs, arranged as a deployment stack. Each layer lists the choices the survey reviews at that level and is tagged with the section that covers them. Numbered pins mark where the open challenges of Section 8 arise between layers, the left rail carries the constraints that act on every layer, and the right rail carries the challenges that cut across all of them.</figcaption>
+  <div class="stk-panel" aria-live="polite"></div>
+  <div class="fig-hint">Click any entry, or search above, to trace the deployments in Tables 4&#8211;6 that use it through every layer &#183; hover a layer, a rail, or a numbered pin for its role.</div>
+  <figcaption><b>Figure 17:</b> The design space of quantized inference on MCUs, arranged as a deployment stack and read from the application down to the hardware. Each layer lists the choices the survey reviews at that level, tagged with the section that covers them. Numbered pins mark where the challenges of Section 8 arise between layers, the left rail carries the constraints that act on every layer, and the right rail the challenges that cut across all of them. Selecting any entry traces the deployments in Tables 4&#8211;6 that use it through every layer, checks which platforms in Table 3 support it, and surfaces the corresponding recommendation from Section 7.4.</figcaption>
 </figure>
 
 
 <h2 id="challenges">8&ensp;Challenges and Future Directions</h2>
 
-<p>Despite the progress surveyed here, several obstacles continue to limit the broader, more systematic deployment of quantized neural networks on MCU-class devices. These challenges are no longer purely algorithmic. Rather, they increasingly arise at the interfaces between quantization methods, deployment toolchains, runtime systems, and hardware support. We therefore present them in the order they arise in the deployment stack of <a class="xref" href="#figure-17">Fig. 17</a>, descending from the model to the silicon: operator and architecture coverage in the quantization toolchains; the numerical formats that the stack will not carry, from sub-8-bit integers to Posit; and the runtime and hardware limits that constrain mixed precision and on-device adaptation. The last two challenges, hardware-aware co-design and sustainability, span the full height of the stack rather than sitting between any two layers. The following subsections discuss these bottlenecks and outline the most promising directions for future work.</p>
+<p>Despite the progress surveyed here, several obstacles continue to limit the broader, more systematic deployment of quantized neural networks on MCU-class devices. These challenges are no longer purely algorithmic. Rather, they increasingly arise at the interfaces between quantization methods, deployment toolchains, runtime systems, and hardware support. We therefore present them in the order they arise in the deployment stack of <a class="xref" href="#figure-17">Fig. 17</a>, descending from the application to the silicon: operator and architecture coverage in the quantization toolchains; the numerical formats that the stack will not carry, from sub-8-bit integers to Posit; and the runtime and hardware limits that constrain mixed precision and on-device adaptation. The last two challenges, hardware-aware co-design and sustainability, span the full height of the stack rather than sitting between any two layers. The following subsections discuss these bottlenecks and outline the most promising directions for future work.</p>
 
 <h3 id="ch-operator">8.1&ensp;Operator Support in Quantization Toolchains</h3>
 
@@ -1758,7 +1765,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260910w"></script>
   <script src="assets/js/supplements.js?v=20260910w"></script>
-  <script src="assets/js/figs.js?v=20260911a"></script>
+  <script src="assets/js/figs.js?v=20260911e"></script>
 
   </body>
 
