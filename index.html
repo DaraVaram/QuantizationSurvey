@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260910o">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260910p">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260910o"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260910o"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260910o"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260910p"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260910p"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260910p"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1241,7 +1241,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>The two formats therefore trade differently against the same constraint. Posit concentrates precision near unity at the cost of an unbounded regime and no worst-case mantissa guarantee, which complicates fixed-latency hardware; takum bounds the regime and guarantees a mantissa floor, which simplifies the decoder and makes it precision-agnostic, but caps dynamic range and weakens exactly the operation that dominates inference. For extreme-edge deployment both remain research directions rather than options a current toolchain can target.</p>
 
-<p>Overall, alternative numerical representations broaden the design space beyond standard integer quantization. They show that efficiency can be improved not only by reducing bit-width, but also by changing how precision and dynamic range are distributed. For practical MCU inference, however, uniform and affine integer quantization remain the most widely adopted choices because they align best with existing kernels, runtimes, and hardware support. For a more comprehensive overview of emerging number systems, we refer the reader to the survey by Alsuhli et al. <d-cite key="alsuhli2023number"></d-cite>, for Posit in particular to the survey by Mallas&#233;n et al. <d-cite key="mallasen2025navigating"></d-cite>, which spans its functional units, accelerators, RISC-V cores, and software stack, and for hardware-oriented approximate arithmetic to the study by Guntoro et al. <d-cite key="guntoro2020next"></d-cite>.</p>
+<p>Overall, alternative numerical representations broaden the design space beyond standard integer quantization. They show that efficiency can be improved not only by reducing bit-width, but also by changing how precision and dynamic range are distributed. For practical MCU inference, however, uniform and affine integer quantization remain the most widely adopted choices because they align best with existing kernels, runtimes, and hardware support. For a more comprehensive overview of emerging number systems, we refer the reader to the survey by Alsuhli et al. <d-cite key="alsuhli2023number"></d-cite>, for Posit in particular to the survey by Mallas&#233;n et al. <d-cite key="mallasen2025navigating"></d-cite>, and for hardware-oriented approximate arithmetic to the study by Guntoro et al. <d-cite key="guntoro2020next"></d-cite>.</p>
 
 <h2 id="deployment-stack">6&ensp;Hardware and Software Deployment Stack</h2>
 
@@ -1569,7 +1569,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260910o"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260910p"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1590,9 +1590,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260910o"></script>
-  <script src="assets/js/supplements.js?v=20260910o"></script>
-  <script src="assets/js/figs.js?v=20260910o"></script>
+  <script src="assets/js/data.js?v=20260910p"></script>
+  <script src="assets/js/supplements.js?v=20260910p"></script>
+  <script src="assets/js/figs.js?v=20260910p"></script>
 
   </body>
 
