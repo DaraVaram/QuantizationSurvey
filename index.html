@@ -90,7 +90,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
     <!-- Styles -->
     <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
-    <link rel="stylesheet" href="assets/css/main.css?v=20260910u">
+    <link rel="stylesheet" href="assets/css/main.css?v=20260910v">
 
     <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -107,9 +107,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
 
     <!-- Distill js -->
-    <script src="assets/js/distillpub/template.v2.js?v=20260910u"></script>
-    <script src="assets/js/distillpub/transforms.v2.js?v=20260910u"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260910u"></script>
+    <script src="assets/js/distillpub/template.v2.js?v=20260910v"></script>
+    <script src="assets/js/distillpub/transforms.v2.js?v=20260910v"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260910v"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -1239,7 +1239,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
 <p>For MCU deployment, however, takum is at an earlier stage than Posit. Its published evaluations are in numerical linear algebra rather than neural networks, covering sparse iterative solvers <d-cite key="hunhold2025sparse"></d-cite> and integer representability across the three formats <d-cite key="hunhold2024integer"></d-cite>, and no takum ASIC or instruction set extension has been reported. The format also matches or outperforms Posit and BFloat16 in all reported scenarios <em>except</em> addition and subtraction <d-cite key="hunhold2024beating"></d-cite>, a consequence of the logarithmic significand that bears directly on the accumulate-heavy kernels of DNN inference, and the posit literature notes that its bounded range leaves it with a more limited tapered behavior than a Posit <d-cite key="mallasen2025navigating"></d-cite>. A balanced-ternary sibling, tekum <d-cite key="hunhold2025tekum"></d-cite>, carries the same tapered-precision idea into ternary logic, but remains an analytical design with no hardware or software implementation.</p>
 
-<p>The two formats therefore trade differently against the same constraint. Posit concentrates precision near unity at the cost of an unbounded regime and no worst-case mantissa guarantee, which complicates fixed-latency hardware; takum bounds the regime and guarantees a mantissa floor, which simplifies the decoder and makes it precision-agnostic, but caps dynamic range and weakens exactly the operation that dominates inference. For extreme-edge deployment both remain research directions rather than options a current toolchain can target.</p>
+<p>Posit and takum therefore trade differently against the same constraint. The former concentrates precision near unity at the cost of an unbounded regime and no worst-case mantissa guarantee, which complicates fixed-latency hardware; the latter bounds the regime and guarantees a mantissa floor, which simplifies the decoder and makes it precision-agnostic, but caps dynamic range and weakens exactly the operation that dominates inference. For extreme-edge deployment both remain research directions rather than options a current toolchain can target.</p>
 
 <p>Overall, alternative numerical representations broaden the design space beyond standard integer quantization. They show that efficiency can be improved not only by reducing bit-width, but also by changing how precision and dynamic range are distributed. For practical MCU inference, however, uniform and affine integer quantization remain the most widely adopted choices because they align best with existing kernels, runtimes, and hardware support. For a more comprehensive overview of emerging number systems, we refer the reader to the survey by Alsuhli et al. <d-cite key="alsuhli2023number"></d-cite>, for Posit in particular to the survey by Mallas&#233;n et al. <d-cite key="mallasen2025navigating"></d-cite>, and for hardware-oriented approximate arithmetic to the study by Guntoro et al. <d-cite key="guntoro2020next"></d-cite>.</p>
 
@@ -1569,7 +1569,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     </div>
 
-    <d-bibliography src="assets/bibliography/references.bib?v=20260910u"></d-bibliography>
+    <d-bibliography src="assets/bibliography/references.bib?v=20260910v"></d-bibliography>
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
@@ -1590,9 +1590,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260910u"></script>
-  <script src="assets/js/supplements.js?v=20260910u"></script>
-  <script src="assets/js/figs.js?v=20260910u"></script>
+  <script src="assets/js/data.js?v=20260910v"></script>
+  <script src="assets/js/supplements.js?v=20260910v"></script>
+  <script src="assets/js/figs.js?v=20260910v"></script>
 
   </body>
 
