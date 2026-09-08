@@ -61,22 +61,22 @@ deploymentStack: [
    hwPath:"Inference on the Cortex-M cores themselves, without a dedicated accelerator, using integer and DSP-optimized kernels under tight on-chip SRAM and flash limits.",
    swPath:"TFLM and LiteRT for Microcontrollers with CMSIS-NN kernels, with STM32Cube.AI or Edge Impulse for vendor-integrated, end-to-end code generation.",
    quant:"Uniform full-integer INT8 via PTQ is the dominant reported path, with QAT where always-on accuracy must survive compression, and sub-8-bit or mixed precision only through custom kernels and ISA-level work such as CMIX-NN.",
-   impl:"Most reproducible baseline for modest-depth sensing workloads: HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare (Section 7.1, Table 4). Choose when mature tooling, portability, and low-friction integration matter more than peak efficiency."},
+   impl:"Most reproducible baseline for modest-depth sensing workloads: HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare (Section 7.1, Table 3). Choose when mature tooling, portability, and low-friction integration matter more than peak efficiency."},
   {family:"RISC-V-Based",
    hwPath:"Inference on commercial MCUs such as the ESP32-C and ESP32-P families, using packed integer arithmetic, SIMD, and ISA extensions on the programmable CPU path, without a dedicated neural accelerator.",
    swPath:"TFLM with ESP-NN kernels on commercial ESP32 devices, through vendor and community toolchains that remain less standardized than the Cortex-M ecosystem.",
    quant:"Uniform INT8 PTQ in every commercial deployment reported to date, while aggressive low-bit and mixed precision remain confined to research-class PULP systems.",
-   impl:"Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (Section 7.2, Table 5). Choose when an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable."},
+   impl:"Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (Section 7.2, Table 4). Choose when an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable."},
   {family:"NPU-Integrated",
    hwPath:"Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration, spanning tightly coupled CNN engines (MAX78x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9), under device-specific on-chip memory partitioning.",
    swPath:"ai8x training and synthesis, GAPFlow with nntool and Autotiler, Ethos-U tooling, and Neural-ART runtimes, each mapping compatible graphs onto its own accelerator.",
    quant:"INT8 remains the default even where the accelerator advertises lower precision, with genuine sub-8-bit and layer-wise mixed precision where the toolchain exploits it (QAT down to INT1\u2013INT4 with ai8x on MAX78x, INT2\u2013INT8 on GAP9's NE16), always bounded by the accelerator's supported operators and formats.",
-   impl:"State of the art for latency- and energy-critical workloads: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (Section 7.3, Table 6). Choose when hard latency or energy budgets dominate and the model can be matched to the accelerator's operators, precision formats, and memory limits."}
+   impl:"State of the art for latency- and energy-critical workloads: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (Section 7.3, Table 5). Choose when hard latency or energy budgets dominate and the model can be matched to the accelerator's operators, precision formats, and memory limits."}
 ],
 
 /* ----------------------------------------------------------------------
    APPLICATION TABLES — ARM / RISC-V / NPU
-   These strings are exactly what Tables 4-6 display and are the single source
+   These strings are exactly what Tables 3-5 display and are the single source
    of truth. The deployment-landscape scatter parses its numbers straight out
    of them, so there are no separate numeric mirrors to drift out of step.
 ---------------------------------------------------------------------- */
@@ -130,7 +130,7 @@ apps: {
    `steps` are the defaults the figure draws. `can` lists everything the
    toolchain supports at that step. `implies` are settings it fixes for you.
    `targets` are the platforms it deploys to, further narrowed by the widths
-   each platform carries (Table 3 and platformWidths below).
+   each platform carries (Table 2 and platformWidths below).
 
    Chip keys: q: path, s: precision strategy, r: refinement, d: design
    choice, n: numerical representation, f: software tool, h: platform.
@@ -254,7 +254,7 @@ guide: {
     }
   },
 
-  // Widths for the platforms Table 3 does not itemise, so every width the figure
+  // Widths for the platforms Table 2 does not itemise, so every width the figure
   // offers can be checked against the silicon underneath it.
   platformWidths: {
     "h:stm32":  ["n:INT8", "n:INT16"],
