@@ -795,6 +795,12 @@
       });
     });
     var ORDER = ["path", "strat", "repr", "dev", "conv", "run", "hw"];
+    /* The drawn line also visits the refinement and design-choice rows, in the place they
+       sit in the layout, so anything the reader selects there is on the route rather than
+       lit beside it. Only an explicit choice joins: a route implies several design choices
+       at once, and threading the line through all of them would say nothing. */
+    var LINE_ORDER = ["path", "strat", "free", "design", "repr", "dev", "conv", "run", "hw"];
+    var PICK_ONLY = { free: 1, design: 1 };
     function famName(f) { return (G.families[f] || {}).name || f; }
 
     /* ---- what each platform can carry ---- */
@@ -829,7 +835,7 @@
     function blank() { return { app: null, sel: {}, base: {}, free: [], reject: null, pick: null, label: "", note: null }; }
     function withCouples(sel) {
       var out = {};
-      ORDER.forEach(function (s) { out[s] = sel[s]; });
+      LINE_ORDER.forEach(function (s) { out[s] = sel[s]; });
       Object.keys(sel).forEach(function (s) {
         (COUPLES[sel[s]] || []).forEach(function (c) { var cs = SLOT[c]; if (cs && !sel[cs]) out[cs] = c; });
       });
@@ -887,15 +893,21 @@
     }
     function lineOf(tid, q) {
       var T = TC[tid], full = withCouples(q.sel), base = q.base || {}, out = [];
-      ORDER.forEach(function (s) {
+      LINE_ORDER.forEach(function (s) {
         if (s === "hw") { var hs = targetsOf(tid, q); if (hs.length) out.push(hs[0]); return; }
+        if (s === "free") {                                   // refinements are kept in their own list
+          (q.free || []).slice().sort(function (x, y) { return IDX[x] - IDX[y]; })
+            .forEach(function (g) { if (out.indexOf(g) === -1) out.push(g); });
+          return;
+        }
         var k = full[s] && canDo(tid, s, full[s]) ? full[s]
               : base[s] && canDo(tid, s, base[s]) ? base[s]           // the surveyed step, where this route allows it
               : T.steps[s];
         /* A tool the route fixes for you still sits on the path: ai8x-training is a
            PyTorch fork, and TFLM calls CMSIS-NN, so the line runs through both. Order
            them as they are laid out, so PyTorch comes before ai8x-training. */
-        var group = (k ? [k] : []).concat((T.implies || []).filter(function (im) { return SLOT[im] === s; }));
+        var group = PICK_ONLY[s] ? (k ? [k] : [])
+                  : (k ? [k] : []).concat((T.implies || []).filter(function (im) { return SLOT[im] === s; }));
         group.sort(function (x, y) { return IDX[x] - IDX[y]; });
         group.forEach(function (g) { if (out.indexOf(g) === -1) out.push(g); });
       });
