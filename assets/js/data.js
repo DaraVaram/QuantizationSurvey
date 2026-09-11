@@ -68,9 +68,9 @@ deploymentStack: [
    quant:"Uniform INT8 PTQ in every commercial deployment reported to date, while aggressive low-bit and mixed precision remain confined to research-class PULP systems.",
    impl:"Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (Section 7.2, Table 4). Choose when an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable."},
   {family:"NPU-Integrated",
-   hwPath:"Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration, spanning tightly coupled CNN engines (MAX78x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9), under device-specific on-chip memory partitioning.",
+   hwPath:"Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration, spanning tightly coupled CNN engines (MAX7800x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9), under device-specific on-chip memory partitioning.",
    swPath:"ai8x training and synthesis, GAPFlow with nntool and Autotiler, Ethos-U tooling, and Neural-ART runtimes, each mapping compatible graphs onto its own accelerator.",
-   quant:"INT8 remains the default even where the accelerator advertises lower precision, with genuine sub-8-bit and layer-wise mixed precision where the toolchain exploits it (QAT down to INT1\u2013INT4 with ai8x on MAX78x, INT2\u2013INT8 on GAP9's NE16), always bounded by the accelerator's supported operators and formats.",
+   quant:"INT8 remains the default even where the accelerator advertises lower precision, with genuine sub-8-bit and layer-wise mixed precision where the toolchain exploits it (QAT down to INT1\u2013INT4 with ai8x on MAX7800x, INT2\u2013INT8 on GAP9's NE16), always bounded by the accelerator's supported operators and formats.",
    impl:"State of the art for latency- and energy-critical workloads: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (Section 7.3, Table 5). Choose when hard latency or energy budgets dominate and the model can be matched to the accelerator's operators, precision formats, and memory limits."}
 ],
 
@@ -264,6 +264,12 @@ guide: {
     "h:pulp":   ["n:INT2", "n:INT4", "n:INT8", "n:INT16"]
   },
 
+  /* Parts that are interchangeable for everything this figure models: the same
+     toolchain, the same conversion flow, the same widths. A route that reaches
+     one reaches the other, so the figure lights both and offers them as a choice
+     rather than presenting one of them as the answer. */
+  equivalent: [["h:max000", "h:max002"]],
+
   // Choices that come as a pair: taking one pulls the other along wherever a route allows it.
   couples: {
     "n:mixed": ["s:mixed"], "s:mixed": ["n:mixed"],
@@ -276,7 +282,7 @@ guide: {
   applications: {
     "Speech":               { prefer: ["tflm", "ai8x"], via: ["q:QAT"], note: "Speech models are always-on, so energy per inference decides. Cortex-M is the low-friction default; move to an accelerator when the audio front end and the model together must fit a hard budget." },
     "Keyword Spotting":     { prefer: ["tflm", "ai8x", "nxp"], via: ["q:QAT"], note: "Keyword spotting is small and permanently listening. Start on Cortex-M, and move to an accelerator when the duty cycle is high enough that inference energy dominates the power budget." },
-    "Object Detection":     { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Detection is where accelerators pay off most, and the MAX78x is the one still generally available. On Cortex-M it is confined to tiny detectors at low frame rates." },
+    "Object Detection":     { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Detection is where accelerators pay off most, and the MAX7800x is the one still generally available. On Cortex-M it is confined to tiny detectors at low frame rates." },
     "Image Classification": { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max002"], note: "Compact classifiers fit Cortex-M at modest input resolution; an accelerator extends resolution and frame rate at lower energy." },
     "Face Recognition":     { prefer: ["ai8x", "gapflow"], via: ["q:QAT", "h:max002"], note: "Input resolution and embedding networks put face recognition beyond real-time Cortex-M execution, so plan on an accelerator from the start. The surveyed result used INT16 on a GAP8, which the GAP route still reaches." },
     "Segmentation":         { prefer: ["ai8x", "gapflow", "ethos"], note: "Dense per-pixel output needs an accelerator, and needs its toolchain to cover the upsampling operators, which is where these flows most often stop." },
@@ -284,7 +290,7 @@ guide: {
     "VQA":                  { prefer: ["ethos", "gapflow", "neuralart"], note: "Multimodal models need an accelerator and a toolchain that covers attention operators. Expect the operator gap of challenge 8.1 and the architecture gap of 8.2 before the arithmetic becomes the problem." },
     "HAR":                  { prefer: ["tflm", "gapflow", "ai8x"], via: ["q:PTQ", "h:stm32"], note: "Inertial activity recognition is the archetypal Cortex-M workload. An accelerator suits fast multi-sensor loops where reaction time matters." },
     "Healthcare":           { prefer: ["tflm", "gapflow", "ai8x", "esp"], via: ["q:QAT", "h:stm32"], note: "Physiological-signal models run on all three families. Choose by the signal's dimensionality, by certification and tooling constraints, and only then by raw efficiency." },
-    "Wearables":            { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max002"], note: "Wearables trade the accelerator's energy per inference against the simpler Cortex-M stack. Hearing aids on the GAP9 showed how far the accelerator side of that trade reaches, and the MAX78x is where to reproduce it today." },
+    "Wearables":            { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max002"], note: "Wearables trade the accelerator's energy per inference against the simpler Cortex-M stack. Hearing aids on the GAP9 showed how far the accelerator side of that trade reaches, and the MAX7800x is where to reproduce it today." },
     "Networking":           { prefer: ["tflm", "ai8x"], via: ["q:PTQ", "h:stm32"], note: "Packet- and flow-level classifiers are small and latency-tolerant, so Cortex-M is the default. An accelerator brings sub-millisecond inference when the whole model fits inside it." },
     "Environment":          { prefer: ["tflm", "ei", "ai8x"], via: ["q:PTQ", "h:stm32"], note: "Environmental sensing is long-duty-cycle and battery-bound, so the mature Cortex-M stack is the default; accelerators help once acoustic or image inputs are involved." },
     "Agriculture":          { prefer: ["tflm", "gapflow", "ai8x"], via: ["q:PTQ", "h:stm32"], note: "Low-rate environmental inputs sit comfortably on Cortex-M; camera-based crop and livestock monitoring wants an accelerator. The surveyed deployment used a GAP8, which is now a reference rather than a recommendation." },
@@ -292,8 +298,8 @@ guide: {
     "Anomaly Detection":    { prefer: ["ai8x", "tflm"], via: ["q:QAT", "h:max000"], note: "Anomaly detectors are small but always-on, so energy per inference decides. Accelerators reach milliwatt operation; Cortex-M remains the low-friction alternative." },
     "Spectrum Sensing":     { prefer: ["tflm", "ai8x"], via: ["q:QAT", "h:spresense"], note: "Spectrum sensing is a one-dimensional pipeline that Cortex-M handles at the reported sample rates. An accelerator becomes relevant for wideband inputs or tighter latency budgets." },
     "DSP":                  { prefer: ["tflm", "ai8x"], note: "Classical DSP front ends run on Cortex-M with its DSP kernels; neural DSP pipelines move to the accelerator." },
-    "Robotics":             { prefer: ["esp", "gapflow", "ai8x"], via: ["q:PTQ", "h:p4"], note: "The dual-core ESP32-P4 handles steering and throttle models directly. Reaction-critical perception loops want an accelerator, which historically meant the GAP family and now means the MAX78x." },
-    "Drones":               { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Drone perception is parallelisable, latency-bound, and power-limited, so it wants an accelerator. The surveyed work runs on GAP8 and GAP9; the MAX78x is the equivalent you can still buy. Cortex-M remains a fallback for the lightest navigation models." },
+    "Robotics":             { prefer: ["esp", "gapflow", "ai8x"], via: ["q:PTQ", "h:p4"], note: "The dual-core ESP32-P4 handles steering and throttle models directly. Reaction-critical perception loops want an accelerator, which historically meant the GAP family and now means the MAX7800x." },
+    "Drones":               { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Drone perception is parallelisable, latency-bound, and power-limited, so it wants an accelerator. The surveyed work runs on GAP8 and GAP9; the MAX7800x is the equivalent you can still buy. Cortex-M remains a fallback for the lightest navigation models." },
     "Education":            { prefer: ["tflm", "ei"], via: ["q:QAT", "h:spresense"], note: "Teaching platforms favour the most reproducible path, which is a Cortex-M board with a workflow that hides as little as possible behind vendor tooling." }
   },
 
@@ -333,10 +339,10 @@ guide: {
     "n:afx": "Adaptive fixed-point formats need dedicated hardware support that no platform here provides.",
     "f:cmsis": "CMSIS-NN sits underneath TFLM on the Cortex-M routes rather than being chosen separately.",
     "f:espnn": "ESP-NN sits underneath TFLM on the ESP32 parts, the way CMSIS-NN does on Cortex-M.",
-    "f:accel": "The vendor runtime that drives the accelerator: ai8x firmware on the MAX78x, the GAP SDK, the Ethos-U driver, or the Neural-ART runtime.",
+    "f:accel": "The vendor runtime that drives the accelerator: ai8x firmware on the MAX7800x, the GAP SDK, the Ethos-U driver, or the Neural-ART runtime.",
     "f:cubert": "The network runtime library STM32Cube.AI emits alongside the converted C. Cube.AI only converts, so this is what executes the model on the part; the same flow can target TFLite Micro instead when portability matters more.",
-    "f:ai8xt": "ai8x-training is a PyTorch fork that trains with the MAX78x accelerator's constraints in the loop, so choosing it is a PyTorch flow.",
-    "f:pytorch": "PyTorch reaches every family. On the MAX78x it arrives as ai8x-training, the fork that trains with the accelerator's constraints in the loop.",
+    "f:ai8xt": "ai8x-training is a PyTorch fork that trains with the MAX7800x accelerator's constraints in the loop, so choosing it is a PyTorch flow.",
+    "f:pytorch": "PyTorch reaches every family. On the MAX7800x it arrives as ai8x-training, the fork that trains with the accelerator's constraints in the loop.",
     "h:pulp": "A research platform, where low-bit and mixed-precision RISC-V kernels have been demonstrated, rather than a part you can buy."
   }
 },

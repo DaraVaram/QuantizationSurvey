@@ -781,6 +781,11 @@
     var layers = $$(".stk-layer", fig), chips = $$(".mchip[data-k]", fig), pins = $$(".stk-pin", fig);
     var NS = "http://www.w3.org/2000/svg";
     var TC = G.toolchains, TIDS = Object.keys(TC), COUPLES = G.couples || {}, FREE = G.free || [];
+    /* Interchangeable parts, looked up both ways: a route that reaches one reaches
+       the other, so the drawn line runs through both and the panel offers them as
+       one step rather than picking a winner. */
+    var TWIN = {};
+    (G.equivalent || []).forEach(function (pair) { TWIN[pair[0]] = pair[1]; TWIN[pair[1]] = pair[0]; });
     var byKey = {}, LABEL = {}, SLOT = {}, IDX = {};
     chips.forEach(function (c, i) { var k = c.getAttribute("data-k"); byKey[k] = c; IDX[k] = i; LABEL[k] = c.textContent.replace(/\s+/g, " ").trim(); });
 
@@ -844,7 +849,14 @@
     function targetsOf(tid, q) {
       var T = TC[tid], full = withCouples(q.sel || {});
       var hs = T.targets.filter(function (h) { return !full.repr || hwCarries(h, full.repr); });
-      if (full.hw) return hs.filter(function (h) { return h === full.hw; });
+      if (full.hw) {
+        /* Choosing one of an interchangeable pair keeps the other: the two parts run the
+           same route, so naming one is a choice of route, not a choice between them. The
+           one actually picked leads. */
+        var tw = TWIN[full.hw];
+        return hs.filter(function (h) { return h === full.hw || h === tw; })
+                 .sort(function (a, b) { return (a === full.hw ? 0 : 1) - (b === full.hw ? 0 : 1); });
+      }
       var pref = (q.base || {}).hw;                       // the surveyed board, first if this route reaches it
       if (pref && hs.indexOf(pref) !== -1) return [pref].concat(hs.filter(function (h) { return h !== pref; }));
       return hs;
@@ -894,7 +906,15 @@
     function lineOf(tid, q) {
       var T = TC[tid], full = withCouples(q.sel), base = q.base || {}, out = [];
       LINE_ORDER.forEach(function (s) {
-        if (s === "hw") { var hs = targetsOf(tid, q); if (hs.length) out.push(hs[0]); return; }
+        if (s === "hw") {
+          var hs = targetsOf(tid, q);
+          if (hs.length) {
+            out.push(hs[0]);
+            var tw = TWIN[hs[0]];                             // an equivalent part is on the route, not beside it
+            if (tw && hs.indexOf(tw) !== -1) out.push(tw);
+          }
+          return;
+        }
         if (s === "free") {                                   // refinements are kept in their own list
           (q.free || []).slice().sort(function (x, y) { return IDX[x] - IDX[y]; })
             .forEach(function (g) { if (out.indexOf(g) === -1) out.push(g); });
@@ -1146,15 +1166,23 @@
       var listed = vp.slice(0, 5);
       if (listed.length) h += '<ol class="stk-routes">' + listed.map(function (tid) {
         var T = TC[tid], main = tid === pickId;
-        var steps = lineOf(tid, Q).map(function (k) { return '<span class="stk-step-chip">' + esc(LABEL[k]) + "</span>"; }).join('<span class="stk-arr">&#8594;</span>');
-        var hs = targetsOf(tid, Q);
+        /* Equivalent parts are one step of the route, not two, so they read as a
+           choice between them rather than as a hop from one board to the next. */
+        var ks = lineOf(tid, Q), parts = [];
+        for (var si = 0; si < ks.length; si++) {
+          var lab = esc(LABEL[ks[si]]), tw = TWIN[ks[si]];
+          if (tw && tw === ks[si + 1]) { lab += ' <i class="stk-or">or</i> ' + esc(LABEL[tw]); si++; }
+          parts.push('<span class="stk-step-chip">' + lab + "</span>");
+        }
+        var steps = parts.join('<span class="stk-arr">&#8594;</span>');
+        var also = targetsOf(tid, Q).filter(function (x) { return ks.indexOf(x) === -1; });
         return '<li class="stk-route' + (main ? " stk-route-main" : "") + '" data-t="' + tid + '" tabindex="0" style="--pc:' + T.color + '">' +
           '<span class="stk-rhead"><i class="stk-dot"></i><b>' + esc(T.name) + "</b>" +
           '<span class="stk-fam">' + esc(famName(T.fam)) + "</span>" +
           (main ? '<span class="stk-badge">recommended</span>' : "") +
           (T.caveat ? '<span class="stk-caveat">' + esc(T.caveat) + "</span>" : "") + "</span>" +
           '<span class="stk-steps">' + steps + "</span>" +
-          (hs.length > 1 ? '<span class="stk-alsohw">also runs on ' + hs.slice(1).map(function (x) { return esc(LABEL[x]); }).join(", ") + "</span>" : "") +
+          (also.length ? '<span class="stk-alsohw">also runs on ' + also.map(function (x) { return esc(LABEL[x]); }).join(", ") + "</span>" : "") +
           '<span class="stk-rstory">' + T.story + "</span></li>";
       }).join("") + "</ol>";
       if (vp.length > listed.length) h += '<div class="stk-more">' + (vp.length - listed.length) + " further route" + (vp.length - listed.length === 1 ? "" : "s") + " in this stack also support this selection.</div>";
@@ -1164,6 +1192,11 @@
           (imp ? "is fixed by the recommended route rather than chosen." : "cannot be combined with what is selected: no toolchain and platform in this stack support both.") + " " +
           (G.notes[rk] || "") + ' <span class="stk-crumb" data-drop="__reject">dismiss &#215;</span></div>';
       }
+      /* Say once, under the list, why two boards are lit instead of one. */
+      var twins = pickId ? lineOf(pickId, Q).filter(function (k) { return TWIN[k] && lineOf(pickId, Q).indexOf(TWIN[k]) !== -1; }) : [];
+      if (twins.length > 1) h += '<div class="stk-note"><b>' + esc(LABEL[twins[0]]) + " or " + esc(LABEL[twins[1]]) +
+        '.</b> The recommended route targets both parts at the same widths, so either one can run it. Both are highlighted and the choice is left open.</div>';
+
       var repr = withCouples(Q.sel).repr;
       if (repr && FMT[repr.slice(2)]) {
         var carr = Object.keys(PW).filter(function (x) { return hwCarries(x, repr); });
