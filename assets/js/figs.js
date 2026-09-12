@@ -846,6 +846,14 @@
       });
       return out;
     }
+    /* Two parts may be paired only where the width in play is one both actually list.
+       A tracked width has already been checked against each part by hwCarries, and so
+       has a mixed-width selection. A format no part lists at all, FP16 here, passes
+       that check unchallenged, so pairing on it would be a guess rather than a fact. */
+    function pairable(repr) {
+      if (!repr || repr === "n:mixed") return true;
+      return !!FMT[repr.slice(2)];
+    }
     function targetsOf(tid, q) {
       var T = TC[tid], full = withCouples(q.sel || {});
       var hs = T.targets.filter(function (h) { return !full.repr || hwCarries(h, full.repr); });
@@ -918,7 +926,7 @@
           if (hs.length) {
             out.push(hs[0]);
             var tw = TWIN[hs[0]];                             // an equivalent part is on the route, not beside it
-            if (tw && hs.indexOf(tw) !== -1) out.push(tw);
+            if (tw && hs.indexOf(tw) !== -1 && pairable(full.repr)) out.push(tw);
           }
           return;
         }
@@ -1204,7 +1212,7 @@
       /* Say once, under the list, why two boards are lit instead of one. */
       var twins = pickId ? lineOf(pickId, Q).filter(function (k) { return TWIN[k] && lineOf(pickId, Q).indexOf(TWIN[k]) !== -1; }) : [];
       if (twins.length > 1) h += '<div class="stk-note"><b>' + esc(LABEL[twins[0]]) + " or " + esc(LABEL[twins[1]]) +
-        '.</b> The recommended route targets both parts at the same widths, so either one can run it. Both are highlighted and the choice is left open.</div>';
+        '.</b> The recommended route reaches both parts, and both carry the width it uses, so either one can run it. Both are highlighted and the choice is left open.</div>';
 
       var repr = withCouples(Q.sel).repr;
       if (repr && FMT[repr.slice(2)]) {

@@ -266,11 +266,13 @@ guide: {
     "h:pulp":   ["n:INT2", "n:INT4", "n:INT8", "n:INT16"]
   },
 
-  /* Parts that are interchangeable for everything this figure models: the same
-     toolchain, the same conversion flow, the same widths. A route that reaches
-     one reaches the other, so the figure lights both and offers them as a choice
-     rather than presenting one of them as the answer. */
-  equivalent: [["h:max000", "h:max002"]],
+  /* Parts a route reaches interchangeably: the same toolchain and the same
+     conversion flow, so naming one is a choice of route rather than a choice
+     between them. The figure lights both and offers them as a choice instead of
+     presenting one as the answer. Widths are checked separately against each
+     part, so where the pair differs, GAP8 carrying INT16 and GAP9 INT2, only the
+     part that carries the selected width is offered. */
+  equivalent: [["h:max000", "h:max002"], ["h:gap8", "h:gap9"]],
 
   // Choices that come as a pair: taking one pulls the other along wherever a route allows it.
   couples: {
