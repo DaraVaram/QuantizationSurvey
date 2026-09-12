@@ -232,7 +232,7 @@ guide: {
     "gapflow": {
       rank: 10, name: "GAPflow on GAP8/GAP9", fam: "npu", color: "#0288D1",
       vendorFor: ["h:gap8", "h:gap9"],
-      caveat: "only if you already have the hardware",
+      caveat: "recommended only if you already have the hardware",
       story: "The clustered-accelerator route, and the one much of the surveyed literature runs on. GAPflow tiles the graph, orchestrates DMA, and generates code for the convolution engine. Treat it as a reference point rather than a starting point, since the GAP parts are no longer generally available: take it only if you already have the hardware and toolchain.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:pytorch", conv: "f:gapflow", run: "f:accel" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform", "s:mixed", "s:extreme"],

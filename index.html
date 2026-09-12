@@ -433,6 +433,10 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .stk-rhead b { font-size: 0.78rem; }
       .stk-fam { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #667; }
       .stk-badge { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #fff; background: var(--pc); padding: 0.05rem 0.4rem; border-radius: 3px; }
+      .stk-badge-sel { color: var(--pc); background: #fff; box-shadow: inset 0 0 0 1px var(--pc); }
+      /* Sits where a badge sits, since a caveat qualifies the recommendation rather
+         than replacing it. Never rendered next to the recommended badge, so it cannot
+         be read as running on from it. */
       .stk-caveat { font-size: 0.6rem; font-style: italic; color: #6f4000; background: #fdf3e0; border: 1px solid #e8cf9d; padding: 0.02rem 0.4rem; border-radius: 3px; }
       .stk-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem; margin: 0.28rem 0 0.2rem; }
       .stk-step-chip { font-size: 0.64rem; padding: 0.04rem 0.36rem; border: 1px solid color-mix(in srgb, var(--pc) 35%, #fff); border-radius: 4px; background: #fff; color: #223; }
@@ -1834,9 +1838,9 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
 
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
-  <script src="assets/js/data.js?v=20260912-5"></script>
+  <script src="assets/js/data.js?v=20260912-8"></script>
   <script src="assets/js/supplements.js?v=20260911-28"></script>
-  <script src="assets/js/figs.js?v=20260911-35"></script>
+  <script src="assets/js/figs.js?v=20260912-8"></script>
 
   </body>
 

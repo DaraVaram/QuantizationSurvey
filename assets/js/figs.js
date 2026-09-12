@@ -897,11 +897,18 @@
     }
     /* A route carrying a caveat, such as hardware no longer sold, keeps its place in the
        list but never becomes the drawn recommendation while an available one exists. */
+    function recommendedId(q) {
+      var vp = viable(q);
+      for (var i = 0; i < vp.length; i++) if (!TC[vp[i]].caveat) return vp[i];
+      return vp[0];
+    }
+    /* What gets drawn: the reader's own pick where they made one, the recommendation
+       otherwise. The two are reported separately so a pinned route is never labelled
+       as the figure's recommendation. */
     function pickedId(q) {
       var vp = viable(q);
       if (q.pick && vp.indexOf(q.pick) !== -1) return q.pick;
-      for (var i = 0; i < vp.length; i++) if (!TC[vp[i]].caveat) return vp[i];
-      return vp[0];
+      return recommendedId(q);
     }
     function lineOf(tid, q) {
       var T = TC[tid], full = withCouples(q.sel), base = q.base || {}, out = [];
@@ -1148,8 +1155,9 @@
     }
     function renderPanel() {
       if (!Q) { panel.innerHTML = ""; return; }
-      var vp = shown(Q), pickId = pickedId(Q);
+      var vp = shown(Q), pickId = pickedId(Q), recId = recommendedId(Q);
       if (Q.famOnly && vp.indexOf(pickId) === -1) pickId = vp[0];
+      if (Q.famOnly && vp.indexOf(recId) === -1) recId = vp[0];
       var h = '<div class="stk-ph"><span class="stk-crumbs"><b>' + esc(Q.label) + "</b>";
       ORDER.concat(["design"]).forEach(function (s) {
         var k = Q.sel[s];
@@ -1179,7 +1187,8 @@
         return '<li class="stk-route' + (main ? " stk-route-main" : "") + '" data-t="' + tid + '" tabindex="0" style="--pc:' + T.color + '">' +
           '<span class="stk-rhead"><i class="stk-dot"></i><b>' + esc(T.name) + "</b>" +
           '<span class="stk-fam">' + esc(famName(T.fam)) + "</span>" +
-          (main ? '<span class="stk-badge">recommended</span>' : "") +
+          (tid === recId && !T.caveat ? '<span class="stk-badge">recommended</span>' : "") +
+          (main && tid !== recId ? '<span class="stk-badge stk-badge-sel">selected</span>' : "") +
           (T.caveat ? '<span class="stk-caveat">' + esc(T.caveat) + "</span>" : "") + "</span>" +
           '<span class="stk-steps">' + steps + "</span>" +
           (also.length ? '<span class="stk-alsohw">also runs on ' + also.map(function (x) { return esc(LABEL[x]); }).join(", ") + "</span>" : "") +
