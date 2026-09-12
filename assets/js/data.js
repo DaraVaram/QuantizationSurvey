@@ -192,10 +192,10 @@ guide: {
     "neuralart": {
       rank: 6, name: "Neural-ART on STM32N6", fam: "npu", color: "#455A64",
       vendorFor: ["h:n6"],
-      story: "ST's accelerator route, deployed through the same Cube tooling as the Cortex-M parts, which makes it the shortest move from an existing STM32 product to an accelerated one.",
-      steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:neuralart", run: "f:accel" },
+      story: "ST's accelerator route, deployed through the same Cube tooling as the Cortex-M parts, which makes it the shortest move from an existing STM32 product to an accelerated one. The runtime that drives the NPU ships inside that same package, so the model is built and run through Cube throughout.",
+      steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:neuralart", run: "f:cubert" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
-             dev: ["f:tf", "f:pytorch"], conv: ["f:neuralart"], run: ["f:accel", "f:cubert"] },
+             dev: ["f:tf", "f:pytorch"], conv: ["f:neuralart"], run: ["f:cubert", "f:accel"] },
       implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
       targets: ["h:n6"]
     },
