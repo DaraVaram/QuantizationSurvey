@@ -162,12 +162,12 @@ guide: {
     "cube": {
       rank: 3, name: "STM32Cube.AI", fam: "arm", color: "#AD1457",
       vendorFor: ["h:stm32"],
-      story: "The vendor route on STM32. Cube.AI converts the trained model into embedded C and emits the runtime library that executes it, or hands the network to TFLite Micro instead if you would rather keep a portable runtime. Either way it calls CMSIS-NN underneath on the Cortex-M core, and the conversion and the engine arrive together, which trades some portability for a shorter path to working firmware. The same package also covers the STM32N6, where it compiles for the Neural-ART NPU and leaves on the Cortex-M55 core whatever the accelerator does not take.",
+      story: "The vendor route on STM32. Cube.AI converts the trained model into embedded C and emits the runtime library that executes it, or hands the network to TFLite Micro instead if you would rather keep a portable runtime. Either way it calls CMSIS-NN underneath on the Cortex-M core, and the conversion and the engine arrive together, which trades some portability for a shorter path to working firmware.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: "f:cubert" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:cubeai"], run: ["f:cubert", "f:tflm"] },
       implies: ["d:uni", "d:sym", "d:asym", "d:pc", "d:static", "d:calib", "f:cmsis"],
-      targets: ["h:stm32", "h:n6"]
+      targets: ["h:stm32"]
     },
     "esp": {
       rank: 4, name: "TFLM + ESP-NN on ESP32", fam: "riscv", color: "#EF6C00",
@@ -192,11 +192,11 @@ guide: {
     "neuralart": {
       rank: 6, name: "Neural-ART on STM32N6", fam: "npu", color: "#455A64",
       vendorFor: ["h:n6"],
-      story: "ST's accelerator route, and the shortest move from an existing STM32 product to an accelerated one. There is no separate tool to adopt: STM32Cube.AI compiles for the Neural-ART NPU through the same flow it uses for the Cortex-M parts, and the runtime that drives the NPU ships in the same package, so the model is converted and run through Cube throughout.",
-      steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: "f:cubert" },
+      story: "ST's accelerator route, and the shortest move from an existing STM32 product to an accelerated one. There is no separate tool to adopt, since STM32Cube.AI compiles for the Neural-ART NPU through the same flow it uses for the Cortex-M parts. Two runtimes arrive with it, because the compiler maps onto the NPU what it can and leaves the rest on the CPU: the Neural-ART runtime drives the accelerator, and the network runtime library Cube.AI emits runs the operators the NPU does not take.",
+      steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:tf", conv: "f:cubeai", run: "f:accel" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
-             dev: ["f:tf", "f:pytorch"], conv: ["f:cubeai"], run: ["f:cubert", "f:accel"] },
-      implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib"],
+             dev: ["f:tf", "f:pytorch"], conv: ["f:cubeai"], run: ["f:accel"] },
+      implies: ["d:uni", "d:sym", "d:pc", "d:static", "d:calib", "f:cubert"],
       targets: ["h:n6"]
     },
     "nxp": {
@@ -340,7 +340,7 @@ guide: {
     "f:cmsis": "CMSIS-NN sits underneath TFLM on the Cortex-M routes rather than being chosen separately.",
     "f:espnn": "ESP-NN sits underneath TFLM on the ESP32 parts, the way CMSIS-NN does on Cortex-M.",
     "f:accel": "The vendor runtime that drives the accelerator: ai8x firmware on the MAX7800x, the GAP SDK, the Ethos-U driver, or the Neural-ART runtime.",
-    "f:cubert": "The network runtime library STM32Cube.AI emits alongside the converted C. Cube.AI only converts, so this is what executes the model on the part; the same flow can target TFLite Micro instead when portability matters more. On the STM32N6 the package supplies the runtime that drives the Neural-ART NPU.",
+    "f:cubert": "The network runtime library STM32Cube.AI emits alongside the converted C. Cube.AI only converts, so this is what executes the model on the part; the same flow can target TFLite Micro instead when portability matters more. On the STM32N6 it runs the operators the Neural-ART NPU does not take.",
     "f:ai8xt": "ai8x-training is a PyTorch fork that trains with the MAX7800x accelerator's constraints in the loop, so choosing it is a PyTorch flow.",
     "f:pytorch": "PyTorch reaches every family. On the MAX7800x it arrives as ai8x-training, the fork that trains with the accelerator's constraints in the loop.",
     "h:pulp": "A research platform, where low-bit and mixed-precision RISC-V kernels have been demonstrated, rather than a part you can buy."
