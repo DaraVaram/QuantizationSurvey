@@ -1187,7 +1187,7 @@
         return '<li class="stk-route' + (main ? " stk-route-main" : "") + '" data-t="' + tid + '" tabindex="0" style="--pc:' + T.color + '">' +
           '<span class="stk-rhead"><i class="stk-dot"></i><b>' + esc(T.name) + "</b>" +
           '<span class="stk-fam">' + esc(famName(T.fam)) + "</span>" +
-          (tid === recId && !T.caveat ? '<span class="stk-badge">recommended</span>' : "") +
+          ((tid === recId && !T.caveat) || T.conditional ? '<span class="stk-badge">recommended</span>' : "") +
           (main && tid !== recId ? '<span class="stk-badge stk-badge-sel">selected</span>' : "") +
           (T.caveat ? '<span class="stk-caveat">' + esc(T.caveat) + "</span>" : "") + "</span>" +
           '<span class="stk-steps">' + steps + "</span>" +
