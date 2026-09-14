@@ -527,7 +527,10 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    fetch("assets/bibliography/references.bib?v=20260909e").then(function (r) { return r.text(); }).then(function (bib) {
+    // Read the same file the page's <d-bibliography> loads, wherever it is served from
+    var bibEl = document.querySelector("d-bibliography[src]");
+    var bibSrc = bibEl ? bibEl.getAttribute("src") : "assets/bibliography/references.bib";
+    fetch(bibSrc).then(function (r) { return r.text(); }).then(function (bib) {
       bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
         var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
         if (!km) return;
