@@ -544,6 +544,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       .cite-card .cc-entry:last-child { border-bottom: none; }
       .cite-card .cc-num { color: #2698BA; font-weight: 700; margin-right: 5px; }
       /* ---- Study rows in Tables 3-5 lead to their reference ---- */
+      /* Table 3 lists several boards per study; the device column needs just enough
+         room that a name such as "STM32H747XI (M7)," stays on one line. */
+      #table-3 th:nth-child(4), #table-3 td:nth-child(4) { min-width: 160px; }
       .ptable-wrap.t-studies tbody tr { transition: background 0.12s; }
       .ptable-wrap.t-studies tbody tr:hover { background: #f3fafc; }
       .ptable-wrap.t-studies tbody td:first-child { cursor: pointer; }
