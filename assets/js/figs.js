@@ -903,7 +903,7 @@
         return (TC[a].rank || 99) - (TC[b].rank || 99);
       };
     }
-    /* A route carrying a caveat, such as hardware no longer sold, keeps its place in the
+    /* A route carrying a caveat, such as a research platform, keeps its place in the
        list but never becomes the drawn recommendation while an available one exists. */
     function recommendedId(q) {
       var vp = viable(q);
@@ -1258,7 +1258,8 @@
        still supports it, drops it when already chosen, and says so when it cannot.
        Only Clear starts over. */
     function chipClicked(k) {
-      if (!Q) { setQuery(queryFor(k)); return; }
+      /* A dead end has no stack left to narrow, so the next click starts from that chip. */
+      if (!Q || Q.dead) { setQuery(queryFor(k)); return; }
       Q.reject = null;
       var slot = SLOT[k];
       if (slot === "app") { setQuery(queryFor(k)); return; }

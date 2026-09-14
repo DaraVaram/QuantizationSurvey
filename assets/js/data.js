@@ -84,9 +84,9 @@ apps: {
   arm: [
     {key:"ulkar2021ultra", cat:"Speech", quant:"INT8 QAT", devices:"ARM Cortex-M4F", fw:"PyTorch", perf:"96.30% Acc.", power:"11.2 mJ", lat:"905", mem:"419.8"},
     {key:"moosmann2023tinyissimoyolo", cat:"Object Detection", quant:"INT8 QAT", devices:"STM32H7A3, STM32L4R9, Apollo4b", fw:"TFLM", perf:"43.50–75.40% mAP", power:"41.8 mJ, 102 mJ, 6.08 mJ", lat:"359, 996, 540", mem:"350–422"},
-    {key:"kang2024device", cat:"HAR", quant:"INT8 PTQ", devices:"STM32F756ZG", fw:"PyTorch", perf:"91.04–98.29% Acc.", power:"4.50–8.77 mJ, 0.035–0.063 mJ", lat:"20.70–39.76, 1.11–1.93", mem:"37.8–44.7"},
+    {key:"kang2024device", cat:"HAR", quant:"INT8 PTQ", devices:"STM32F756ZG", fw:"PyTorch", perf:"91.04–98.29% Acc.", power:"4.50–8.77 mJ", lat:"20.70–39.76", mem:"37.8–44.7"},
     {key:"chehade2025energy", cat:"Networking", quant:"INT8 PTQ", devices:"STM32F746G, Nucleo-F401RE", fw:"TFLM, STM32Cube.AI", perf:"96.59% Acc.", power:"7.86 mJ, 29.10 mJ", lat:"31.43, 115.40", mem:"353"},
-    {key:"cerioli2025efficient", cat:"Environment", quant:"INT8 PTQ", devices:"STM32H747XI, nRF52840, ESP32-PICO-D4", fw:"ONNX Runtime, NeuralCasting, TensorFlow Lite", perf:"98.5–99.1% Acc.", power:"600 mW, 100 mW, 2500 mW", lat:"0.034–0.246, 0.034–0.252, 0.308–2.001, 0.040–0.262", mem:"140–580"},
+    {key:"cerioli2025efficient", cat:"Environment", quant:"INT8 PTQ", devices:"STM32H747XI (M7, M4), nRF52840", fw:"ONNX Runtime, NeuralCasting, TensorFlow Lite", perf:"98.5–99.1% Acc.", power:"600 mW, 100 mW", lat:"0.034–0.246, 0.034–0.252, 0.308–2.001", mem:"70–410"},
     {key:"abushahla2025real", cat:"Education", quant:"INT8 QAT", devices:"Sony Spresense, OpenMV Cam H7, H7 Plus", fw:"TFLM", perf:"93.60–98.73% Acc.", power:"494–884 mW, 1238–1609 mW", lat:"0.63, 0.08, 2.88–12.84", mem:"2900, 340"},
     {key:"abushahla2025cognitive", cat:"Spectrum Sensing", quant:"INT8 QAT", devices:"Sony Spresense", fw:"TFLM", perf:"92.63–99.94% F1, 70.55–99.09% F1", power:"52–54 mW, 44–52 mW", lat:"5.54–37.37, 1.18–5.20", mem:"23.8–72.6, 12.8–19.6"},
     {key:"zhou2025efficient", cat:"HAR", quant:"UINT8 PTQ", devices:"Arduino Nano 33 BLE Sense Rev2", fw:"TFLM, EdgeImpulse", perf:"97.09% Acc.", power:"21 mW", lat:"21", mem:"189.6"},
@@ -232,10 +232,7 @@ guide: {
     "gapflow": {
       rank: 10, name: "GAPflow on GAP8/GAP9", fam: "npu", color: "#0288D1",
       vendorFor: ["h:gap8", "h:gap9"],
-      /* A condition on the recommendation, not a disqualification, so this route keeps
-         its recommended badge and the caveat reads as the condition attached to it. */
-      caveat: "if you already have the hardware", conditional: true,
-      story: "The clustered-accelerator route, and the one much of the surveyed literature runs on. GAPflow tiles the graph, orchestrates DMA, and generates code for the convolution engine. Treat it as a reference point rather than a starting point, since the GAP parts are no longer generally available: take it only if you already have the hardware and toolchain.",
+      story: "The clustered-accelerator route, and the one much of the surveyed literature runs on. GAPflow tiles the graph, orchestrates DMA, and generates code for the convolution engine, which is what suits the GAP parts to reaction-critical, parallelizable perception loops such as drones, robotics, and fast activity recognition.",
       steps: { path: "q:PTQ", strat: "s:uniform", repr: "n:INT8", dev: "f:pytorch", conv: "f:gapflow", run: "f:accel" },
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform", "s:mixed", "s:extreme"],
              repr: ["n:INT8", "n:INT16", "n:INT4", "n:INT2", "n:mixed", "n:FP16"],
@@ -286,7 +283,7 @@ guide: {
   applications: {
     "Speech":               { prefer: ["tflm", "ai8x"], via: ["q:QAT"], note: "Speech models are always-on, so energy per inference decides. Cortex-M is the low-friction default; move to an accelerator when the audio front end and the model together must fit a hard budget." },
     "Keyword Spotting":     { prefer: ["tflm", "ai8x", "nxp"], via: ["q:QAT"], note: "Keyword spotting is small and permanently listening. Start on Cortex-M, and move to an accelerator when the duty cycle is high enough that inference energy dominates the power budget." },
-    "Object Detection":     { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Detection is where accelerators pay off most, and the MAX7800x is the one still generally available. On Cortex-M it is confined to tiny detectors at low frame rates." },
+    "Object Detection":     { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Detection is where accelerators pay off most, and the surveyed work runs on the MAX78000 and the GAP9. On Cortex-M it is confined to tiny detectors at low frame rates." },
     "Image Classification": { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max002"], note: "Compact classifiers fit Cortex-M at modest input resolution; an accelerator extends resolution and frame rate at lower energy." },
     "Face Recognition":     { prefer: ["ai8x", "gapflow"], via: ["q:QAT", "h:max002"], note: "Input resolution and embedding networks put face recognition beyond real-time Cortex-M execution, so plan on an accelerator from the start. The surveyed result used INT16 on a GAP8, which the GAP route still reaches." },
     "Segmentation":         { prefer: ["ai8x", "gapflow", "ethos"], note: "Dense per-pixel output needs an accelerator, and needs its toolchain to cover the upsampling operators, which is where these flows most often stop." },
@@ -303,7 +300,7 @@ guide: {
     "Spectrum Sensing":     { prefer: ["tflm", "ai8x"], via: ["q:QAT", "h:spresense"], note: "Spectrum sensing is a one-dimensional pipeline that Cortex-M handles at the reported sample rates. An accelerator becomes relevant for wideband inputs or tighter latency budgets." },
     "DSP":                  { prefer: ["tflm", "ai8x"], note: "Classical DSP front ends run on Cortex-M with its DSP kernels; neural DSP pipelines move to the accelerator." },
     "Robotics":             { prefer: ["esp", "gapflow", "ai8x"], via: ["q:PTQ", "h:p4"], note: "The dual-core ESP32-P4 handles steering and throttle models directly. Reaction-critical perception loops want an accelerator, which historically meant the GAP family and now means the MAX7800x." },
-    "Drones":               { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max000"], note: "Drone perception is parallelisable, latency-bound, and power-limited, so it wants an accelerator. The surveyed work runs on GAP8 and GAP9; the MAX7800x is the equivalent you can still buy. Cortex-M remains a fallback for the lightest navigation models." },
+    "Drones":               { prefer: ["gapflow", "ai8x", "tflm"], via: ["q:PTQ", "h:gap9"], note: "Drone perception is parallelizable, latency-bound, and power-limited, so it wants an accelerator. The surveyed work runs on GAP8 and GAP9, whose clustered cores, DMA, and tiling suit exactly this kind of loop. Cortex-M remains a fallback for the lightest navigation models." },
     "Education":            { prefer: ["tflm", "ei"], via: ["q:QAT", "h:spresense"], note: "Teaching platforms favour the most reproducible path, which is a Cortex-M board with a workflow that hides as little as possible behind vendor tooling." }
   },
 
