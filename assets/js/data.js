@@ -108,7 +108,7 @@ apps: {
     {key:"kang2024device", cat:"HAR", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"91.04–98.29% Acc.", power:"0.035–0.063 mJ", lat:"1.11–1.93", mem:"37.8–44.7"},
     {key:"van2023real", cat:"Healthcare", quant:"INT8 QAT", devices:"MAX78002", fw:"PyTorch, ai8x-tools", perf:"94.60% AUC", power:"18 mW", lat:"0.248", mem:"25.156"},
     {key:"busia2025endoscopy", cat:"Healthcare", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"98.5% Acc.", power:"30.6 mW", lat:"61", mem:"750"},
-    {key:"ibrahim2024end", cat:"Healthcare", quant:"INT8 QAT", devices:"Ethos-U55", fw:"PyTorch", perf:"94.25% Acc.", power:"2×10⁻⁸ mJ", lat:"5", mem:"<32"},
+    {key:"ibrahim2024end", cat:"Healthcare", quant:"INT8 QAT", devices:"Ethos-U55", fw:"PyTorch", perf:"94.25% Acc.", power:"0.0119 mW (est.)", lat:"5", mem:"<32"},
     {key:"lightbody2022host", cat:"Anomaly Detection", quant:"INT8 QAT", devices:"MAX78000", fw:"PyTorch", perf:"87.19–99.95% Acc.", power:"15 mW", lat:"2.556", mem:"55.9"},
     {key:"ingaleshwar2024wildlife", cat:"Environment", quant:"INT8 PTQ", devices:"MAX78000", fw:"PyTorch, ai8x-tools", perf:"79.67–86.53% F1", power:"0.885–4.275 mJ", lat:"4–27.5", mem:"100–460"},
     {key:"zhou2023solving", cat:"Drones", quant:"INT8 PTQ", devices:"GAP8", fw:"TFLite, GAP8 Autotiler", perf:"98.80% Acc., 57.20% Succ. Rate", power:"130 mW", lat:"35.71", mem:"292"},
