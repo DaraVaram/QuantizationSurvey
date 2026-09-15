@@ -599,6 +599,10 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         table.ptable { font-size: 7.2pt; }
         a.xref { border-bottom: none; color: inherit; }
         d-article { border-top: none; }
+        /* distill sets overflow-x: hidden on these, which makes overflow-y compute to
+           auto; Chrome then prints a vertical scrollbar down the edge of every page. */
+        d-title, d-article { overflow: visible !important; }
+        * { scrollbar-width: none !important; }
       }
       /* Below the sidebar breakpoint Table 1 can no longer shrink to fit, and
          d-article clips what spills out, so let the wrapper scroll instead. */
