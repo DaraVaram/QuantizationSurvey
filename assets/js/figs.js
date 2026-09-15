@@ -527,24 +527,33 @@
 
     // urls/dois from the bibliography file (for outbound links on entries)
     var links = {};
-    // Read the same file the page's <d-bibliography> loads, wherever it is served from
-    var bibEl = document.querySelector("d-bibliography[src]");
-    var bibSrc = bibEl ? bibEl.getAttribute("src") : "assets/bibliography/references.bib";
-    fetch(bibSrc).then(function (r) { return r.text(); }).then(function (bib) {
-      bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
-        var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
-        if (!km) return;
-        var um = chunk.match(/\burl\s*=\s*\{([^}]+)\}/i);
-        var dm = chunk.match(/\bdoi\s*=\s*\{([^}]+)\}/i);
-        var em = chunk.match(/\beprint\s*=\s*\{([^}]+)\}/i);
-        var u = null;
-        if (dm) u = "https://doi.org/" + dm[1].trim();
-        else if (um) u = um[1].trim();
-        else if (em) u = "https://arxiv.org/abs/" + em[1].trim();
-        if (u) links[km[1].trim()] = u;
-      });
-      enhanceSoon();
-    }).catch(enhanceSoon);
+    // Read the same file the page's <d-bibliography> loads, wherever it is served from.
+    // In the Author Kit's layout this script runs inside <d-article>, before the
+    // <d-bibliography> element has been parsed, so look it up once parsing is done.
+    function loadBib() {
+      var bibEl = document.querySelector("d-bibliography[src]");
+      var bibSrc = bibEl ? bibEl.getAttribute("src") : "assets/bibliography/references.bib";
+      fetch(bibSrc).then(function (r) {
+        if (!r.ok) throw new Error("bibliography " + r.status);
+        return r.text();
+      }).then(function (bib) {
+        bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
+          var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
+          if (!km) return;
+          var um = chunk.match(/\burl\s*=\s*\{([^}]+)\}/i);
+          var dm = chunk.match(/\bdoi\s*=\s*\{([^}]+)\}/i);
+          var em = chunk.match(/\beprint\s*=\s*\{([^}]+)\}/i);
+          var u = null;
+          if (dm) u = "https://doi.org/" + dm[1].trim();
+          else if (um) u = um[1].trim();
+          else if (em) u = "https://arxiv.org/abs/" + em[1].trim();
+          if (u) links[km[1].trim()] = u;
+        });
+        enhanceSoon();
+      }).catch(enhanceSoon);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadBib);
+    else loadBib();
 
     function enhance() {
       var cl = document.querySelector("d-citation-list");

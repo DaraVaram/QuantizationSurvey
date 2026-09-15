@@ -193,8 +193,6 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       table.ptable ul.cell-list li { margin: 0 0 0.28rem; padding-left: 0.1em; }
       table.ptable ul.cell-list li:last-child { margin-bottom: 0; }
       table.ptable ul.cell-list li::marker { color: #2698BA; }
-      /* ---- Index terms ---- */
-      .index-terms { font-size: 0.85rem; color: rgba(0,0,0,0.72); }
       /* ---- Interactive supplements (not part of the manuscript) ---- */
       .supplement {
         border: 1px solid #d5dbe2; border-left: 4px solid #2698BA;
@@ -760,8 +758,6 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         <h2 id="abstract">Abstract</h2>
 
 <p>The deployment of quantized neural networks on resource-constrained edge devices, such as microcontrollers (MCUs), introduces fundamental challenges in balancing model performance, computational complexity, and memory constraints. Tiny Machine Learning (TinyML) addresses these issues by jointly advancing machine learning algorithms, hardware architectures, and software optimization techniques to enable deep neural network inference on embedded systems. This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices. Particular emphasis is placed on the critical trade-offs between model performance and the capabilities of MCU-class hardware, including memory hierarchies, numerical representations, and accelerator support. The survey further reviews contemporary MCU hardware platforms, including ARM-based and RISC-V-based designs, as well as MCUs integrating neural processing units (NPUs) for low-precision inference, together with the supporting software stacks. In addition, we analyze real-world deployments of quantized models on MCUs and consolidate the application domains in which such systems are used. Finally, we discuss open challenges and outline promising future directions toward scalable, energy-efficient, and sustainable AI deployment on edge devices.</p>
-
-<p class="index-terms"><strong>Index Terms</strong>—Embedded Systems, Microcontrollers (MCUs), Neural Processing Units (NPUs), Edge Computing, Quantization, Reduced Precision, Deep Learning, TinyML, Sustainable AI</p>
 
 <h2 id="introduction">1&ensp;Introduction</h2>
 
@@ -1843,7 +1839,7 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260914-4"></script>
   <script src="assets/js/supplements.js?v=20260911-28"></script>
-  <script src="assets/js/figs.js?v=20260914-1"></script>
+  <script src="assets/js/figs.js?v=20260915-1"></script>
 
   </body>
 
