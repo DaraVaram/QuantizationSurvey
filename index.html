@@ -46,7 +46,7 @@
     <!-- Distill js -->
     <script src="assets/js/distillpub/template.v2.js?v=20260910w"></script>
     <script src="assets/js/distillpub/transforms.v2.js?v=20260910w"></script>
-    <script src="assets/js/distillpub/overrides.js?v=20260910w"></script>
+    <script src="assets/js/distillpub/overrides.js?v=20260929-1"></script>
 
     <!-- Paper-specific styles -->
     <style type="text/css">
@@ -477,7 +477,13 @@
       }
       .cite-card .cc-entry { padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
       .cite-card .cc-entry:last-child { border-bottom: none; }
-      .cite-card .cc-num { color: #2698BA; font-weight: 700; margin-right: 5px; }
+      /* The paper's reference list (author-year, alphabetical), built by figs.js */
+      d-citation-list { display: none !important; }  /* replaced by #paper-refs */
+      #paper-refs h3 { margin-top: 0; }
+      #paper-refs ol { list-style: none; margin: 0; padding: 0; }
+      #paper-refs li { padding: 0.5em 0.4em; font-size: 0.8rem; line-height: 1.5; border-bottom: 1px solid rgba(0,0,0,0.06); }
+      #paper-refs li.ref-flash { background: #fff3c4; }
+      #paper-refs a.ref-out { color: #2698BA; text-decoration: none; margin-left: 5px; font-size: 0.85em; }
       /* ---- Study rows in Tables 3-5 lead to their reference ---- */
       /* Table 3 lists several boards per study; the device column needs just enough
          room that a name such as "STM32H747XI (M7)," stays on one line. */
@@ -636,7 +642,7 @@
 <table class="ptable" data-sortable>
 <caption><b>Table 1:</b> Scope comparison of surveys on quantization, TinyML, and edge AI.</caption>
 <thead><tr>
-  <th>Paper</th><th>Year</th>
+  <th>Paper</th>
   <th class="ctr">Primary Quantization</th>
   <th class="ctr">Advanced Quantization</th>
   <th class="ctr">Numeric Representations</th>
@@ -645,22 +651,22 @@
   <th class="ctr">Applications</th>
 </tr></thead>
 <tbody>
-<tr><td>Gholami et al. <d-cite key="gholami2022survey"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
-<tr><td>Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Giordano et al. <d-cite key="giordano2022survey"></d-cite></td><td>2022</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
-<tr><td>Saha et al. <d-cite key="saha2022"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Ray <d-cite key="ray2022review"></d-cite></td><td>2022</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite></td><td>2023</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
-<tr><td>Akkad et al. <d-cite key="akkad2023embedded"></d-cite></td><td>2023</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Liu et al. <d-cite key="liu2024lightweight"></d-cite></td><td>2024</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td></tr>
-<tr><td>Liu et al. <d-cite key="liu2024exploring"></d-cite></td><td>2024</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
-<tr><td>Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite></td><td>2024</td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td></tr>
-<tr><td>Liu et al. <d-cite key="liu2025low"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
-<tr><td>Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite></td><td>2025</td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Wang and Jia <d-cite key="wang2025optimizing"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite></td><td>2025</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
-<tr><td>L&#234; et al. <d-cite key="tri2026efficient"></d-cite></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td></tr>
-<tr class="ours"><td><strong>Ours</strong></td><td>2026</td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Gholami et al. <d-cite key="gholami2022survey"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Or&#259;&#537;an et al. <d-cite key="lucan2022brief"></d-cite></td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Giordano et al. <d-cite key="giordano2022survey"></d-cite></td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Saha et al. <d-cite key="saha2022"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Ray <d-cite key="ray2022review"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Rokh et al. <d-cite key="rokh2023comprehensive"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Akkad et al. <d-cite key="akkad2023embedded"></d-cite></td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Liu et al. <d-cite key="liu2024lightweight"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td></tr>
+<tr><td>Liu et al. <d-cite key="liu2024exploring"></d-cite></td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw risc">RISC-V</span></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Capogrosso et al. <d-cite key="capogrosso2024machine"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-none"></td></tr>
+<tr><td>Liu et al. <d-cite key="liu2025low"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-none"></td></tr>
+<tr><td>Heydari and Mahmoud <d-cite key="heydari2025tiny"></d-cite></td><td class="cov-none"></td><td class="cov-none"></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-none"></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Wang and Jia <d-cite key="wang2025optimizing"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-none"></td><td class="hwcell"></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>Somvanshi et al. <d-cite key="somvanshi2025tiny"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
+<tr><td>L&#234; et al. <d-cite key="tri2026efficient"></d-cite></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td><td class="cov-part"><span>Partial</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span></td><td class="cov-full"><span>Full</span></td><td class="cov-part"><span>Partial</span></td></tr>
+<tr class="ours"><td><strong>Ours (2026)</strong></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td><td class="hwcell"><span class="hw arm">ARM</span> <span class="hw risc">RISC-V</span> <span class="hw npu">NPU</span></td><td class="cov-full"><span>Full</span></td><td class="cov-full"><span>Full</span></td></tr>
 </tbody>
 </table>
 <div class="t1-legend"><span><i class="sw sw-full"></i>surveyed</span><span><i class="sw sw-part"></i>partially surveyed</span><span><i class="sw sw-none"></i>not covered</span><span class="t1-legend-note">Hardware Landscape lists the architectures each survey covers</span></div>
@@ -822,16 +828,16 @@
   <th>Study</th><th>Category</th><th>Quantization</th><th>Device(s)</th><th>Framework(s)</th><th>Performance</th><th>Power / Energy</th><th>Latency (ms)</th><th>Memory (KB)</th>
 </tr></thead>
 <tbody>
-<tr><td><d-cite key="ulkar2021ultra"></d-cite></td><td>Speech</td><td>INT8 QAT</td><td>ARM Cortex-M4F</td><td>PyTorch</td><td>96.30% Acc.</td><td>11.2 mJ</td><td>905</td><td>419.8</td></tr>
-<tr><td><d-cite key="moosmann2023tinyissimoyolo"></d-cite></td><td>Object Detection</td><td>INT8 QAT</td><td>STM32H7A3,<br>STM32L4R9,<br>Apollo4b</td><td>TFLM</td><td>43.50&#8211;75.40% mAP</td><td>41.8 mJ,<br>102 mJ, 6.08 mJ</td><td>359,<br>996, 540</td><td>350&#8211;422</td></tr>
-<tr><td><d-cite key="kang2024device"></d-cite></td><td>HAR</td><td>INT8 PTQ</td><td>STM32F756ZG</td><td>PyTorch</td><td>91.04&#8211;98.29% Acc.</td><td>4.50&#8211;8.77 mJ</td><td>20.70&#8211;39.76</td><td>37.8&#8211;44.7</td></tr>
-<tr><td><d-cite key="chehade2025energy"></d-cite></td><td>Networking</td><td>INT8 PTQ</td><td>STM32F746G,<br>Nucleo-F401RE</td><td>TFLM,<br>STM32Cube.AI</td><td>96.59% Acc.</td><td>7.86 mJ,<br>29.10 mJ</td><td>31.43,<br>115.40</td><td>353</td></tr>
-<tr><td><d-cite key="cerioli2025efficient"></d-cite></td><td>Environment</td><td>INT8 PTQ</td><td>STM32H747XI (M7),<br>STM32H747XI (M4),<br>nRF52840</td><td>ONNX Runtime,<br>NeuralCasting,<br>TFLM</td><td>98.5&#8211;99.1% Acc.</td><td>600 mW,<br>600 mW,<br>100 mW</td><td>0.034&#8211;0.246,<br>0.034&#8211;0.252,<br>0.308&#8211;2.001</td><td>70&#8211;410</td></tr>
-<tr><td><d-cite key="abushahla2025real"></d-cite></td><td>Education</td><td>INT8 QAT</td><td>Sony Spresense,<br>OpenMV Cam H7,<br>H7 Plus</td><td>TFLM</td><td>93.60&#8211;98.73% Acc.</td><td>494&#8211;884 mW,<br>1238&#8211;1609 mW</td><td>0.63, 0.08,<br>2.88&#8211;12.84</td><td>2900, 340</td></tr>
-<tr><td><d-cite key="abushahla2025cognitive"></d-cite></td><td>Spectrum Sensing</td><td>INT8 QAT</td><td>Sony Spresense</td><td>TFLM</td><td>92.63&#8211;99.94% F1,<br>70.55&#8211;99.09% F1</td><td>52&#8211;54 mW,<br>44&#8211;52 mW</td><td>5.54&#8211;37.37,<br>1.18&#8211;5.20</td><td>23.8&#8211;72.6,<br>12.8&#8211;19.6</td></tr>
-<tr><td><d-cite key="zhou2025efficient"></d-cite></td><td>HAR</td><td>UINT8 PTQ</td><td>Arduino Nano 33<br>BLE Sense Rev2</td><td>TFLM,<br>EdgeImpulse</td><td>97.09% Acc.</td><td>21 mW</td><td>21</td><td>189.6</td></tr>
-<tr><td><d-cite key="dabbous2024benchmarking"></d-cite></td><td>Environment</td><td>INT8 QAT</td><td>STM32H7,<br>Arduino Nano 33<br>BLE Sense Rev2</td><td>TFLM,<br>STM32Cube.AI</td><td>99.63% Acc.</td><td>227.86 mW,<br>1.43 mW, 9 mW</td><td>30.25,<br>522.15, 1.45</td><td>&#8211;</td></tr>
-<tr><td><d-cite key="rostami2024real"></d-cite></td><td>Healthcare</td><td>INT8 QAT,<br>PQAT, PTQ</td><td>STM32H743iit6,<br>STM32H750vbt6</td><td>TFLM</td><td>84.78&#8211;87.76% Acc.</td><td>840 mW,<br>945 mW</td><td>6230,<br>6300</td><td>860</td></tr>
+<tr><td><d-cite key="ulkar2021ultra" data-cite="textual"></d-cite></td><td>Speech</td><td>INT8 QAT</td><td>ARM Cortex-M4F</td><td>PyTorch</td><td>96.30% Acc.</td><td>11.2 mJ</td><td>905</td><td>419.8</td></tr>
+<tr><td><d-cite key="moosmann2023tinyissimoyolo" data-cite="textual"></d-cite></td><td>Object Detection</td><td>INT8 QAT</td><td>STM32H7A3,<br>STM32L4R9,<br>Apollo4b</td><td>TFLM</td><td>43.50&#8211;75.40% mAP</td><td>41.8 mJ,<br>102 mJ, 6.08 mJ</td><td>359,<br>996, 540</td><td>350&#8211;422</td></tr>
+<tr><td><d-cite key="kang2024device" data-cite="textual"></d-cite></td><td>HAR</td><td>INT8 PTQ</td><td>STM32F756ZG</td><td>PyTorch</td><td>91.04&#8211;98.29% Acc.</td><td>4.50&#8211;8.77 mJ</td><td>20.70&#8211;39.76</td><td>37.8&#8211;44.7</td></tr>
+<tr><td><d-cite key="chehade2025energy" data-cite="textual"></d-cite></td><td>Networking</td><td>INT8 PTQ</td><td>STM32F746G,<br>Nucleo-F401RE</td><td>TFLM,<br>STM32Cube.AI</td><td>96.59% Acc.</td><td>7.86 mJ,<br>29.10 mJ</td><td>31.43,<br>115.40</td><td>353</td></tr>
+<tr><td><d-cite key="cerioli2025efficient" data-cite="textual"></d-cite></td><td>Environment</td><td>INT8 PTQ</td><td>STM32H747XI (M7),<br>STM32H747XI (M4),<br>nRF52840</td><td>ONNX Runtime,<br>NeuralCasting,<br>TFLM</td><td>98.5&#8211;99.1% Acc.</td><td>600 mW,<br>600 mW,<br>100 mW</td><td>0.034&#8211;0.246,<br>0.034&#8211;0.252,<br>0.308&#8211;2.001</td><td>70&#8211;410</td></tr>
+<tr><td><d-cite key="abushahla2025real" data-cite="textual"></d-cite></td><td>Education</td><td>INT8 QAT</td><td>Sony Spresense,<br>OpenMV Cam H7,<br>H7 Plus</td><td>TFLM</td><td>93.60&#8211;98.73% Acc.</td><td>494&#8211;884 mW,<br>1238&#8211;1609 mW</td><td>0.63, 0.08,<br>2.88&#8211;12.84</td><td>2900, 340</td></tr>
+<tr><td><d-cite key="abushahla2025cognitive" data-cite="textual"></d-cite></td><td>Spectrum Sensing</td><td>INT8 QAT</td><td>Sony Spresense</td><td>TFLM</td><td>92.63&#8211;99.94% F1,<br>70.55&#8211;99.09% F1</td><td>52&#8211;54 mW,<br>44&#8211;52 mW</td><td>5.54&#8211;37.37,<br>1.18&#8211;5.20</td><td>23.8&#8211;72.6,<br>12.8&#8211;19.6</td></tr>
+<tr><td><d-cite key="zhou2025efficient" data-cite="textual"></d-cite></td><td>HAR</td><td>UINT8 PTQ</td><td>Arduino Nano 33<br>BLE Sense Rev2</td><td>TFLM,<br>EdgeImpulse</td><td>97.09% Acc.</td><td>21 mW</td><td>21</td><td>189.6</td></tr>
+<tr><td><d-cite key="dabbous2024benchmarking" data-cite="textual"></d-cite></td><td>Environment</td><td>INT8 QAT</td><td>STM32H7,<br>Arduino Nano 33<br>BLE Sense Rev2</td><td>TFLM,<br>STM32Cube.AI</td><td>99.63% Acc.</td><td>227.86 mW,<br>1.43 mW, 9 mW</td><td>30.25,<br>522.15, 1.45</td><td>&#8211;</td></tr>
+<tr><td><d-cite key="rostami2024real" data-cite="textual"></d-cite></td><td>Healthcare</td><td>INT8 QAT,<br>PQAT, PTQ</td><td>STM32H743iit6,<br>STM32H750vbt6</td><td>TFLM</td><td>84.78&#8211;87.76% Acc.</td><td>840 mW,<br>945 mW</td><td>6230,<br>6300</td><td>860</td></tr>
 </tbody>
 </table>
 </div>
@@ -845,9 +851,9 @@
   <th>Study</th><th>Category</th><th>Quantization</th><th>Device(s)</th><th>Framework(s)</th><th>Performance</th><th>Power / Energy</th><th>Latency (ms)</th><th>Memory (KB)</th>
 </tr></thead>
 <tbody>
-<tr><td><d-cite key="rattanasak2025lightweight"></d-cite></td><td>Healthcare</td><td>INT8 PTQ</td><td>ESP32-C6</td><td>TFLM</td><td>88.64 &#177; 1.56% F1,<br>90.05 &#177; 1.60% Sens.,<br>87.29 &#177; 1.54% Prec.</td><td>179.8 mW</td><td>630</td><td>310</td></tr>
-<tr><td><d-cite key="banerjee2026device"></d-cite></td><td>Industrial</td><td>INT8 PTQ</td><td>ESP32-C3</td><td>TFLM</td><td>95.00% macro-F1</td><td>6.77 mJ</td><td>82&#177;7</td><td>80</td></tr>
-<tr><td><d-cite key="roy2026tinynav"></d-cite></td><td>Robotics</td><td>INT8 PTQ</td><td>ESP32-P4</td><td>TFLM,<br>ESP-NN</td><td>40 laps collision-free,<br>99.84% Steer Acc.,<br>99.79% Throttle Acc.</td><td>&#8211;</td><td>30</td><td>&#8764;23</td></tr>
+<tr><td><d-cite key="rattanasak2025lightweight" data-cite="textual"></d-cite></td><td>Healthcare</td><td>INT8 PTQ</td><td>ESP32-C6</td><td>TFLM</td><td>88.64 &#177; 1.56% F1,<br>90.05 &#177; 1.60% Sens.,<br>87.29 &#177; 1.54% Prec.</td><td>179.8 mW</td><td>630</td><td>310</td></tr>
+<tr><td><d-cite key="banerjee2026device" data-cite="textual"></d-cite></td><td>Industrial</td><td>INT8 PTQ</td><td>ESP32-C3</td><td>TFLM</td><td>95.00% macro-F1</td><td>6.77 mJ</td><td>82&#177;7</td><td>80</td></tr>
+<tr><td><d-cite key="roy2026tinynav" data-cite="textual"></d-cite></td><td>Robotics</td><td>INT8 PTQ</td><td>ESP32-P4</td><td>TFLM,<br>ESP-NN</td><td>40 laps collision-free,<br>99.84% Steer Acc.,<br>99.79% Throttle Acc.</td><td>&#8211;</td><td>30</td><td>&#8764;23</td></tr>
 </tbody>
 </table>
 </div>
@@ -861,21 +867,21 @@
   <th>Study</th><th>Category</th><th>Quantization</th><th>Device(s)</th><th>Framework(s)</th><th>Performance</th><th>Power / Energy</th><th>Latency (ms)</th><th>Memory (KB)</th>
 </tr></thead>
 <tbody>
-<tr><td><d-cite key="balbi2024ultra"></d-cite></td><td>Networking</td><td>INT8 PTQ</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>94.87% Acc.</td><td>0.005 mJ</td><td>0.104</td><td>&lt;432</td></tr>
-<tr><td><d-cite key="jakuvs2025implementing"></d-cite></td><td>Keyword Spotting</td><td>INT8 QAT</td><td>NXP MCXN94</td><td>TFLite</td><td>97.06% Acc.</td><td>&#8211;</td><td>3.847</td><td>30.6</td></tr>
-<tr><td><d-cite key="gong2024dex"></d-cite></td><td>Image Classification</td><td>INT8 QAT</td><td>MAX78000,<br>MAX78002</td><td>PyTorch,<br>ai8x-tools</td><td>19.80&#8211;62.00% Acc.</td><td>0.14&#8211;0.4 mJ</td><td>2&#8211;13</td><td>171.2&#8211;1330.7</td></tr>
-<tr><td><d-cite key="zemlyanikin2019512kib"></d-cite></td><td>Face Recognition</td><td>INT16 PTQ</td><td>GAP8</td><td>PyTorch,<br>GAP8 Autotiler</td><td>93.00&#8211;96.33% Acc.</td><td>&#8211;</td><td>&lt;1000</td><td>1500</td></tr>
-<tr><td><d-cite key="moosmann2023tinyissimoyolo"></d-cite></td><td>Object Detection</td><td>INT8 QAT</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>43.50&#8211;75.40% mAP</td><td>0.19 mJ</td><td>5.5</td><td>350&#8211;422</td></tr>
-<tr><td><d-cite key="moosmann2024ultra"></d-cite></td><td>Object Detection</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>14.00&#8211;49.00% mAP</td><td>54 mW</td><td>56.45</td><td>&lt;1000</td></tr>
-<tr><td><d-cite key="kang2024device"></d-cite></td><td>HAR</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>91.04&#8211;98.29% Acc.</td><td>0.035&#8211;0.063 mJ</td><td>1.11&#8211;1.93</td><td>37.8&#8211;44.7</td></tr>
-<tr><td><d-cite key="van2023real"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>MAX78002</td><td>PyTorch,<br>ai8x-tools</td><td>94.60% AUC</td><td>18 mW</td><td>0.248</td><td>25.156</td></tr>
-<tr><td><d-cite key="busia2025endoscopy"></d-cite></td><td>Healthcare</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>98.5% Acc.</td><td>30.6 mW</td><td>61</td><td>750</td></tr>
-<tr><td><d-cite key="ibrahim2024end"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>Ethos-U55</td><td>PyTorch</td><td>94.25% Acc.</td><td>0.0119 mW (est.)</td><td>5</td><td>&lt;32</td></tr>
-<tr><td><d-cite key="lightbody2022host"></d-cite></td><td>Anomaly Detection</td><td>INT8 QAT</td><td>MAX78000</td><td>PyTorch</td><td>87.19&#8211;99.95% Acc.</td><td>15 mW</td><td>2.556</td><td>55.9</td></tr>
-<tr><td><d-cite key="ingaleshwar2024wildlife"></d-cite></td><td>Environment</td><td>INT8 PTQ</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>79.67&#8211;86.53% F1</td><td>0.885&#8211;4.275 mJ</td><td>4&#8211;27.5</td><td>100&#8211;460</td></tr>
-<tr><td><d-cite key="zhou2023solving"></d-cite></td><td>Drones</td><td>INT8 PTQ</td><td>GAP8</td><td>TFLite,<br>GAP8 Autotiler</td><td>98.80% Acc.,<br>57.20% Succ. Rate</td><td>130 mW</td><td>35.71</td><td>292</td></tr>
-<tr><td><d-cite key="crupi2025efficient"></d-cite></td><td>Drones</td><td>INT8,<br>FP16 PTQ</td><td>GAP9</td><td>nntool</td><td>79.00% mAP,<br>80.00% mAP</td><td>34&#8211;41 mW</td><td>147&#8211;462</td><td>1800&#8211;3600</td></tr>
-<tr><td><d-cite key="rashid2025hac"></d-cite></td><td>Agriculture</td><td>INT8 PTQ</td><td>GAP8</td><td>TFLM</td><td>95.00% Acc.</td><td>378 mW</td><td>37.6</td><td>49.6</td></tr>
+<tr><td><d-cite key="balbi2024ultra" data-cite="textual"></d-cite></td><td>Networking</td><td>INT8 PTQ</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>94.87% Acc.</td><td>0.005 mJ</td><td>0.104</td><td>&lt;432</td></tr>
+<tr><td><d-cite key="jakuvs2025implementing" data-cite="textual"></d-cite></td><td>Keyword Spotting</td><td>INT8 QAT</td><td>NXP MCXN94</td><td>TFLite</td><td>97.06% Acc.</td><td>&#8211;</td><td>3.847</td><td>30.6</td></tr>
+<tr><td><d-cite key="gong2024dex" data-cite="textual"></d-cite></td><td>Image Classification</td><td>INT8 QAT</td><td>MAX78000,<br>MAX78002</td><td>PyTorch,<br>ai8x-tools</td><td>19.80&#8211;62.00% Acc.</td><td>0.14&#8211;0.4 mJ</td><td>2&#8211;13</td><td>171.2&#8211;1330.7</td></tr>
+<tr><td><d-cite key="zemlyanikin2019512kib" data-cite="textual"></d-cite></td><td>Face Recognition</td><td>INT16 PTQ</td><td>GAP8</td><td>PyTorch,<br>GAP8 Autotiler</td><td>93.00&#8211;96.33% Acc.</td><td>&#8211;</td><td>&lt;1000</td><td>1500</td></tr>
+<tr><td><d-cite key="moosmann2023tinyissimoyolo" data-cite="textual"></d-cite></td><td>Object Detection</td><td>INT8 QAT</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>43.50&#8211;75.40% mAP</td><td>0.19 mJ</td><td>5.5</td><td>350&#8211;422</td></tr>
+<tr><td><d-cite key="moosmann2024ultra" data-cite="textual"></d-cite></td><td>Object Detection</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>14.00&#8211;49.00% mAP</td><td>54 mW</td><td>56.45</td><td>&lt;1000</td></tr>
+<tr><td><d-cite key="kang2024device" data-cite="textual"></d-cite></td><td>HAR</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>91.04&#8211;98.29% Acc.</td><td>0.035&#8211;0.063 mJ</td><td>1.11&#8211;1.93</td><td>37.8&#8211;44.7</td></tr>
+<tr><td><d-cite key="van2023real" data-cite="textual"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>MAX78002</td><td>PyTorch,<br>ai8x-tools</td><td>94.60% AUC</td><td>18 mW</td><td>0.248</td><td>25.156</td></tr>
+<tr><td><d-cite key="busia2025endoscopy" data-cite="textual"></d-cite></td><td>Healthcare</td><td>INT8 PTQ</td><td>GAP9</td><td>PyTorch</td><td>98.5% Acc.</td><td>30.6 mW</td><td>61</td><td>750</td></tr>
+<tr><td><d-cite key="ibrahim2024end" data-cite="textual"></d-cite></td><td>Healthcare</td><td>INT8 QAT</td><td>Ethos-U55</td><td>PyTorch</td><td>94.25% Acc.</td><td>0.0119 mW (est.)</td><td>5</td><td>&lt;32</td></tr>
+<tr><td><d-cite key="lightbody2022host" data-cite="textual"></d-cite></td><td>Anomaly Detection</td><td>INT8 QAT</td><td>MAX78000</td><td>PyTorch</td><td>87.19&#8211;99.95% Acc.</td><td>15 mW</td><td>2.556</td><td>55.9</td></tr>
+<tr><td><d-cite key="ingaleshwar2024wildlife" data-cite="textual"></d-cite></td><td>Environment</td><td>INT8 PTQ</td><td>MAX78000</td><td>PyTorch,<br>ai8x-tools</td><td>79.67&#8211;86.53% F1</td><td>0.885&#8211;4.275 mJ</td><td>4&#8211;27.5</td><td>100&#8211;460</td></tr>
+<tr><td><d-cite key="zhou2023solving" data-cite="textual"></d-cite></td><td>Drones</td><td>INT8 PTQ</td><td>GAP8</td><td>TFLite,<br>GAP8 Autotiler</td><td>98.80% Acc.,<br>57.20% Succ. Rate</td><td>130 mW</td><td>35.71</td><td>292</td></tr>
+<tr><td><d-cite key="crupi2025efficient" data-cite="textual"></d-cite></td><td>Drones</td><td>INT8,<br>FP16 PTQ</td><td>GAP9</td><td>nntool</td><td>79.00% mAP,<br>80.00% mAP</td><td>34&#8211;41 mW</td><td>147&#8211;462</td><td>1800&#8211;3600</td></tr>
+<tr><td><d-cite key="rashid2025hac" data-cite="textual"></d-cite></td><td>Agriculture</td><td>INT8 PTQ</td><td>GAP8</td><td>TFLM</td><td>95.00% Acc.</td><td>378 mW</td><td>37.6</td><td>49.6</td></tr>
 </tbody>
 </table>
 </div>
@@ -975,7 +981,8 @@
     <!-- Interactive supplements (progressive enhancement; the static page is complete without them) -->
   <script src="assets/js/data.js?v=20260914-4"></script>
   <script src="assets/js/supplements.js?v=20260911-28"></script>
-  <script src="assets/js/figs.js?v=20260915-1"></script>
+  <script src="assets/js/paper-refs.js?v=20260929-1"></script>
+  <script src="assets/js/figs.js?v=20260929-1"></script>
 
   <script>
     (function () {

@@ -10,8 +10,8 @@ $(document).ready(function() {
     });
     // Override styles of the citations.
     document.querySelectorAll("d-cite").forEach(function(cite) {
-        cite.shadowRoot.querySelector("div > span")
-            .setAttribute("style", "color: var(--global-theme-color);");
+        // Colour only: figs.js sets the rest of this span's style (author-year text).
+        cite.shadowRoot.querySelector("div > span").style.color = "var(--global-theme-color)";
         cite.shadowRoot.querySelector("style").sheet
             .insertRule("ul li a {color: var(--global-text-color) !important; text-decoration: none;}");
         cite.shadowRoot.querySelector("style").sheet

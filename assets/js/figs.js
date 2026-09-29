@@ -512,97 +512,101 @@
     window.addEventListener("beforeprint", stop);
   })();
 
-  /* ---------- References: numbered entries + clickable citations ---------- */
+  /* ---------- References: the paper's author-year citations ----------
+     The paper (Springer Nature, author-year) cites as "(Lew et al. 2022)" and
+     lists its references alphabetically. window.PAPER_REFS, generated from the
+     paper's main.bbl by tools/paper_refs.py, holds its label and entry for each
+     key, so every citation here reads exactly as it does in the paper. Distill
+     still renders <d-cite> (and its hover box); only the "[n]" text is replaced,
+     and its numbered list gives way to the paper's list. */
   (function () {
-    // key -> number, by first appearance in document order (manuscript order)
-    var nums = {}, n = 0;
-    $$("d-cite").forEach(function (c) {
-      (c.getAttribute("key") || "").split(",").forEach(function (k) {
-        k = k.trim();
-        if (k && !(k in nums)) nums[k] = ++n;
-      });
-    });
-    var byNum = [];
-    Object.keys(nums).forEach(function (k) { byNum[nums[k]] = k; });
+    var R = window.PAPER_REFS || {};
+    function lab(k) { var r = R[k]; return r ? r.author + " " + r.year : k; }
 
-    // urls/dois from the bibliography file (for outbound links on entries)
-    var links = {};
-    // Read the same file the page's <d-bibliography> loads, wherever it is served from.
-    // In the Author Kit's layout this script runs inside <d-article>, before the
-    // <d-bibliography> element has been parsed, so look it up once parsing is done.
-    function loadBib() {
-      var bibEl = document.querySelector("d-bibliography[src]");
-      var bibSrc = bibEl ? bibEl.getAttribute("src") : "assets/bibliography/references.bib";
-      fetch(bibSrc).then(function (r) {
-        if (!r.ok) throw new Error("bibliography " + r.status);
-        return r.text();
-      }).then(function (bib) {
-        bib.split(/@(?=\w+\s*\{)/).forEach(function (chunk) {
-          var km = chunk.match(/^\w+\s*\{\s*([^,\s]+)\s*,/);
-          if (!km) return;
-          var um = chunk.match(/\burl\s*=\s*\{([^}]+)\}/i);
-          var dm = chunk.match(/\bdoi\s*=\s*\{([^}]+)\}/i);
-          var em = chunk.match(/\beprint\s*=\s*\{([^}]+)\}/i);
-          var u = null;
-          if (dm) u = "https://doi.org/" + dm[1].trim();
-          else if (um) u = um[1].trim();
-          else if (em) u = "https://arxiv.org/abs/" + em[1].trim();
-          if (u) links[km[1].trim()] = u;
-        });
-        enhanceSoon();
-      }).catch(enhanceSoon);
-    }
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadBib);
-    else loadBib();
-
-    function enhance() {
-      var cl = document.querySelector("d-citation-list");
-      if (!cl) return false;
-      var sr = cl.shadowRoot || cl;
-      var lis = sr.querySelectorAll("li");
-      if (!lis.length) return false;
-      try {
-        var st = sr.querySelector("style");
-        if (st && st.sheet) {
-          // Reference markers are left to distill's default decimal list, matching
-          // the official TMLR Beyond PDF template. (We used to override them with
-          // blue bracketed [n] counters here.)
-          st.sheet.insertRule("li.ref-flash{background:#fff3c4 !important}", 0);
-          st.sheet.insertRule("a.ref-out{color:#2698BA;text-decoration:none;margin-left:5px;font-size:0.85em}", 0);
+    // "Gholami et al. <d-cite>" already names the authors, so it reads
+    // "Gholami et al. (2022)", as \citeyearpar does in the paper.
+    function citeText(el) {
+      var keys = (el.getAttribute("key") || "").split(",").map(function (k) { return k.trim(); }).filter(Boolean);
+      var prev = el.previousSibling, before = "";
+      while (prev && before.length < 80) {
+        before = (prev.textContent || "") + before;
+        prev = prev.previousSibling;
+      }
+      before = before.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+      var r0 = R[keys[0]];
+      // Study columns of Tables 3-5 name the work: "Ulkar and Okman (2021)".
+      if (el.getAttribute("data-cite") === "textual" && r0) return r0.author + " (" + r0.year + ")";
+      // Text just before the citation that ends with the author label (or its
+      // tail, e.g. "Orășan et al." for "Lucan Orășan et al.") takes the year only.
+      if (keys.length === 1 && r0) {
+        var parts = r0.author.replace(/\u00a0/g, " ").split(" ");
+        for (var j = 0; j < parts.length; j++) {
+          var tail = parts.slice(j).join(" ");
+          if (tail.length > 2 && before.slice(-tail.length) === tail) return "(" + r0.year + ")";
         }
-      } catch (e) { }
-      lis.forEach(function (li, i) {
-        if (li.dataset.refDone) return;
-        li.dataset.refDone = "1";
-        var key = byNum[i + 1];
-        if (key && links[key]) {
+      }
+      return "(" + keys.map(lab).join("; ") + ")";
+    }
+    function label(el) {
+      if (!el.shadowRoot) return false;
+      var span = el.shadowRoot.querySelector(".citation-number");
+      if (!span) return false;
+      var t = citeText(el);
+      if (span.textContent !== t) span.textContent = t;
+      span.style.cssText = "font-size:inherit;font-family:inherit;top:0;margin:0 0 0 0.15em;" +
+                           "white-space:normal;display:inline;line-height:inherit;color:var(--global-theme-color)";
+      return true;
+    }
+    // Distill writes "[n]" through Cite.displayNumbers; write the label instead.
+    if (window.customElements) {
+      customElements.whenDefined("d-cite").then(function () {
+        var C = customElements.get("d-cite");
+        C.prototype.displayNumbers = function () { label(this); };
+        $$("d-cite").forEach(label);
+      });
+    }
+
+    // Cited keys, in the paper's (alphabetical) order.
+    var keys = {};
+    $$("d-cite").forEach(function (c) {
+      (c.getAttribute("key") || "").split(",").forEach(function (k) { k = k.trim(); if (k) keys[k] = 1; });
+    });
+    var cited = Object.keys(keys).sort(function (x, y) {
+      return ((R[x] || {}).order || 1e9) - ((R[y] || {}).order || 1e9);
+    });
+
+    // The paper's reference list replaces distill's numbered one.
+    function buildList() {
+      var app = document.querySelector("d-appendix");
+      if (!app || document.getElementById("paper-refs")) return !!app;
+      var sec = document.createElement("div");
+      sec.id = "paper-refs";
+      var h = document.createElement("h3");
+      h.textContent = "References";
+      var ol = document.createElement("ol");
+      cited.forEach(function (k) {
+        var r = R[k];
+        if (!r) return;
+        var li = document.createElement("li");
+        li.id = "ref-" + k;
+        li.innerHTML = r.html;
+        if (r.url && r.html.indexOf(r.url) === -1) {
           var a = document.createElement("a");
-          a.className = "ref-out";
-          a.href = links[key];
-          a.target = "_blank";
-          a.rel = "noopener";
+          a.className = "ref-out"; a.href = r.url; a.target = "_blank"; a.rel = "noopener";
           a.textContent = "[link ↗]";
           li.appendChild(a);
         }
+        ol.appendChild(li);
       });
+      sec.appendChild(h); sec.appendChild(ol);
+      var cl = app.querySelector("d-citation-list");
+      if (cl) { cl.style.display = "none"; cl.parentNode.insertBefore(sec, cl.nextSibling); }
+      else app.appendChild(sec);
       return true;
     }
-    var tries = 0, timer = null;
-    function enhanceSoon() {
-      if (timer) return;
-      timer = setInterval(function () {
-        if (enhance() || ++tries > 60) { clearInterval(timer); timer = null; }
-      }, 500);
-    }
-    enhanceSoon();
+    if (!buildList()) document.addEventListener("DOMContentLoaded", buildList);
 
-    function entryLi(key) {
-      var num = nums[key];
-      if (!num) return null;
-      var cl = document.querySelector("d-citation-list");
-      if (!cl) return null;
-      return (cl.shadowRoot || cl).querySelectorAll("li")[num - 1] || null;
-    }
+    function entryLi(key) { return document.getElementById("ref-" + key); }
     function jump(key) {
       var li = entryLi(key);
       if (!li) return false;
@@ -611,16 +615,9 @@
       setTimeout(function () { li.classList.remove("ref-flash"); }, 2200);
       return true;
     }
-    // Rendered text of a reference entry, for hover cards elsewhere on the page.
-    // The outbound "[link]" is stripped so the card stays self-contained.
-    function entryHTML(key) {
-      var li = entryLi(key);
-      if (!li) return null;
-      var c = li.cloneNode(true);
-      $$(".ref-out", c).forEach(function (a) { a.parentNode.removeChild(a); });
-      return c.innerHTML;
-    }
-    window.QSRefs = { number: function (k) { return nums[k] || null; }, jump: jump, entryHTML: entryHTML };
+    // Entry text for hover cards elsewhere on the page, without the outbound link.
+    function entryHTML(key) { return R[key] ? R[key].html : null; }
+    window.QSRefs = { label: lab, jump: jump, entryHTML: entryHTML };
 
     // clicking an inline citation jumps to its entry in the reference list
     document.addEventListener("click", function (e) {
@@ -659,7 +656,7 @@
           k = k.trim();
           var body = k && window.QSRefs && window.QSRefs.entryHTML(k);
           if (!body) return "";
-          return '<div class="cc-entry"><span class="cc-num">[' + window.QSRefs.number(k) + "]</span>" + body + "</div>";
+          return '<div class="cc-entry">' + body + "</div>";
         }).join("");
         if (!html) { hide(); return; }
         el.innerHTML = html;
