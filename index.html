@@ -613,6 +613,8 @@ ${academicLFI}, "${title}", 2026. [Online]. Available: ${window.location.href}
       }
     </style>
     <style>d-byline .byline > div:last-child:not(.authors-affiliations){display:none}</style>
+    <link rel="stylesheet" href="assets/css/project.css?v=20260929-2">
+    <meta name="color-scheme" content="dark">
   </head>
 
   <d-front-matter>
@@ -646,29 +648,33 @@ ${academicLFI}, "${title}", 2026. [Online]. Available: ${window.location.href}
 
   <body class="fixed-top-nav">
 
-    <!-- Header --><header>
-  <!-- Nav Bar -->
-  <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top">
-    <div class="container">
-      <a class="navbar-brand title font-weight-lighter" href="#">Quantization for Microcontrollers</a>
-      <!-- Navbar Toggle -->
-      <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar top-bar"></span>
-        <span class="icon-bar middle-bar"></span>
-        <span class="icon-bar bottom-bar"></span>
-      </button>
-
-      <div class="collapse navbar-collapse text-right" id="navbarNav">
-        <ul class="navbar-nav ml-auto flex-nowrap">
-          <li class="nav-item "><a class="nav-link" href="#abstract">Abstract</a></li>
-          <li class="nav-item "><a class="nav-link" href="#bibtex-container">Cite</a></li>
-          <li class="nav-item "><a class="nav-link" href="https://github.com/DaraVaram/QuantizationSurvey">GitHub</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <header class="pp-bar">
+  <div class="pp-bar-inner">
+    <a class="pp-bar-title" href="#top">Neural Network Quantization for Microcontrollers</a>
+    <nav>
+      <a href="#abstract">Abstract</a>
+      <a href="#introduction">Paper</a>
+      <a href="#bibtex-container">Cite</a>
+    </nav>
+  </div>
 </header>
+
+<section class="pp-hero" id="top">
+  <h1>Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications</h1>
+  <p class="pp-authors">
+    <span>Hamza A. Abushahla<sup>*</sup></span>
+    <span><a href="https://github.com/DaraVaram">Dara Varam</a><sup>*</sup></span>
+    <span>Ariel Justine N. Panopio<sup>*</sup></span>
+    <span>Mohamed I. AlHajri<sup>&dagger;</sup></span>
+  </p>
+  <p class="pp-affil">Department of Computer Science and Engineering, American University of Sharjah, Sharjah, UAE</p>
+  <p class="pp-notes"><sup>*</sup>Equal contribution &nbsp;&middot;&nbsp; <sup>&dagger;</sup>Corresponding author: <a href="mailto:mialhajri@aus.edu">mialhajri@aus.edu</a></p>
+  <div class="pp-buttons">
+    <a class="pp-btn pp-primary" href="#abstract">Read the survey</a>
+    <a class="pp-btn" href="https://github.com/DaraVaram/QuantizationSurvey"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+    <a class="pp-btn" href="#bibtex-container">BibTeX</a>
+  </div>
+</section>
 
 
     <!-- Content -->
@@ -682,7 +688,6 @@ ${academicLFI}, "${title}", 2026. [Online]. Available: ${window.location.href}
       <d-byline></d-byline>
 
       <d-article>
-        <p class="author-notes" style="font-size:0.8rem;color:rgba(0,0,0,0.6);margin:0 0 1rem;">* Equal contribution. &nbsp;† Corresponding author: <a href="mailto:mialhajri@aus.edu">mialhajri@aus.edu</a></p>
         <d-contents>
           <nav class="l-text figcaption toc-nav">
           <h3>Contents</h3>
@@ -1819,6 +1824,8 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   </pre>
     </d-article>
 
+    <footer class="pp-footer">&copy; 2026 Abushahla, Varam, Panopio, and AlHajri &middot; American University of Sharjah</footer>
+
     <button id="toTop" aria-label="Back to top" title="Back to top">&#8593;</button>
 
     <!-- Bootsrap & MDB scripts -->
@@ -1830,6 +1837,25 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
   <script src="assets/js/supplements.js?v=20260911-28"></script>
   <script src="assets/js/figs.js?v=20260915-1"></script>
 
+  <script>
+    (function () {
+      var hero = document.querySelector('.pp-hero');
+      function onScroll() { document.body.classList.toggle('pp-toc-on', hero.getBoundingClientRect().bottom < 0); }
+      window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+      var links = {}, heads = [];
+      document.querySelectorAll('d-contents nav a[href^="#"]').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+      Object.keys(links).forEach(function (id) { var h = document.getElementById(id); if (h) heads.push(h); });
+      var cur = null;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          if (cur) cur.classList.remove('pp-current');
+          cur = links[e.target.id]; cur.classList.add('pp-current');
+        });
+      }, { rootMargin: '0px 0px -75% 0px' });
+      heads.forEach(function (h) { io.observe(h); });
+    })();
+  </script>
   </body>
 
 </html>
