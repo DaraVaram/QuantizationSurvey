@@ -5,7 +5,7 @@
 <script>
   let thunk = () => {
     let trimIt = (e) => e.trim();
-    let getText = (e) => e.innerText;
+    let getText = (e) => e.innerText.replace(/[*†]/g, "");
     let splitNameAndFamilyName = (e) => {
       let splitted = e.split(" ");
 
@@ -31,11 +31,11 @@
               title.split(" ").slice(0, 3).join("")
       ).replace(" ", "").replace(/[\p{P}$+<=>^`|~]/gu, '').toLowerCase().trim();
       let bibtexTemplate = `
-@inproceedings{${bibtexTitleShorthand},
+@misc{${bibtexTitleShorthand},
   author = {${authorsBibtex}},
   title = {${title}},
   abstract = {${description}},
-  booktitle = {TMLR Beyond PDF},
+  howpublished = {Online edition},
   year = {2026},
   note = {${window.location.href}},
   url  = {${window.location.href}}
@@ -52,7 +52,7 @@
         else academicLFI = academicLFI[0];
       }
       let academicTemplate = `
-${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
+${academicLFI}, "${title}", 2026. [Online]. Available: ${window.location.href}
 `.trim();
       document.getElementById("bibtex-academic-attribution").innerText = academicTemplate;
     }
@@ -71,10 +71,10 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications | TMLR Beyond PDF</title>
+    <title>Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications</title>
     <meta name="author" content="  " />
     <meta name="description" content="The deployment of quantized neural networks on resource-constrained edge devices, such as microcontrollers (MCUs), introduces fundamental challenges in balancing model performance, computational complexity, and memory constraints. Tiny Machine Learning (TinyML) addresses these issues by jointly advancing machine learning algorithms, hardware architectures, and software optimization techniques to enable deep neural network inference on embedded systems. This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices. Particular emphasis is placed on the critical trade-offs between model performance and the capabilities of MCU-class hardware, including memory hierarchies, numerical representations, and accelerator support. The survey further reviews contemporary MCU hardware platforms, including ARM-based and RISC-V-based designs, as well as MCUs integrating neural processing units (NPUs) for low-precision inference, together with the supporting software stacks. In addition, we analyze real-world deployments of quantized models on MCUs and consolidate the application domains in which such systems are used. Finally, we discuss open challenges and outline promising future directions toward scalable, energy-efficient, and sustainable AI deployment on edge devices." />
-    <meta name="keywords" content="machine-learning, ml, deep-learning, TinyML, quantization, microcontrollers, TMLR, Transactions-on-Machine-Learning" />
+    <meta name="keywords" content="machine-learning, ml, deep-learning, TinyML, quantization, microcontrollers" />
 
     <!-- Bootstrap & MDB -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-DF7Zhf293AJxJNTmh5zhoYYIMs2oXitRfBjY+9L//AY=" crossorigin="anonymous">
@@ -89,7 +89,6 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/github.css" media="" id="highlight_theme_light" />
 
     <!-- Styles -->
-    <link rel="shortcut icon" href="assets/img/tmlr-favicon.ico"/>
     <link rel="stylesheet" href="assets/css/main.css?v=20260910w">
 
     <!-- jQuery -->
@@ -613,6 +612,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
         table.ptable { font-size: 0.66rem; }
       }
     </style>
+    <style>d-byline .byline > div:last-child:not(.authors-affiliations){display:none}</style>
   </head>
 
   <d-front-matter>
@@ -622,17 +622,10 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       "submitted": "",
       "published": "",
       "authors": [
-        {
-          "author": "Anonymous",
-          "authorURL": "",
-          "affiliations": [
-            {
-              "name": "Anonymous",
-              "url": ""
-            }
-          ]
-        }
-
+        {"author": "Hamza A. Abushahla*", "authorURL": "", "affiliations": [{"name": "Department of Computer Science and Engineering, American University of Sharjah, Sharjah, UAE", "url": "https://www.aus.edu"}]},
+        {"author": "Dara Varam*", "authorURL": "https://github.com/DaraVaram", "affiliations": [{"name": "Department of Computer Science and Engineering, American University of Sharjah, Sharjah, UAE", "url": "https://www.aus.edu"}]},
+        {"author": "Ariel Justine N. Panopio*", "authorURL": "", "affiliations": [{"name": "Department of Computer Science and Engineering, American University of Sharjah, Sharjah, UAE", "url": "https://www.aus.edu"}]},
+        {"author": "Mohamed I. AlHajri†", "authorURL": "", "affiliations": [{"name": "Department of Computer Science and Engineering, American University of Sharjah, Sharjah, UAE", "url": "https://www.aus.edu"}]}
       ],
       "katex": {
         "delimiters": [
@@ -657,7 +650,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
   <!-- Nav Bar -->
   <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top">
     <div class="container">
-      <a class="navbar-brand title font-weight-lighter" href="https://tmlr-beyond-pdf.org">TMLR Beyond PDF</a>
+      <a class="navbar-brand title font-weight-lighter" href="#">Quantization for Microcontrollers</a>
       <!-- Navbar Toggle -->
       <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="sr-only">Toggle navigation</span>
@@ -668,18 +661,9 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
 
       <div class="collapse navbar-collapse text-right" id="navbarNav">
         <ul class="navbar-nav ml-auto flex-nowrap">
-          <li class="nav-item ">
-            <a class="nav-link" href="https://tmlr-beyond-pdf.org/about">About</a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="https://tmlr-beyond-pdf.org/accepted/index.html">Accepted Papers</a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="https://tmlr-beyond-pdf.org/under_review/index.html">Under Review</a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="https://tmlr-beyond-pdf.org/submission-instructions">Submission Instructions</a>
-          </li>
+          <li class="nav-item "><a class="nav-link" href="#abstract">Abstract</a></li>
+          <li class="nav-item "><a class="nav-link" href="#bibtex-container">Cite</a></li>
+          <li class="nav-item "><a class="nav-link" href="https://github.com/DaraVaram/QuantizationSurvey">GitHub</a></li>
         </ul>
       </div>
     </div>
@@ -698,6 +682,7 @@ ${academicLFI}, "${title}", TMLR Beyond PDF, 2026.
       <d-byline></d-byline>
 
       <d-article>
+        <p class="author-notes" style="font-size:0.8rem;color:rgba(0,0,0,0.6);margin:0 0 1rem;">* Equal contribution. &nbsp;† Corresponding author: <a href="mailto:mialhajri@aus.edu">mialhajri@aus.edu</a></p>
         <d-contents>
           <nav class="l-text figcaption toc-nav">
           <h3>Contents</h3>
