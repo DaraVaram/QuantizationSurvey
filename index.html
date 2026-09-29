@@ -2,68 +2,6 @@
 <!-- _layouts/distill.html -->
 <html>
 
-<script>
-  let thunk = () => {
-    let trimIt = (e) => e.trim();
-    let getText = (e) => e.innerText.replace(/[*†]/g, "");
-    let splitNameAndFamilyName = (e) => {
-      let splitted = e.split(" ");
-
-      let fnames = splitted.slice(0, -1).join(" ");
-      let lname = splitted.at(-1);
-
-      return [lname, fnames];
-    }
-
-    let authors = Array.from(document.getElementsByClassName("author")).map(getText).map(trimIt).map(splitNameAndFamilyName);
-    let firstAuthorLName = authors.length ? authors[0][0] : "Anonymous";
-    let affiliationElements = Array.from(document.getElementsByClassName("affiliation")).filter(e => e.nodeName === "P").map(getText).map(trimIt);
-
-    // getting stuff directly from Jekyll
-    let publishedWhen = "2026";
-    let title = "Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications";
-    let description = "The deployment of quantized neural networks on resource-constrained edge devices, such as microcontrollers (MCUs), introduces fundamental challenges in balancing model performance, computational complexity, and memory constraints. Tiny Machine Learning (TinyML) addresses these issues by jointly advancing machine learning algorithms, hardware architectures, and software optimization techniques to enable deep neural network inference on embedded systems. This survey provides a hardware-oriented perspective on neural network quantization, systematically reviewing the quantization methods most relevant to MCUs and extreme-edge devices. Particular emphasis is placed on the critical trade-offs between model performance and the capabilities of MCU-class hardware, including memory hierarchies, numerical representations, and accelerator support. The survey further reviews contemporary MCU hardware platforms, including ARM-based and RISC-V-based designs, as well as MCUs integrating neural processing units (NPUs) for low-precision inference, together with the supporting software stacks. In addition, we analyze real-world deployments of quantized models on MCUs and consolidate the application domains in which such systems are used. Finally, we discuss open challenges and outline promising future directions toward scalable, energy-efficient, and sustainable AI deployment on edge devices.";
-
-    {
-      let authorsBibtex = authors.length ? authors.map(e => `${e[0]}, ${e[1]}`).join(" and ") : "Anonymous";
-      let bibtexTitleShorthand = (firstAuthorLName +
-              "2026" +
-              title.split(" ").slice(0, 3).join("")
-      ).replace(" ", "").replace(/[\p{P}$+<=>^`|~]/gu, '').toLowerCase().trim();
-      let bibtexTemplate = `
-@misc{${bibtexTitleShorthand},
-  author = {${authorsBibtex}},
-  title = {${title}},
-  abstract = {${description}},
-  howpublished = {Online edition},
-  year = {2026},
-  note = {${window.location.href}},
-  url  = {${window.location.href}}
-}
-  `.trim();
-      document.getElementById("bibtex-box").innerText = bibtexTemplate;
-    }
-
-    {
-      let academicLFI = authors.length ? authors.map(e => e[0]) : ["Anonymous"];
-      {
-        if (academicLFI.length > 2) academicLFI = academicLFI[0] + ", et al.";
-        else if (academicLFI.length == 2) academicLFI = academicLFI[0] + " & " + academicLFI[1];
-        else academicLFI = academicLFI[0];
-      }
-      let academicTemplate = `
-${academicLFI}, "${title}", 2026. [Online]. Available: ${window.location.href}
-`.trim();
-      document.getElementById("bibtex-academic-attribution").innerText = academicTemplate;
-    }
-  };
-
-  document.addEventListener('readystatechange', function(event) {
-    if (document.readyState === "complete") {
-      thunk();
-    }
-  });
-</script>
 
   <head>    <!-- Metadata, OpenGraph and Schema.org -->
 
@@ -671,6 +609,7 @@ ${academicLFI}, "${title}", 2026. [Online]. Available: ${window.location.href}
   <p class="pp-notes"><sup>*</sup>Equal contribution &nbsp;&middot;&nbsp; <sup>&dagger;</sup>Corresponding author: <a href="mailto:mialhajri@aus.edu">mialhajri@aus.edu</a></p>
   <div class="pp-buttons">
     <a class="pp-btn pp-primary" href="#abstract">Read the survey</a>
+    <a class="pp-btn" href="https://arxiv.org/abs/2508.15008">arXiv</a>
     <a class="pp-btn" href="https://github.com/DaraVaram/QuantizationSurvey"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
     <a class="pp-btn" href="#bibtex-container">BibTeX</a>
   </div>
@@ -1814,14 +1753,18 @@ s = \frac{\text{max}(\mathbf{x}) - \text{min}(\mathbf{x})}{2^b - 1},
 
     <d-article id="bibtex-container" class="related highlight">
       For attribution in academic contexts, please cite this work as
-      <pre id="bibtex-academic-attribution">
-        PLACEHOLDER FOR ACADEMIC ATTRIBUTION
-  </pre>
+      <pre id="bibtex-academic-attribution">H. A. Abushahla, D. Varam, A. J. N. Panopio, and M. I. AlHajri, "Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications," arXiv preprint arXiv:2508.15008, 2026.</pre>
 
       BibTeX citation
-      <pre id="bibtex-box">
-        PLACEHOLDER FOR BIBTEX
-  </pre>
+      <pre id="bibtex-box">@misc{abushahla2026neuralnetworkquantizationmicrocontrollers,
+      title={Neural Network Quantization for Microcontrollers: A Comprehensive Survey of Methods, Platforms, and Applications}, 
+      author={Hamza A. Abushahla and Dara Varam and Ariel Justine N. Panopio and Mohamed I. AlHajri},
+      year={2026},
+      eprint={2508.15008},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2508.15008}, 
+}</pre>
     </d-article>
 
     <footer class="pp-footer">&copy; 2026 Abushahla, Varam, Panopio, and AlHajri &middot; American University of Sharjah</footer>
