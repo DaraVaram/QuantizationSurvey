@@ -1318,7 +1318,7 @@
 <div class="ptable-wrap l-page" id="table-6">
 <table class="ptable">
 <caption><b>Table 6:</b> Extreme low-bit representatives, with calculated weight-storage reduction.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th><th>ΔW (MB)</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>ΔW</th></tr></thead>
 <tbody>
 <tr><td>CBCN (K=4) <d-cite key="liu2019circulant"></d-cite></td><td>QAT</td><td>1/1</td><td>69.3</td><td>61.4</td><td>−7.9</td><td>−43.3</td></tr>
 <tr><td>CI-BCNN (add) <d-cite key="wang2019learning"></d-cite></td><td>QAT</td><td>1/1</td><td>69.3</td><td>59.9</td><td>−9.4</td><td>−42.6</td></tr>
@@ -1339,7 +1339,7 @@
 <div class="ptable-wrap l-page" id="table-7">
 <table class="ptable">
 <caption><b>Table 7:</b> Mixed-precision accuracy and weight-storage reduction.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th><th>ΔW (MB)</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>ΔW</th></tr></thead>
 <tbody>
 <tr><td>InfoQ <d-cite key="akbulut2026infoq"></d-cite></td><td>QAT</td><td>3.2/3.9</td><td>70.6</td><td>70.0</td><td>−0.6</td><td>−42.4</td></tr>
 <tr><td>LIMPQ <d-cite key="tang2022mixed"></d-cite></td><td>QAT</td><td>4MP/4MP</td><td>70.5</td><td>70.8</td><td>+0.3</td><td>–</td></tr>
@@ -1354,7 +1354,7 @@
 <div class="ptable-wrap l-page" id="table-8">
 <table class="ptable">
 <caption><b>Table 8:</b> Hardware-aware accuracy and resource costs. MobileNet changes correspond to minimum storage reductions under the reported 2 MB weight-memory limit.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th><th>Network</th><th>ΔW (MB)</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>Network</th><th>ΔW</th></tr></thead>
 <tbody>
 <tr><td>HAQ <d-cite key="rusci2020"></d-cite></td><td>QAT</td><td>5/32</td><td>72.0</td><td>71.4</td><td>−0.6</td><td>MobileNetV2</td><td>−11.7</td></tr>
 <tr><td><d-cite key="rusci2020" data-cite="textual"></d-cite></td><td>QAT</td><td>7.5/32</td><td>72.0</td><td>70.6</td><td>−1.4</td><td>MobileNetV2</td><td>−11.7</td></tr>
@@ -1369,7 +1369,7 @@
 <div class="ptable-wrap l-page" id="table-9">
 <table class="ptable">
 <caption><b>Table 9:</b> Redistribution representatives.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th></tr></thead>
 <tbody>
 <tr><td>BR on LSQ <d-cite key="han2021improving"></d-cite></td><td>QAT</td><td>4/4</td><td>70.5</td><td>70.8</td><td>+0.3</td></tr>
 <tr><td>R2 + EWGS <d-cite key="kundu2023r2"></d-cite></td><td>QAT</td><td>4/4</td><td>70.2</td><td>70.2</td><td>0.0</td></tr>
@@ -1384,7 +1384,7 @@
 <div class="ptable-wrap l-page" id="table-10">
 <table class="ptable">
 <caption><b>Table 10:</b> Quantizer-optimization representatives at 4/4.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th><th>Level spacing</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>Level spacing</th></tr></thead>
 <tbody>
 <tr><td>LSQ <d-cite key="esser2020lsq"></d-cite></td><td>QAT</td><td>4/4</td><td>70.5</td><td>71.1</td><td>+0.6</td><td>Uniform</td></tr>
 <tr><td>APoT <d-cite key="li2020apot"></d-cite></td><td>QAT</td><td>4/4</td><td>70.2</td><td>70.7</td><td>+0.5</td><td>Nonuniform</td></tr>
@@ -1404,7 +1404,7 @@
 <div class="ptable-wrap l-page" id="table-11">
 <table class="ptable">
 <caption><b>Table 11:</b> Data-agnostic representatives at 4/4.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th><th>Synthetic inputs</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>Synthetic inputs</th></tr></thead>
 <tbody>
 <tr><td>GDFQ <d-cite key="xu2020generative"></d-cite></td><td>QAT</td><td>4/4</td><td>71.5</td><td>60.6</td><td>−10.9</td><td>Yes</td></tr>
 <tr><td>SQuant <d-cite key="squant"></d-cite></td><td>PTQ</td><td>4/4</td><td>71.5</td><td>66.1</td><td>−5.3</td><td>No</td></tr>
@@ -1420,7 +1420,7 @@
 <div class="ptable-wrap l-page" id="table-12">
 <table class="ptable">
 <caption><b>Table 12:</b> Training representatives at 8/8 with eight-bit gradients.</caption>
-<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th><th>Gradient bits</th><th>Execution</th></tr></thead>
+<thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>Gradient bits</th><th>Execution</th></tr></thead>
 <tbody>
 <tr><td>DDSQ+UDPS <d-cite key="wang2023"></d-cite></td><td>QAT</td><td>8/8</td><td>70.1</td><td>69.7</td><td>−0.3</td><td>8</td><td>Simulation</td></tr>
 <tr><td>Unified INT8 <d-cite key="zhu2020"></d-cite></td><td>QAT</td><td>8/8</td><td>70.3</td><td>69.7</td><td>−0.6</td><td>8</td><td>INT8 kernels</td></tr>
@@ -1435,7 +1435,7 @@
 <div class="ptable-wrap l-page" id="table-13">
 <table class="ptable">
 <caption><b>Table 13:</b> Selected outcomes from seven quantization families.</caption>
-<thead><tr><th>Family</th><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>Δ (pp)</th></tr></thead>
+<thead><tr><th>Family</th><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th></tr></thead>
 <tbody>
 <tr><td class="fam" rowspan="2">Extreme low-bit</td><td>HWGQ <d-cite key="cai2017deep"></d-cite></td><td>QAT</td><td>1/2</td><td>67.3</td><td>59.6</td><td>−7.7</td></tr>
 <tr><td>IR-Net <d-cite key="qin2020forward"></d-cite></td><td>QAT</td><td>1/32</td><td>69.6</td><td>66.5</td><td>−3.1</td></tr>

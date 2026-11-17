@@ -124,8 +124,10 @@ class Paper:
     def math(self, m):
         t = m.strip()
         # letters are variables: leave them to MathJax, as the site's own captions do
-        if re.search(r"[A-Za-z]", re.sub(r"\\(Delta|times|pm|approx|dagger|ddagger|leq|geq|sim|cdot)\b", "", t)) \
-                and not re.fullmatch(r"\\Delta\s*W", t):
+        t = re.sub(r"\\mathrm\{(\w+)\}", r"\1", t)
+        if re.fullmatch(r"\\Delta\s*(W|Acc)", t):          # the column symbols of Tables 4-13
+            return "\u0394" + t.replace("\\Delta", "").strip()
+        if re.search(r"[A-Za-z]", re.sub(r"\\(Delta|times|pm|approx|dagger|ddagger|leq|geq|sim|cdot)\b", "", t)):
             return "\\(" + m + "\\)"
         rep = {r"\Delta": "\u0394", r"\times": "\u00d7", r"\pm": "\u00b1", r"\approx": "\u2248",
                r"\leq": "\u2264", r"\geq": "\u2265", r"\alpha": "\u03b1", r"\beta": "\u03b2",
