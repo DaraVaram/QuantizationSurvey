@@ -637,10 +637,11 @@ def build(p):
         blocks[lab] = ('<figure class="pfig" id="figure-%s">\n  <div style="max-width: %s; margin: 0 auto;">%s</div>\n'
                        '  <div class="fig-hint">%s</div>\n  <figcaption><b>Figure %s:</b> %s</figcaption>\n</figure>'
                        % (n, width, fn(p), hint, n, p.caption(lab)))
-    for lab in ["tab:keywords", "tab:eligibility", "tab:family-reading", "tab:family-tradeoffs",
-                "tab:family-binary", "tab:family-allocation", "tab:family-hardware", "tab:family-redistribution",
+    # Tables 2-5 (search keywords, eligibility, reporting conventions, family trade-offs)
+    # and Table 14 (error models) are reading aids that stay in the paper only.
+    for lab in ["tab:family-binary", "tab:family-allocation", "tab:family-hardware", "tab:family-redistribution",
                 "tab:family-quantizer", "tab:family-datafree", "tab:family-training", "tab:family-across",
-                "tab:error-models", "tab:2", "tab:3", "tab:4", "tab:5"]:
+                "tab:2", "tab:3", "tab:4", "tab:5"]:
         t = p.table_html(lab, TABLE_OPTS.get(lab))
         if lab == "tab:2":
             t = re.sub(r'(<td class="fam"[^>]*>[^<]*</td>|<tr[^>]*>)<td>', r'\1<td class="t2-plat">', t)

@@ -751,38 +751,7 @@
 
 <h2 id="methodology">4&ensp;Survey Methodology</h2>
 
-<h3 id="method-search">4.1&ensp;Search Strategy</h3>
-
-<!-- paper:tab:keywords -->
-<div class="ptable-wrap l-page" id="table-2">
-<table class="ptable">
-<caption><b>Table 2:</b> Keywords of the second search step. Each query combines keywords from one or more groups, and all but one also add “neural network” or “deep learning”, as in (quantization OR quantized) AND (microcontroller OR MCU OR TinyML) AND (“neural network” OR “deep learning”). The names added in the third step were drawn from the records found in the first two steps.</caption>
-<thead><tr><th>Methods</th><th>Formats</th><th>Platforms and tools</th><th>Deployments</th></tr></thead>
-<tbody>
-<tr><td>quantization, quantized, low-bit, low-precision</td><td>number format, numerical representation, number representation, data format, number system, floating-point, fixed-point, reduced precision</td><td>microcontroller, MCU, TinyML, inference, runtime, compiler, hardware</td><td>quantization, quantized, deployment, on-device, latency, energy, power, memory</td></tr>
-</tbody>
-</table>
-</div>
-<!-- /paper:tab:keywords -->
-
 <h3 id="method-eligibility">4.2&ensp;Eligibility and Study Selection</h3>
-
-<!-- paper:tab:eligibility -->
-<div class="ptable-wrap l-page" id="table-3">
-<table class="ptable">
-<caption><b>Table 3:</b> Eligibility criteria. A record is included when it meets the criteria for all records and the inclusion criteria of at least one stream, and none of the exclusion criteria that apply to it.</caption>
-<thead><tr><th>Applies to</th><th>Include</th><th>Exclude</th></tr></thead>
-<tbody>
-<tr><td>All records</td><td><ul class="cell-list"><li>Published from January 2015 to November 2026</li><li>A peer-reviewed paper, a thesis, or an arXiv preprint with full text (for platforms, official vendor or toolchain documentation also counts)</li></ul></td><td><ul class="cell-list"><li>Surveys and reviews</li><li>Full text unavailable, or claims that the full text does not support</li><li>A preprint whose peer-reviewed version is included</li><li>A preprint rejected at peer review with no published version</li></ul></td></tr>
-<tr><td>Methods (Sec. 5)</td><td><ul class="cell-list"><li>Proposes a new way of addressing quantization error in DNN inference or training, or changes what an existing mechanism minimizes or acts on</li><li>Evaluates it on DNNs</li></ul></td><td><ul class="cell-list"><li>Applies an existing method unchanged</li><li>Changes only the solver, schedule, calibration data, granularity, or target model of an existing mechanism</li><li>An analysis, benchmark, verification, or cost study that proposes no mechanism</li><li>Not a DNN quantization method</li></ul></td></tr>
-<tr><td>Formats (Sec. 6)</td><td><ul class="cell-list"><li>Proposes a number format for DNN weights, activations, or arithmetic, or is the first to evaluate such a format on DNNs or in arithmetic at 16 bits or fewer</li><li>Proposes a general-purpose format of 16 bits or fewer that allocates precision or range differently from fixed-point and IEEE 754, with a published implementation or arithmetic evaluation at those widths</li></ul></td><td><ul class="cell-list"><li>Another implementation or evaluation of an existing format</li><li>A variant that changes an encoding detail of an existing format, or adds a mode to it, without allocating precision or range differently</li><li>No DNN evaluation or DNN-specific design, and no implementation or arithmetic evaluation at 16 bits or fewer</li></ul></td></tr>
-<tr><td>Platforms (Sec. 7.1)</td><td><ul class="cell-list"><li>An MCU-class device with documented neural network inference support, namely an Arm Cortex-M MCU, a RISC-V MCU (including one prototyped as a softcore on an FPGA), or an MCU with an integrated NPU</li></ul></td><td><ul class="cell-list"><li>Application processors, single-board computers, and devices that run a full operating system</li><li>A research system on chip (SoC) that no included deployment runs on and whose instruction set and accelerator type repeat those of a device already considered</li></ul></td></tr>
-<tr><td>Tools (Sec. 7.2)</td><td><ul class="cell-list"><li>A runtime, compiler, or kernel library for MCU-class devices that is released as a tool or used by an included deployment</li></ul></td><td><ul class="cell-list"><li>Desktop-only tools</li><li>A research runtime, compiler, or kernel library with no release that no included deployment uses</li></ul></td></tr>
-<tr><td>Deployments (Sec. 8)</td><td><ul class="cell-list"><li>A quantized neural network run on an MCU-class device, with an identifiable quantization method</li><li>At least one task metric and at least two cost metrics measured on that device, out of latency per inference (or per frame), power or energy, and memory</li></ul></td><td><ul class="cell-list"><li>Run on higher-end boards, such as Raspberry Pi or Jetson, or offloaded to a host</li><li>Simulation or emulation only</li><li>Fewer than two measured cost metrics, or only estimated or relative ones</li></ul></td></tr>
-</tbody>
-</table>
-</div>
-<!-- /paper:tab:eligibility -->
 
 <!-- paper:fig:prisma -->
 <figure class="pfig" id="figure-10">
@@ -1342,44 +1311,7 @@
 
 <h3 id="advanced-comparison">5.8&ensp;Comparison Across Families</h3>
 
-<!-- paper:tab:family-reading -->
-<div class="ptable-wrap l-page" id="table-4">
-<table class="ptable">
-<caption><b>Table 4:</b> Reporting conventions of the comparison tables.</caption>
-<thead><tr><th>Item</th><th>How we report it</th></tr></thead>
-<tbody>
-<tr><td>Settings compared</td><td>Results are compared only within the same dataset, network, and regime, at bit-widths that several methods report.</td></tr>
-<tr class="thin"><td>One result per method</td><td>Each method appears once per setting, with its most accurate reported result.</td></tr>
-<tr class="thin"><td>Mixed precision</td><td>A mixed-precision result uses different resources from a uniform result of the same average width, so it is read as a different trade-off, not as a competitor at an equal budget.</td></tr>
-<tr class="thin"><td>Regime</td><td>PTQ and QAT results are compared separately.</td></tr>
-<tr class="thin"><td>Precision (W/A)</td><td>Bits for weights and activations, where 32 means FP32 and T means ternary. A mixed-precision method shows the average width its source reports, or its nominal width marked MP when the source gives no average.</td></tr>
-<tr class="thin"><td>Accuracy change (Δ)</td><td>Quantized top-1 accuracy minus the FP32 accuracy reported by the same source, in percentage points.</td></tr>
-<tr class="thin"><td>FP32 weight size</td><td>Size of the network's weights at 32 bits each. ResNet-18 has 46.7 MB, MobileNetV1 16.8 MB, and MobileNetV2 13.9 MB.</td></tr>
-<tr class="thin"><td>Weight-size change (ΔW)</td><td>Quantized weight size minus FP32 weight size, in MB. A negative value means the quantized model is smaller.</td></tr>
-</tbody>
-</table>
-</div>
-<!-- /paper:tab:family-reading -->
-
 <h4 id="family-within">5.8.1&ensp;Within-Family Comparisons</h4>
-
-<!-- paper:tab:family-tradeoffs -->
-<div class="ptable-wrap l-page" id="table-5">
-<table class="ptable">
-<caption><b>Table 5:</b> Trade-off of each family and the columns added to its comparison table.</caption>
-<thead><tr><th>Family</th><th>Trade-off</th><th>Added columns</th></tr></thead>
-<tbody>
-<tr><td>Extreme low-bit</td><td>Accuracy against storage and arithmetic cost as the bit-width falls.</td><td>ΔW, the change in weight storage from FP32.</td></tr>
-<tr class="thin"><td>Mixed precision</td><td>Accuracy against storage, by giving different layers different bit-widths.</td><td>ΔW for each allocation.</td></tr>
-<tr class="thin"><td>Hardware-aware</td><td>Accuracy under a memory or hardware objective set for a given network.</td><td>Network, the model whose FP32 size is the reference. ΔW, the change in weight storage, or the smallest reduction that a memory limit implies.</td></tr>
-<tr class="thin"><td>Redistribution</td><td>Accuracy at a fixed bit-width, by reshaping the weights or activations before an existing quantizer rounds them.</td><td>None.</td></tr>
-<tr class="thin"><td>Quantizer optimization</td><td>Accuracy at a fixed bit-width, by designing or optimizing the quantizer itself.</td><td>Level spacing, whether the levels are uniform or nonuniform, which decides the arithmetic the hardware needs.</td></tr>
-<tr class="thin"><td>Data-agnostic</td><td>Accuracy without the original training data.</td><td>Synthetic inputs, whether the method generates inputs to calibrate with.</td></tr>
-<tr class="thin"><td>Integer and quantized training</td><td>Accuracy when the backward pass and the training arithmetic also run at low precision.</td><td>Gradient bits, the precision of the backward pass. Execution, whether the integer arithmetic is simulated or runs on integer kernels.</td></tr>
-</tbody>
-</table>
-</div>
-<!-- /paper:tab:family-tradeoffs -->
 
 <!-- paper:tab:family-binary -->
 <div class="ptable-wrap l-page" id="table-6">
@@ -1542,27 +1474,6 @@
 </table>
 </div>
 <!-- /paper:tab:family-across -->
-
-<h4 id="family-synthesis">5.8.3&ensp;Choosing a Method</h4>
-
-<!-- paper:tab:error-models -->
-<div class="ptable-wrap l-page" id="table-14">
-<table class="ptable">
-<caption><b>Table 14:</b> Error each method targets, what it needs, and its main limitation.</caption>
-<thead><tr><th>Method and example</th><th>Error it targets and how</th><th>What it needs</th><th>Main limitation</th></tr></thead>
-<tbody>
-<tr><td>Extreme low-bit<br> IR-Net <d-cite key="qin2020forward"></d-cite></td><td>Lost information and coarse gradients at one bit. Balanced binary weights carry as much information as possible.</td><td>Full training set</td><td>Gradients estimated through the binarization cannot recover the information it removes.</td></tr>
-<tr class="thin"><td>Sensitivity-based mixed precision<br> HAWQ <d-cite key="hawq"></d-cite></td><td>Layers differ in sensitivity. Hessian curvature sets each layer's bit-width under a resource budget.</td><td>Loss surface of the model</td><td>Curvature is a local approximation that becomes less reliable for large changes in bit-width.</td></tr>
-<tr class="thin"><td>Hardware-constrained mixed precision<br> HAWQ-V3 <d-cite key="yao2021hawq"></d-cite></td><td>FLOPs do not predict speed on the device, so bit-widths are tuned against measured latency.</td><td>Device profiling and a cost model</td><td>The best allocation depends on what the hardware supports and on how accurate the latency lookup is.</td></tr>
-<tr class="thin"><td>Distribution shaping<br> BR, KURE <d-cite key="han2021improving,chmiel2020robust"></d-cite></td><td>Weights spread poorly over the grid. A regularizer moves them toward a distribution that quantizes well.</td><td>Full training set</td><td>A regularizer tuned for one bit-width rarely carries over to mixed precision.</td></tr>
-<tr class="thin"><td>Reconstruction-based PTQ<br> AdaRound, QDrop <d-cite key="nagel2020adaround,wei2022qdrop"></d-cite></td><td>Rounding and activation errors that build up across layers. The output of each layer or block is matched to FP32.</td><td>Small unlabeled calibration set</td><td>Matching one layer or block at a time is only a proxy for the task and can drift from it.</td></tr>
-<tr class="thin"><td>QAT with learned quantizers<br> LSQ <d-cite key="esser2020lsq"></d-cite></td><td>The balance between clipping and rounding error. Step sizes and weights are learned together from the task loss.</td><td>Labeled training set</td><td>Learned steps do not remove the gradient mismatch or the weight oscillation of training through rounding.</td></tr>
-<tr class="thin"><td>Data-free quantization<br> SQuant, GDFQ <d-cite key="squant,xu2020generative"></d-cite></td><td>Missing calibration data. GDFQ synthesizes inputs with a generator, and SQuant bounds the error analytically with the Hessian.</td><td>Weights and batch-normalization statistics</td><td>Synthetic inputs miss the variety and long tail of real data.</td></tr>
-<tr class="thin"><td>Fully quantized training<br> Unified INT8 <d-cite key="zhu2020"></d-cite></td><td>Memory and noise in the backward pass. Gradients are quantized along with weights and activations.</td><td>Full training set</td><td>Quantized gradients make every update noisy, which can destabilize training and slow convergence unless the gradients are stabilized.</td></tr>
-</tbody>
-</table>
-</div>
-<!-- /paper:tab:error-models -->
 
 <h2 id="deployment-stack">7&ensp;Hardware and Software Deployment Stack</h2>
 

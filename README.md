@@ -38,7 +38,7 @@ python3 tools/paper_sync.py ../QuantizationSurveyResponse   # after building the
 
 It reads `main.tex`, the numbering in `response.aux`, `prisma_counts.tex`
 and `fig_years.tex`, and rewrites every block of `index.html` between
-`<!-- paper:LABEL -->` markers (Tables 2-18 and Figures 10-12), every figure
+`<!-- paper:LABEL -->` markers (Tables 6-13 and 15-18, Figures 10-12), every figure
 caption, and the `hardware` and `apps` data in `assets/js/data.js`. Figure
 and table anchors (`#figure-N`, `#table-N`) carry the paper's numbers, which
 is what the PDF links to. Refresh the citation labels with
