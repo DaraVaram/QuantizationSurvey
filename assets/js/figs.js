@@ -356,39 +356,31 @@
   (function () {
     var svg = $("#figure-14 svg");
     if (!svg) return;
-    var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
-    var DEFAULT = { "1": "2", "2": "3", "n": "b" };
-    var state = { "1": "2", "2": "3", "n": "b" };
+    // the paper's colours (Fig. 14): fills per bit-width, black outlines
+    var ROW = { "2": ["#CFE4FF", "#000000"], "3": ["#FFDDA6", "#000000"], "b": ["#C3F7C8", "#000000"] };
+    // as drawn in the paper: Layers 1 and 2 decided, Layer n still open ("all")
+    var DEFAULT = { "1": "2", "2": "3", "n": "all" };
+    var state = { "1": "2", "2": "3", "n": "all" };
     var cells = $$(".f6-cell", svg);
     function cellPos(col, row) {
       var g = cells.filter(function (c) { return c.getAttribute("data-col") === col && c.getAttribute("data-row") === row; })[0];
       return g ? { x: +g.getAttribute("data-x"), y: +g.getAttribute("data-y") } : null;
     }
-    /* Layer 2 -> Layer n routing. Continuation ellipses sit at x=676 on every
-       row, so the connector must never approach a cell edge-on from the left,
-       and the layer captions sit below y=800, so it must never dip past the
-       grid either. Every route therefore leaves Layer 2 through its right
-       edge, drops into the empty corridor at x=624, runs along a clear band
-       between two rows, and enters Layer n vertically through its nearest free
-       edge. No combination crosses a cell, an ellipsis or a caption. */
-    var CORRIDOR = 624, ENTRY = 724;
-    var LANE = { "2": 604, "3": 690, "b": 690 };   // clear horizontal bands between the rows
-    var EDGE = { "2": 594, "3": 669, "b": 734 };   // stop just outside the target's edge
     function render() {
       cells.forEach(function (g) {
         var col = g.getAttribute("data-col"), row = g.getAttribute("data-row");
         var rect = g.querySelector("rect");
-        var active = state[col] === row;
+        var active = state[col] === row || state[col] === "all";
         if (active) {
-          rect.setAttribute("fill", rect.getAttribute("data-fill"));
-          rect.setAttribute("stroke", rect.getAttribute("data-border"));
-          rect.setAttribute("stroke-width", "2.4");
+          rect.setAttribute("fill", ROW[row][0]);
+          rect.setAttribute("stroke", "#000");
+          rect.setAttribute("stroke-width", "1.8");
           rect.removeAttribute("stroke-dasharray");
         } else {
           rect.setAttribute("fill", "#fff");
-          rect.setAttribute("stroke", "#9a9a9a");
-          rect.setAttribute("stroke-width", "1.6");
-          rect.setAttribute("stroke-dasharray", "3 4");
+          rect.setAttribute("stroke", "#000");
+          rect.setAttribute("stroke-width", "1.8");
+          rect.setAttribute("stroke-dasharray", "2 4");
         }
       });
       // selection arrows
@@ -398,17 +390,10 @@
               '" fill="none" stroke="#000" stroke-width="2" marker-end="url(#f6a)"/>';
       h += '<path d="M' + (p1.x + 104) + "," + (p1.y + 25) + " L457," + (p1.y + 25) + " L457," + (p2.y + 25) +
            " L" + (p2.x - 6) + "," + (p2.y + 25) + '" fill="none" stroke="#000" stroke-width="2" marker-end="url(#f6a)"/>';
-      var laneY = LANE[state.n], edgeY = EDGE[state.n];
-      h += '<path d="M' + (p2.x + 104) + "," + (p2.y + 25) +
-           " L" + CORRIDOR + "," + (p2.y + 25) +
-           " L" + CORRIDOR + "," + laneY +
-           " L" + ENTRY + "," + laneY +
-           " L" + ENTRY + "," + edgeY +
-           '" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#f6a)"/>';
       arr.innerHTML = h;
       // network node tint
       function tint(sel, key) {
-        var c = ROW[key] || ["#ffffff", "#000000"];
+        var c = ROW[key] || ["#ffffff", "#000000"];   // an open layer stays white
         $$(sel, svg).forEach(function (n) { n.setAttribute("fill", c[0]); n.setAttribute("stroke", c[1]); });
       }
       tint(".f6-nodeL1", state["1"]);
@@ -452,9 +437,10 @@
     });
     function syncA11y() {
       cells.forEach(function (c) {
-        var on = state[c.getAttribute("data-col")] === c.getAttribute("data-row");
+        var col = c.getAttribute("data-col"), on = state[col] === c.getAttribute("data-row");
+        var stop = on || (state[col] === "all" && c.getAttribute("data-row") === "2");
         c.setAttribute("aria-checked", on ? "true" : "false");
-        c.setAttribute("tabindex", on ? "0" : "-1");     // roving tab stop per column
+        c.setAttribute("tabindex", stop ? "0" : "-1");     // roving tab stop per column
       });
     }
     var reset = $("#f6-reset", svg);
