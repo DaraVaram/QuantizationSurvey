@@ -1092,7 +1092,7 @@
         }
       }
       if (Q.dead && Q.subject && byKey[Q.subject]) {
-        var pin = pinByLabel(/^n:/.test(Q.subject) ? "8.4" : "8.3"), src = byKey[Q.subject];
+        var pin = pinByLabel(/^n:/.test(Q.subject) ? "10.4" : "10.2"), src = byKey[Q.subject];
         if (pin) { var p2 = rel(pin), s = rel(src), my2 = (s.cy + p2.cy) / 2;
           overlay.appendChild(mk("path", { d: "M" + s.cx + "," + s.cy + " C" + s.cx + "," + my2 + " " + p2.cx + "," + my2 + " " + p2.cx + "," + (p2.y - 2), "class": "stk-path-broken" })); }
       }
@@ -1151,9 +1151,9 @@
         var lbl = c.closest(".stk-row") && $(".stk-rowlabel", c.closest(".stk-row")); if (lbl) lbl.classList.add("stk-on");
       });
       var pinLbl = null;
-      if (Q.dead && Q.subject && /^n:/.test(Q.subject)) pinLbl = "8.4";
-      if (Q.subject === "q:qt") pinLbl = "8.6";
-      if (Q.sel.strat === "s:extreme" || SUB8.indexOf(Q.sel.repr) !== -1) pinLbl = "8.3";
+      if (Q.dead && Q.subject && /^n:/.test(Q.subject)) pinLbl = "10.4";
+      if (Q.subject === "q:qt") pinLbl = "10.6";
+      if (Q.sel.strat === "s:extreme" || SUB8.indexOf(Q.sel.repr) !== -1) pinLbl = "10.2";
       if (pinLbl) { var pn = pinByLabel(pinLbl); if (pn) { pn.classList.add("stk-pin-on"); if (Q.dead && !reduced) pn.classList.add("stk-pulse"); } }
     }
     function renderPanel() {
