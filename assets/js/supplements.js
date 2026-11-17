@@ -28,7 +28,7 @@
   function cellVal(td) {
     var raw = cellText(td);
     if (!raw) return "";
-    raw = raw.replace(/[⁰¹²³⁴-⁹⁻]/g, function (c) { return SUP[c]; });
+    raw = raw.replace(/[⁰¹²³⁴-⁹⁻]/g, function (c) { return SUP[c]; }).replace(/\u2212/g, "-");
     // scientific notation, e.g. "2x10-8 mJ" -> 2e-8
     var sci = raw.match(/(-?\d+(?:\.\d+)?)\s*[×x*]\s*10\s*([−–-]?)\s*(\d+)/);
     if (sci) return parseFloat(sci[1]) * Math.pow(10, parseInt(sci[3], 10) * (sci[2] ? -1 : 1));
@@ -197,10 +197,10 @@
   }
 
   /* =======================================================================
-     Table 2 — how many of the surveyed deployments use each platform.
+     Table 15 — how many of the surveyed deployments use each platform.
      A study counts for a platform only when its Device(s) cell names that
      platform; accelerator names are deliberately not mapped onto boards, and
-     the count is scoped to the studies selected for Tables 3-5 rather than to
+     the count is scoped to the studies selected for Tables 16-18 rather than to
      the literature at large. Runs before enhanceTable so the hints survive a
      table reset.
      ======================================================================= */
@@ -208,26 +208,27 @@
     var D = window.DATA;
     if (!D || !D.apps) return;
     var rows = [].concat(D.apps.arm, D.apps.riscv, D.apps.npu);
-    var NAMES = ["Arduino Nano 33 BLE Sense", "SparkFun Edge", "Sony Spresense", "OpenMV Cam H7",
-                 "ESP32-C3", "ESP32-C6", "ESP32-P4", "MSPM0G5187", "MAX78002",
-                 "GAP8", "GAP9", "HX6538-WE2", "STM32N6"];
+    // names under which the deployment tables list each platform of Table 15
+    var ALIAS = { "Arduino Nano 33 BLE Sense": ["Arduino Nano 33"], "Raspberry Pi Pico": ["Pico", "RP2040"],
+                  "Mr. Wolf (research)": ["Wolf"], "MCX N947": ["MCX"], "HX6538-WE2": ["HX6538", "Ethos-U55"],
+                  "nRF54LM20B": ["nRF54"], "Sony Spresense": ["Spresense"] };
     var everyKey = {};
     rows.forEach(function (r) { everyKey[r.key] = 1; });
     var total = Object.keys(everyKey).length;
-    $$("#table-2 td.t2-plat").forEach(function (td) {
-      var name = cellText(td);
-      if (NAMES.indexOf(name) === -1) return;
+    $$("#table-15 td.t2-plat").forEach(function (td) {
+      var name = cellText(td), names = [name].concat(ALIAS[name] || []);
       var seen = {}, cats = [];
       rows.forEach(function (r) {
-        if ((r.devices || "").indexOf(name) === -1 || seen[r.key]) return;
+        var dev = r.devices || "";
+        if (!names.some(function (n) { return dev.indexOf(n) !== -1; }) || seen[r.key]) return;
         seen[r.key] = 1;
         if (cats.indexOf(r.cat) === -1) cats.push(r.cat);
       });
       var n = Object.keys(seen).length;
       td.setAttribute("data-tip", "<b>" + name + "</b><br>" + (n
-        ? n + (n === 1 ? " study" : " studies") + " of the " + total + " surveyed in Tables 3&#8211;5 " +
+        ? n + (n === 1 ? " study" : " studies") + " of the " + total + " surveyed in Tables 16&#8211;18 " +
           (n === 1 ? "reports" : "report") + " a deployment on this platform.<br>" + cats.join(" &#183; ")
-        : "None of the " + total + " studies surveyed in Tables 3&#8211;5 reports a deployment on this platform."));
+        : "None of the " + total + " studies surveyed in Tables 16&#8211;18 reports a deployment on this platform."));
     });
   })();
 
@@ -237,7 +238,7 @@
      them along with the rows; the behaviour itself is delegated in figs.js.
      ======================================================================= */
   (function () {
-    $$("#table-2 td.t2-plat").forEach(function (td) {
+    $$("#table-15 td.t2-plat").forEach(function (td) {
       td.setAttribute("tabindex", "0");
       td.setAttribute("role", "button");
       var d = document.createElement("div");
@@ -265,8 +266,8 @@
     },
     sortable: [1]                      // Year
   });
-  // Table 2 — platforms: family filter (rowspan flattening on demand)
-  enhanceTable("table-2", {
+  // Table 15 — platforms: family filter (rowspan flattening on demand)
+  enhanceTable("table-15", {
     chips: [
       { key: "ARM-based", label: "ARM" }, { key: "RISC-V-based", label: "RISC-V" },
       { key: "NPU-Integrated", label: "NPU" }
@@ -274,18 +275,34 @@
     match: function (tr, key) { return cellText(tr.cells[0]) === key; },
     sortable: [4, 5, 6]                // Clock, Flash, RAM
   });
-  // Tables 3 and 5 — deployments: quantization-path filter
-  ["table-3", "table-5"].forEach(function (tid) {
+  // Tables 16-18 — deployments: quantization-path filter
+  ["table-16", "table-17", "table-18"].forEach(function (tid) {
     enhanceTable(tid, {
       chips: [{ key: "PTQ", label: "PTQ" }, { key: "QAT", label: "QAT" }],
       match: function (tr, key) { return cellText(tr.cells[2]).indexOf(key) !== -1; },
-      sortable: [5, 6, 7, 8]           // Performance, Power/Energy, Latency, Memory
+      sortable: [5, 6, 7, 8, 9]        // Performance, Memory, Latency, Power, Energy
     });
   });
-  // Table 4 — all three rows are INT8 PTQ: search and sorting only, no chips
-  enhanceTable("table-4", { sortable: [5, 6, 7, 8] });
+  // Tables 6-12 — one family each: regime filter, sorting on the result columns
+  var REGIME = [{ key: "QAT", label: "QAT" }, { key: "PTQ", label: "PTQ" }];
+  ["table-6", "table-7", "table-8", "table-9", "table-10", "table-11", "table-12"].forEach(function (tid) {
+    var w = $("#" + tid);
+    if (!w) return;
+    var n = w.querySelectorAll("thead th").length;
+    enhanceTable(tid, {
+      chips: REGIME,
+      match: function (tr, key) { return cellText(tr.cells[1]) === key; },
+      sortable: [3, 4, 5].concat(cellText(w.querySelectorAll("thead th")[n - 1]).indexOf("\u0394W") === 0 ? [n - 1] : [])
+    });
+  });
+  // Table 13 — across families: family column, regime filter
+  enhanceTable("table-13", {
+    chips: REGIME,
+    match: function (tr, key) { return cellText(tr.cells[2]) === key; },
+    sortable: [4, 5, 6]                // FP32, Quantized, Delta
+  });
   // Table 2 (efficiency comparison) is parked in index.html, so its wiring is parked too.
-  // enhanceTable("table-2", ...) below now refers to the platforms table, formerly Table 3.
+  // enhanceTable("table-15", ...) below now refers to the platforms table, formerly Table 3.
   // Table 7 is commented out in index.html: Figure 17 now carries the synthesis.
   // enhanceTable already no-ops on a missing id, but the wiring is parked here so
   // the two stay in step if the table ever comes back.

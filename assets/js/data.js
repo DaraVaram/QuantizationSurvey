@@ -37,19 +37,21 @@ surveyScope: {
    TABLE — Representative MCU-class platforms (tab:deployment_hw_summary)
 ---------------------------------------------------------------------- */
 hardware: [
-  {family:"ARM-based",     platform:"Arduino Nano 33 BLE Sense", cpu:"Cortex-M4F", accel:"—", clock:"64 MHz",  flash:"1 MB",   ram:"256 KB RAM", formats:["INT8","INT16","FP32"]},
-  {family:"ARM-based",     platform:"SparkFun Edge",             cpu:"Cortex-M4F", accel:"—", clock:"48 MHz",  flash:"1 MB",   ram:"384 KB RAM", formats:["INT8","INT16","FP32"]},
-  {family:"ARM-based",     platform:"Sony Spresense",            cpu:"6× Cortex-M4F", accel:"—", clock:"156 MHz", flash:"8 MB",  ram:"1.5 MB RAM", formats:["INT8","INT16","FP32"]},
-  {family:"ARM-based",     platform:"OpenMV Cam H7",             cpu:"Cortex-M7",  accel:"—", clock:"480 MHz", flash:"2 MB",   ram:"1 MB SRAM",  formats:["INT8","INT16","FP32"]},
-  {family:"RISC-V-based",  platform:"ESP32-C3", cpu:"Single-core RISC-V", accel:"—", clock:"160 MHz", flash:"4 MB",  ram:"400 KB SRAM", formats:["INT8"]},
-  {family:"RISC-V-based",  platform:"ESP32-C6", cpu:"Single-core RISC-V", accel:"—", clock:"160 MHz", flash:"8 MB",  ram:"512 KB SRAM", formats:["INT8"]},
-  {family:"RISC-V-based",  platform:"ESP32-P4", cpu:"Dual-core RISC-V",   accel:"—", clock:"400 MHz", flash:"16 MB", ram:"768 KB SRAM, 32 MB PSRAM", formats:["INT8","FP32"]},
-  {family:"NPU-integrated",platform:"MSPM0G5187", cpu:"Cortex-M0+", accel:"TinyEngine NPU", clock:"80 MHz",  flash:"128 KB", ram:"32 KB SRAM",  formats:["INT2","INT4","INT8"]},
-  {family:"NPU-integrated",platform:"MAX78002",   cpu:"Cortex-M4F, RISC-V controller", accel:"CNN accelerator", clock:"120 MHz, 60 MHz", flash:"2.5 MB", ram:"1.3 MB CNN SRAM, 384 KB SRAM", formats:["INT1","INT2","INT4","INT8"]},
-  {family:"NPU-integrated",platform:"GAP8", cpu:"8-core RISC-V", accel:"HWCE", clock:"250 MHz", flash:"20 MB", ram:"512 KB L2 SRAM, 8 MB L3 RAM", formats:["INT4","INT8","INT16"]},
-  {family:"NPU-integrated",platform:"GAP9", cpu:"9-core RISC-V", accel:"NE16", clock:"270–370 MHz", flash:"2 MB", ram:"1.6 MB L2 SRAM", formats:["INT2–INT8"]},
-  {family:"NPU-integrated",platform:"HX6538-WE2", cpu:"Cortex-M55", accel:"Ethos-U55", clock:"400 MHz", flash:"16 MB", ram:"2 MB SRAM", formats:["INT8","INT16"]},
-  {family:"NPU-integrated",platform:"STM32N6", cpu:"Cortex-M55", accel:"Neural-ART", clock:"800 MHz", flash:"External", ram:"4.2 MB SRAM", formats:["INT8"]}
+  {"family": "ARM-based", "platform": "Arduino Nano 33 BLE Sense", "cpu": "Cortex-M4F", "accel": "–", "clock": "64 MHz", "flash": "1 MB", "ram": "256 KB RAM", "formats": ["INT8", "INT16", "FP32"]},
+  {"family": "ARM-based", "platform": "nRF5340", "cpu": "2× Cortex-M33", "accel": "–", "clock": "128 MHz, 64 MHz", "flash": "1 MB", "ram": "512 KB RAM", "formats": ["INT8", "INT16", "FP32"]},
+  {"family": "ARM-based", "platform": "Raspberry Pi Pico", "cpu": "2× Cortex-M0+", "accel": "–", "clock": "133 MHz", "flash": "2 MB", "ram": "264 KB SRAM", "formats": ["INT8", "INT16"]},
+  {"family": "ARM-based", "platform": "Sony Spresense", "cpu": "6× Cortex-M4F", "accel": "–", "clock": "156 MHz", "flash": "8 MB", "ram": "1.5 MB RAM", "formats": ["INT8", "INT16", "FP32"]},
+  {"family": "ARM-based", "platform": "STM32H747", "cpu": "Cortex-M7, Cortex-M4F", "accel": "–", "clock": "480 MHz, 240 MHz", "flash": "2 MB", "ram": "1 MB SRAM", "formats": ["INT8", "INT16", "FP32"]},
+  {"family": "RISC-V-based", "platform": "ESP32-C3", "cpu": "Single-core RISC-V", "accel": "–", "clock": "160 MHz", "flash": "4 MB", "ram": "400 KB SRAM", "formats": ["INT8", "INT16"]},
+  {"family": "RISC-V-based", "platform": "ESP32-P4", "cpu": "Dual-core RISC-V", "accel": "–", "clock": "400 MHz", "flash": "16 MB", "ram": "768 KB SRAM, 32 MB PSRAM", "formats": ["INT8", "INT16", "FP32"]},
+  {"family": "RISC-V-based", "platform": "Mr. Wolf (research)", "cpu": "8-core RISC-V", "accel": "–", "clock": "450 MHz", "flash": "External", "ram": "512 KB L2 SRAM", "formats": ["INT8", "INT16", "FP32"]},
+  {"family": "NPU-Integrated", "platform": "MAX78000", "cpu": "Cortex-M4F, RISC-V controller", "accel": "CNN accelerator", "clock": "100 MHz, 60 MHz", "flash": "512 KB", "ram": "512 KB CNN SRAM, 128 KB SRAM", "formats": ["INT1", "INT2", "INT4", "INT8", "FP32"]},
+  {"family": "NPU-Integrated", "platform": "nRF54LM20B", "cpu": "Cortex-M33", "accel": "Axon NPU", "clock": "128 MHz", "flash": "2 MB", "ram": "512 KB RAM", "formats": ["INT8", "FP32"]},
+  {"family": "NPU-Integrated", "platform": "MCX N947", "cpu": "2× Cortex-M33", "accel": "eIQ Neutron NPU", "clock": "150 MHz", "flash": "2 MB", "ram": "512 KB RAM", "formats": ["INT8", "FP32"]},
+  {"family": "NPU-Integrated", "platform": "GAP8", "cpu": "8-core RISC-V", "accel": "HWCE", "clock": "250 MHz, 170 MHz", "flash": "External", "ram": "512 KB L2 SRAM, 8 MB L3 RAM", "formats": ["INT4", "INT8", "INT16"]},
+  {"family": "NPU-Integrated", "platform": "GAP9", "cpu": "9-core RISC-V", "accel": "NE16", "clock": "370 MHz", "flash": "2 MB", "ram": "1.6 MB L2 SRAM", "formats": ["INT2–INT8", "FP16", "BF16", "FP32"]},
+  {"family": "NPU-Integrated", "platform": "HX6538-WE2", "cpu": "Cortex-M55", "accel": "Ethos-U55", "clock": "400 MHz", "flash": "16 MB", "ram": "2 MB SRAM", "formats": ["INT8", "INT16", "FP16", "FP32"]},
+  {"family": "NPU-Integrated", "platform": "STM32N6", "cpu": "Cortex-M55", "accel": "Neural-ART", "clock": "800 MHz", "flash": "External", "ram": "4.2 MB SRAM", "formats": ["INT4", "INT8", "INT16", "FP16", "FP32"]}
 ],
 
 /* ----------------------------------------------------------------------
@@ -61,64 +63,71 @@ deploymentStack: [
    hwPath:"Inference on the Cortex-M cores themselves, without a dedicated accelerator, using integer and DSP-optimized kernels under tight on-chip SRAM and flash limits.",
    swPath:"TFLM and LiteRT for Microcontrollers with CMSIS-NN kernels, with STM32Cube.AI or Edge Impulse for vendor-integrated, end-to-end code generation.",
    quant:"Uniform full-integer INT8 via PTQ is the dominant reported path, with QAT where always-on accuracy must survive compression, and sub-8-bit or mixed precision only through custom kernels and ISA-level work such as CMIX-NN.",
-   impl:"Most reproducible baseline for modest-depth sensing workloads: HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare (Section 7.1, Table 3). Choose when mature tooling, portability, and low-friction integration matter more than peak efficiency."},
+   impl:"Most reproducible baseline for modest-depth sensing workloads: HAR, environmental monitoring, speech and keyword spotting, networking, spectrum sensing, and lightweight vision or healthcare (Section 8.1, Table 16). Choose when mature tooling, portability, and low-friction integration matter more than peak efficiency."},
   {family:"RISC-V-Based",
    hwPath:"Inference on commercial MCUs such as the ESP32-C and ESP32-P families, using packed integer arithmetic, SIMD, and ISA extensions on the programmable CPU path, without a dedicated neural accelerator.",
    swPath:"TFLM with ESP-NN kernels on commercial ESP32 devices, through vendor and community toolchains that remain less standardized than the Cortex-M ecosystem.",
    quant:"Uniform INT8 PTQ in every commercial deployment reported to date, while aggressive low-bit and mixed precision remain confined to research-class PULP systems.",
-   impl:"Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (Section 7.2, Table 4). Choose when an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable."},
+   impl:"Feasible healthcare, industrial-monitoring, and robotics deployments in the lower-to-middle tier of edge workloads, with a smaller and more recent application base than ARM (Section 8.2, Table 17). Choose when an open-ISA, low-cost part suffices for compact workloads and a younger toolchain is acceptable."},
   {family:"NPU-Integrated",
    hwPath:"Accelerator-backed convolution, matrix, or operator-specific kernels with CPU orchestration, spanning tightly coupled CNN engines (MAX7800x) and clustered RISC-V with dedicated convolution acceleration (HWCE on GAP8, NE16 on GAP9), under device-specific on-chip memory partitioning.",
    swPath:"ai8x training and synthesis, GAPFlow with nntool and Autotiler, Ethos-U tooling, and Neural-ART runtimes, each mapping compatible graphs onto its own accelerator.",
    quant:"INT8 remains the default even where the accelerator advertises lower precision, with genuine sub-8-bit and layer-wise mixed precision where the toolchain exploits it (QAT down to INT1\u2013INT4 with ai8x on MAX7800x, INT2\u2013INT8 on GAP9's NE16), always bounded by the accelerator's supported operators and formats.",
-   impl:"State of the art for latency- and energy-critical workloads: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (Section 7.3, Table 5). Choose when hard latency or energy budgets dominate and the model can be matched to the accelerator's operators, precision formats, and memory limits."}
+   impl:"State of the art for latency- and energy-critical workloads: object detection, drone navigation, audio and speech, healthcare, HAR, anomaly detection, environmental sensing, and compact vision or DSP pipelines (Section 8.3, Table 18). Choose when hard latency or energy budgets dominate and the model can be matched to the accelerator's operators, precision formats, and memory limits."}
 ],
 
 /* ----------------------------------------------------------------------
    APPLICATION TABLES — ARM / RISC-V / NPU
-   These strings are exactly what Tables 3-5 display and are the single source
+   These strings are exactly what Tables 16-18 display and are the single source
    of truth. The deployment-landscape scatter parses its numbers straight out
    of them, so there are no separate numeric mirrors to drift out of step.
 ---------------------------------------------------------------------- */
 apps: {
   arm: [
-    {key:"ulkar2021ultra", cat:"Speech", quant:"INT8 QAT", devices:"ARM Cortex-M4F", fw:"PyTorch", perf:"96.30% Acc.", power:"11.2 mJ", lat:"905", mem:"419.8"},
-    {key:"moosmann2023tinyissimoyolo", cat:"Object Detection", quant:"INT8 QAT", devices:"STM32H7A3, STM32L4R9, Apollo4b", fw:"TFLM", perf:"43.50–75.40% mAP", power:"41.8 mJ, 102 mJ, 6.08 mJ", lat:"359, 996, 540", mem:"350–422"},
-    {key:"kang2024device", cat:"HAR", quant:"INT8 PTQ", devices:"STM32F756ZG", fw:"PyTorch", perf:"91.04–98.29% Acc.", power:"4.50–8.77 mJ", lat:"20.70–39.76", mem:"37.8–44.7"},
-    {key:"chehade2025energy", cat:"Networking", quant:"INT8 PTQ", devices:"STM32F746G, Nucleo-F401RE", fw:"TFLM, STM32Cube.AI", perf:"96.59% Acc.", power:"7.86 mJ, 29.10 mJ", lat:"31.43, 115.40", mem:"353"},
-    {key:"cerioli2025efficient", cat:"Environment", quant:"INT8 PTQ", devices:"STM32H747XI (M7), STM32H747XI (M4), nRF52840", fw:"ONNX Runtime, NeuralCasting, TFLM", perf:"98.5–99.1% Acc.", power:"600 mW, 600 mW, 100 mW", lat:"0.034–0.246, 0.034–0.252, 0.308–2.001", mem:"70–410"},
-    {key:"abushahla2025real", cat:"Education", quant:"INT8 QAT", devices:"Sony Spresense, OpenMV Cam H7, H7 Plus", fw:"TFLM", perf:"93.60–98.73% Acc.", power:"494–884 mW, 1238–1609 mW", lat:"0.63, 0.08, 2.88–12.84", mem:"2900, 340"},
-    {key:"abushahla2025cognitive", cat:"Spectrum Sensing", quant:"INT8 QAT", devices:"Sony Spresense", fw:"TFLM", perf:"92.63–99.94% F1, 70.55–99.09% F1", power:"52–54 mW, 44–52 mW", lat:"5.54–37.37, 1.18–5.20", mem:"23.8–72.6, 12.8–19.6"},
-    {key:"zhou2025efficient", cat:"HAR", quant:"UINT8 PTQ", devices:"Arduino Nano 33 BLE Sense Rev2", fw:"TFLM, EdgeImpulse", perf:"97.09% Acc.", power:"21 mW", lat:"21", mem:"189.6"},
-    {key:"dabbous2024benchmarking", cat:"Environment", quant:"INT8 QAT", devices:"STM32H7, Arduino Nano 33 BLE Sense Rev2", fw:"TFLM, STM32Cube.AI", perf:"99.63% Acc.", power:"227.86 mW, 1.43 mW, 9 mW", lat:"30.25, 522.15, 1.45", mem:"—"},
-    {key:"rostami2024real", cat:"Healthcare", quant:"INT8 QAT, PQAT, PTQ", devices:"STM32H743iit6, STM32H750vbt6", fw:"TFLM", perf:"84.78–87.76% Acc.", power:"840 mW, 945 mW", lat:"6230, 6300", mem:"860"}
+    {"key": "munirathinam2026optimizing", "cat": "Audio Classification", "quant": "INT8 PTQ", "devices": "STM32H743", "fw": "TFLM", "perf": "93.41–96.83% Acc.", "mem": "17.6–36.3", "lat": "0.9–8.2", "power": "–", "energy": "0.14–4.1", "measured": "Chip"},
+    {"key": "moosmann2023tinyissimoyolo", "cat": "Object Detection", "quant": "INT8 QAT", "devices": "STM32H7A3, STM32L4R9, Apollo4b", "fw": "TFLM", "perf": "43.50–75.40% mAP", "mem": "398–422", "lat": "359, 996, 540", "power": "–", "energy": "41.8, 102, 6.08", "measured": "Chip"},
+    {"key": "mohammady2026binarized", "cat": "Visual Wake Words", "quant": "INT1 QAT", "devices": "STM32H7B3I-DK", "fw": "CBin-NN", "perf": "73.35% Acc.", "mem": "7.03", "lat": "30.5", "power": "80", "energy": "2.4", "measured": "Board"},
+    {"key": "yahyati2026novel", "cat": "Image Classification", "quant": "INT8 QAT", "devices": "STM32F4, STM32F7", "fw": "TFLM, CMSIS-NN", "perf": "98.00% Acc.", "mem": "118", "lat": "96–122, 37–54", "power": "–", "energy": "11.1–14.1, 7.9–11.6", "measured": "Chip"},
+    {"key": "zhou2025efficient", "cat": "HAR", "quant": "INT8 PTQ", "devices": "Arduino Nano 33, BLE Sense Rev2", "fw": "TFLM, Edge Impulse", "perf": "97.09% Acc.", "mem": "136.5", "lat": "21", "power": "21", "energy": "–", "measured": "Board"},
+    {"key": "chehade2025energy", "cat": "Network Security", "quant": "INT8 PTQ", "devices": "STM32F746G-DISCO, Nucleo-F401RE", "fw": "TFLite, STM32Cube.AI", "perf": "94.73% Acc.", "mem": "353", "lat": "31.43, 115.40", "power": "250, 250", "energy": "7.86, 29.10", "measured": "Board"},
+    {"key": "abushahla2025cognitive", "cat": "Spectrum Sensing", "quant": "INT8 QAT", "devices": "Sony Spresense", "fw": "TFLM", "perf": "92.63–99.94% F1, 70.55–99.09% F1", "mem": "23.8–72.6, 12.8–19.6", "lat": "5.54–37.37, 1.18–5.20", "power": "53–54, 44–52", "energy": "–", "measured": "Board"},
+    {"key": "zainab2023lighteq", "cat": "Environment", "quant": "INT8 PTQ", "devices": "nRF52840", "fw": "TFLM, CMSIS-NN", "perf": "98.00% F1", "mem": "39", "lat": "932", "power": "–", "energy": "5.86", "measured": "Chip"},
+    {"key": "cerioli2025efficient", "cat": "Environment", "quant": "INT8 PTQ", "devices": "STM32H747XI, nRF52840", "fw": "NeuralCasting, TFLM", "perf": "98.50–99.10% Acc.", "mem": "70–410, 80–350", "lat": "0.034–0.212, 0.308–1.965", "power": "600, 100", "energy": "–", "measured": "Board"},
+    {"key": "abushahla2025real", "cat": "Education", "quant": "INT8 QAT", "devices": "Sony Spresense, OpenMV Cam H7, OpenMV Cam H7 Plus", "fw": "TFLM, CMSIS-NN, OpenMV IDE", "perf": "93.60–98.73% Acc.", "mem": "339, 339, 339–2900", "lat": "631, 80, 78–688", "power": "495, 884, 1239–1616", "energy": "–", "measured": "Board"},
+    {"key": "burrello2021q", "cat": "Healthcare", "quant": "INT4 QAT, INT8 QAT, Mixed QAT, (INT2/4/8)", "devices": "STM32WB55", "fw": "CMix-NN", "perf": "4.41–7.73 BPM MAE", "mem": "1.87–412", "lat": "55.7–1900", "power": "25", "energy": "1.39–47.65", "measured": "Chip"},
+    {"key": "rostami2024real", "cat": "Healthcare", "quant": "INT8 PTQ, INT8 QAT", "devices": "STM32H743, STM32H750", "fw": "TFLM", "perf": "84.78–87.76% Acc.", "mem": "860", "lat": "6230–6290, 6300", "power": "840, 945", "energy": "–", "measured": "Board"},
+    {"key": "langer2025tinyml", "cat": "Industrial", "quant": "INT8 PTQ", "devices": "STM32L4R5", "fw": "TFLite, STM32Cube.AI", "perf": "100.00% Acc.", "mem": "12.59", "lat": "15.4", "power": "94.9", "energy": "1.462", "measured": "Chip"},
+    {"key": "pleterski2023miniature", "cat": "Robotics", "quant": "INT8 PTQ", "devices": "RP2040", "fw": "Edge Impulse", "perf": "91.80% Acc.", "mem": "7", "lat": "34", "power": "–", "energy": "3.685", "measured": "Chip"}
   ],
   riscv: [
-    {key:"rattanasak2025lightweight", cat:"Healthcare", quant:"INT8 PTQ", devices:"ESP32-C6", fw:"TFLM", perf:"88.64 ± 1.56% F1, 90.05 ± 1.60% Sens., 87.29 ± 1.54% Prec.", power:"179.8 mW", lat:"630", mem:"310"},
-    {key:"banerjee2026device", cat:"Industrial", quant:"INT8 PTQ", devices:"ESP32-C3", fw:"TFLM", perf:"95.00% macro-F1", power:"6.77 mJ", lat:"82±7", mem:"80"},
-    {key:"roy2026tinynav", cat:"Robotics", quant:"INT8 PTQ", devices:"ESP32-P4", fw:"TFLM, ESP-NN", perf:"40 laps collision-free, 99.84% Steer Acc., 99.79% Throttle Acc.", power:"—", lat:"30", mem:"~23"}
+    {"key": "yardimci2025evaluation", "cat": "Image Classification", "quant": "INT8 PTQ", "devices": "ESP32-P4", "fw": "TFLM", "perf": "80.00–97.00% Acc.", "mem": "7–8", "lat": "18.96–18.98", "power": "–", "energy": "–", "measured": "–"},
+    {"key": "boumedine2026streaming", "cat": "Speech Recognition", "quant": "Mixed PTQ, (INT2/4)", "devices": "ESP32-P4", "fw": "ESP-IDF", "perf": "4.34–19.56% WER", "mem": "26650", "lat": "753.5", "power": "–", "energy": "–", "measured": "–"},
+    {"key": "wang2022mi", "cat": "Healthcare", "quant": "INT8 QAT", "devices": "Mr. Wolf", "fw": "PULP-DSP", "perf": "65.31–97.76% Acc.", "mem": "15.62–46.58", "lat": "5.53–11.37", "power": "9.06–10.24", "energy": "0.050–0.116", "measured": "Chip"},
+    {"key": "rattanasak2025lightweight", "cat": "Healthcare", "quant": "INT8 PTQ", "devices": "ESP32-C6", "fw": "TFLM", "perf": "88.64% F1", "mem": "310", "lat": "630", "power": "179.8", "energy": "–", "measured": "Board"},
+    {"key": "banerjee2026device", "cat": "Industrial", "quant": "INT8 PTQ", "devices": "ESP32-C3", "fw": "TFLM", "perf": "95.00% F1", "mem": "80", "lat": "82", "power": "–", "energy": "–", "measured": "–"}
   ],
   npu: [
-    {key:"balbi2024ultra", cat:"Networking", quant:"INT8 PTQ", devices:"MAX78000", fw:"PyTorch, ai8x-tools", perf:"94.87% Acc.", power:"0.005 mJ", lat:"0.104", mem:"<432"},
-    {key:"jakuvs2025implementing", cat:"Keyword Spotting", quant:"INT8 QAT", devices:"NXP MCXN94", fw:"TFLite", perf:"97.06% Acc.", power:"—", lat:"3.847", mem:"30.6"},
-    {key:"gong2024dex", cat:"Image Classification", quant:"INT8 QAT", devices:"MAX78000, MAX78002", fw:"PyTorch, ai8x-tools", perf:"19.80–62.00% Acc.", power:"0.14–0.4 mJ", lat:"2–13", mem:"171.2–1330.7"},
-    {key:"zemlyanikin2019512kib", cat:"Face Recognition", quant:"INT16 PTQ", devices:"GAP8", fw:"PyTorch, GAP8 Autotiler", perf:"93.00–96.33% Acc.", power:"—", lat:"<1000", mem:"1500"},
-    {key:"moosmann2023tinyissimoyolo", cat:"Object Detection", quant:"INT8 QAT", devices:"MAX78000", fw:"PyTorch, ai8x-tools", perf:"43.50–75.40% mAP", power:"0.19 mJ", lat:"5.5", mem:"350–422"},
-    {key:"moosmann2024ultra", cat:"Object Detection", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"14.00–49.00% mAP", power:"54 mW", lat:"56.45", mem:"<1000"},
-    {key:"kang2024device", cat:"HAR", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"91.04–98.29% Acc.", power:"0.035–0.063 mJ", lat:"1.11–1.93", mem:"37.8–44.7"},
-    {key:"van2023real", cat:"Healthcare", quant:"INT8 QAT", devices:"MAX78002", fw:"PyTorch, ai8x-tools", perf:"94.60% AUC", power:"18 mW", lat:"0.248", mem:"25.156"},
-    {key:"busia2025endoscopy", cat:"Healthcare", quant:"INT8 PTQ", devices:"GAP9", fw:"PyTorch", perf:"98.5% Acc.", power:"30.6 mW", lat:"61", mem:"750"},
-    {key:"ibrahim2024end", cat:"Healthcare", quant:"INT8 QAT", devices:"Ethos-U55", fw:"PyTorch", perf:"94.25% Acc.", power:"0.0119 mW (est.)", lat:"5", mem:"<32"},
-    {key:"lightbody2022host", cat:"Anomaly Detection", quant:"INT8 QAT", devices:"MAX78000", fw:"PyTorch", perf:"87.19–99.95% Acc.", power:"15 mW", lat:"2.556", mem:"55.9"},
-    {key:"ingaleshwar2024wildlife", cat:"Environment", quant:"INT8 PTQ", devices:"MAX78000", fw:"PyTorch, ai8x-tools", perf:"79.67–86.53% F1", power:"0.885–4.275 mJ", lat:"4–27.5", mem:"100–460"},
-    {key:"zhou2023solving", cat:"Drones", quant:"INT8 PTQ", devices:"GAP8", fw:"TFLite, GAP8 Autotiler", perf:"98.80% Acc., 57.20% Succ. Rate", power:"130 mW", lat:"35.71", mem:"292"},
-    {key:"crupi2025efficient", cat:"Drones", quant:"INT8, FP16 PTQ", devices:"GAP9", fw:"nntool", perf:"79.00% mAP, 80.00% mAP", power:"34–41 mW", lat:"147–462", mem:"1800–3600"},
-    {key:"rashid2025hac", cat:"Agriculture", quant:"INT8 PTQ", devices:"GAP8", fw:"TFLM", perf:"95.00% Acc.", power:"378 mW", lat:"37.6", mem:"49.6"}
+    {"key": "lightbody2022host", "cat": "Network Security", "quant": "INT8 QAT", "devices": "MAX78000", "fw": "ai8x-tools", "perf": "87.10–99.92% Acc.", "mem": "55.9", "lat": "2.556", "power": "15", "energy": "–", "measured": "Chip"},
+    {"key": "cerutti2020sound", "cat": "Audio Event Detection", "quant": "Mixed QAT, (INT1/16)", "devices": "GAP8", "fw": "OpenMP", "perf": "77.90% Acc.", "mem": "58", "lat": "511", "power": "–", "energy": "25.54", "measured": "Chip"},
+    {"key": "ulkar2021ultra", "cat": "Keyword Spotting", "quant": "INT8 QAT", "devices": "MAX78000", "fw": "ai8x-tools", "perf": "96.30% Acc.", "mem": "419.8", "lat": "3.5", "power": "–", "energy": "0.251", "measured": "Chip"},
+    {"key": "gong2024dex", "cat": "Image Classification", "quant": "Mixed QAT, (INT2/4/8)", "devices": "MAX78000", "fw": "ai8x-tools", "perf": "18.40–65.60% Acc.", "mem": "171.2–319.3", "lat": "2.59–3.82", "power": "68.9–77.1", "energy": "–", "measured": "Board"},
+    {"key": "moosmann2023tinyissimoyolo", "cat": "Object Detection", "quant": "INT8 QAT", "devices": "MAX78000", "fw": "ai8x-tools", "perf": "43.50–75.40% mAP", "mem": "398–422", "lat": "5.5", "power": "–", "energy": "0.196", "measured": "Chip"},
+    {"key": "chen2025low", "cat": "Object Detection", "quant": "INT8 QAT", "devices": "MAX78000", "fw": "ai8x-tools", "perf": "76.20% mAP", "mem": "300", "lat": "13.76", "power": "25.77", "energy": "0.354", "measured": "Chip"},
+    {"key": "kang2024device", "cat": "HAR", "quant": "BF16 PTQ", "devices": "GAP9", "fw": "GAPflow", "perf": "84.00–95.69% Acc.", "mem": "75.6–89.4", "lat": "1.11–1.96", "power": "–", "energy": "0.035–0.063", "measured": "Chip"},
+    {"key": "van2023real", "cat": "Healthcare", "quant": "INT8 QAT", "devices": "MAX78002", "fw": "ai8x-tools", "perf": "94.60% AUC", "mem": "25.2", "lat": "0.248", "power": "75", "energy": "–", "measured": "Chip"},
+    {"key": "busia2025endoscopy", "cat": "Healthcare", "quant": "INT8 PTQ", "devices": "GAP9", "fw": "TFLite, GAP SDK", "perf": "98.50% Acc.", "mem": "750", "lat": "61", "power": "30.6", "energy": "1.9", "measured": "Chip"},
+    {"key": "tegon2026femba", "cat": "Healthcare", "quant": "INT8 QAT", "devices": "GAP9", "fw": "Brevitas, GAP SDK", "perf": "81.02% Acc.", "mem": "7800", "lat": "1700", "power": "44.1", "energy": "75", "measured": "Chip"},
+    {"key": "ingaleshwar2024wildlife", "cat": "Environment", "quant": "INT8 QAT", "devices": "MAX78000", "fw": "ai8x-tools", "perf": "85.93% F1", "mem": "240", "lat": "9", "power": "–", "energy": "0.855", "measured": "Board"},
+    {"key": "duboisset2026polychirp", "cat": "Environment", "quant": "INT8 PTQ", "devices": "nRF54LM20B", "fw": "Edge AI Add-on", "perf": "92.00–94.00% F1", "mem": "157.3–245.5", "lat": "2–39", "power": "–", "energy": "0.022–0.343", "measured": "Board"},
+    {"key": "abushahla2026submillisecond", "cat": "Environment", "quant": "Mixed QAT, (INT2/4/8)", "devices": "MAX78002", "fw": "ai8x-tools", "perf": "99.22% Acc.", "mem": "46.56", "lat": "0.128", "power": "–", "energy": "0.027", "measured": "Chip"},
+    {"key": "rashid2025hac", "cat": "Agriculture", "quant": "INT8 PTQ", "devices": "GAP8", "fw": "TFLite, GAPflow", "perf": "70.00% Acc.", "mem": "306.1", "lat": "37.6", "power": "378", "energy": "14.2", "measured": "Board"},
+    {"key": "zhou2023solving", "cat": "Drones", "quant": "INT8 PTQ", "devices": "GAP8", "fw": "TFLite, GAPflow", "perf": "98.80% Acc.", "mem": "292", "lat": "35.71", "power": "130", "energy": "4.7", "measured": "Board"},
+    {"key": "crupi2025efficient", "cat": "Drones", "quant": "INT8 PTQ", "devices": "GAP9", "fw": "GAPflow", "perf": "79.00% mAP", "mem": "3400", "lat": "147–249", "power": "31–34", "energy": "–", "measured": "Chip"}
   ]
 },
 
 /* ----------------------------------------------------------------------
-   GUIDE — Figure 17. A compatibility model, not a list of recipes.
+   GUIDE — the interactive deployment map. A compatibility model, not a list of recipes.
 
    Each toolchain declares what it CAN do at every step of the stack and
    which platforms it targets. The figure works out what is still reachable
@@ -130,7 +139,7 @@ apps: {
    `steps` are the defaults the figure draws. `can` lists everything the
    toolchain supports at that step. `implies` are settings it fixes for you.
    `targets` are the platforms it deploys to, further narrowed by the widths
-   each platform carries (Table 2 and platformWidths below).
+   each platform carries (Table 15 and platformWidths below).
 
    Chip keys: q: path, s: precision strategy, r: refinement, d: design
    choice, n: numerical representation, f: software tool, h: platform.
@@ -146,7 +155,7 @@ guide: {
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8", "n:INT16"],
              dev: ["f:tf", "f:pytorch"], conv: ["f:tflite", "f:onnx"], run: ["f:tflm", "f:onnxrt", "f:minimal"] },
       implies: ["d:uni", "d:sym", "d:asym", "d:pt", "d:pc", "d:static", "d:calib", "f:cmsis"],
-      targets: ["h:stm32", "h:nano33", "h:spresense", "h:openmv", "h:sparkfun", "h:apollo"]
+      targets: ["h:stm32", "h:nano33", "h:nrf53", "h:pico", "h:spresense", "h:openmv", "h:apollo"]
     },
     "ai8x": {
       rank: 2, name: "ai8x on MAX78000/78002", fam: "npu", color: "#5E35B1",
@@ -227,7 +236,7 @@ guide: {
       can: { path: ["q:PTQ", "q:QAT"], strat: ["s:uniform"], repr: ["n:INT8"],
              dev: ["f:ei"], conv: ["f:tflite"], run: ["f:tflm"] },
       implies: ["d:uni", "d:asym", "d:pt", "d:static", "d:calib", "f:cmsis"],
-      targets: ["h:nano33", "h:stm32", "h:spresense", "h:openmv", "h:sparkfun"]
+      targets: ["h:nano33", "h:stm32", "h:nrf53", "h:pico", "h:spresense", "h:openmv"]
     },
     "gapflow": {
       rank: 10, name: "GAPflow on GAP8/GAP9", fam: "npu", color: "#0288D1",
@@ -253,14 +262,19 @@ guide: {
     }
   },
 
-  // Widths for the platforms Table 2 does not itemise, so every width the figure
+  // Widths for the platforms Table 15 does not itemise, so every width the figure
   // offers can be checked against the silicon underneath it.
   platformWidths: {
     "h:stm32":  ["n:INT8", "n:INT16"],
     "h:apollo": ["n:INT8", "n:INT16"],
     "h:max000": ["n:INT1", "n:INT2", "n:INT4", "n:INT8"],
     "h:mcxn":   ["n:INT8"],
-    "h:pulp":   ["n:INT2", "n:INT4", "n:INT8", "n:INT16"]
+    "h:pulp":   ["n:INT2", "n:INT4", "n:INT8", "n:INT16"],
+    // listed in the paper's Sections 7-8 but not in Table 15
+    "h:openmv": ["n:INT8", "n:INT16"],
+    "h:c6":     ["n:INT8"],
+    "h:max002": ["n:INT1", "n:INT2", "n:INT4", "n:INT8"],
+    "h:mspm0":  ["n:INT2", "n:INT4", "n:INT8"]
   },
 
   /* Parts a route reaches interchangeably: the same toolchain and the same
@@ -288,7 +302,7 @@ guide: {
     "Face Recognition":     { prefer: ["ai8x", "gapflow"], via: ["q:QAT", "h:max002"], note: "Input resolution and embedding networks put face recognition beyond real-time Cortex-M execution, so plan on an accelerator from the start. The surveyed result used INT16 on a GAP8, which the GAP route still reaches." },
     "Segmentation":         { prefer: ["ai8x", "gapflow", "ethos"], note: "Dense per-pixel output needs an accelerator, and needs its toolchain to cover the upsampling operators, which is where these flows most often stop." },
     "Surveillance":         { prefer: ["ai8x", "gapflow", "ethos"], note: "Always-on camera pipelines pair an accelerator with aggressive duty-cycling of the sensor and the radio, which usually dominate the energy budget." },
-    "VQA":                  { prefer: ["ethos", "gapflow", "neuralart"], note: "Multimodal models need an accelerator and a toolchain that covers attention operators. Expect the operator gap of challenge 8.1 and the architecture gap of 8.2 before the arithmetic becomes the problem." },
+    "VQA":                  { prefer: ["ethos", "gapflow", "neuralart"], note: "Multimodal models need an accelerator and a toolchain that covers attention operators. Expect the operator gap of challenge 10.1 and the architecture gap of 10.3 before the arithmetic becomes the problem." },
     "HAR":                  { prefer: ["tflm", "gapflow", "ai8x"], via: ["q:PTQ", "h:stm32"], note: "Inertial activity recognition is the archetypal Cortex-M workload. An accelerator suits fast multi-sensor loops where reaction time matters." },
     "Healthcare":           { prefer: ["tflm", "gapflow", "ai8x", "esp"], via: ["q:QAT", "h:stm32"], note: "Physiological-signal models run on all three families. Choose by the signal's dimensionality, by certification and tooling constraints, and only then by raw efficiency." },
     "Wearables":            { prefer: ["ai8x", "gapflow", "tflm"], via: ["q:QAT", "h:max002"], note: "Wearables trade the accelerator's energy per inference against the simpler Cortex-M stack. Hearing aids on the GAP9 showed how far the accelerator side of that trade reaches, and the MAX7800x is where to reproduce it today." },
@@ -311,7 +325,7 @@ guide: {
   notes: {
     "q:PTQ": "Post-training quantization is the right default on every route: the strongest balance between memory reduction, effort, and accuracy retention.",
     "q:QAT": "Quantization-aware training is where accuracy must survive compression, and the only way to reach sub-8-bit widths on the accelerators that accept them.",
-    "q:qt": "Quantized training carries quantization into the training process itself, including the backward pass. Section 4.1 finds it markedly less mature than PTQ and QAT for MCU deployment, and no runtime in this stack supports it, so it remains a research direction rather than a route you can take today. It is what challenge 8.6 would have to unlock.",
+    "q:qt": "Quantized training carries quantization into the training process itself, including the backward pass. Section 5.7 finds it markedly less mature than PTQ and QAT for MCU deployment, and no runtime in this stack supports it, so it remains a research direction rather than a route you can take today. It is what challenge 10.6 would have to unlock.",
     "s:uniform": "One bit-width for the whole network, INT8 in practice, is the best default on every route. Not to be confused with a uniform grid, which is about how the levels are spaced.",
     "s:mixed": "Mixed precision pays off when profiling reveals clear layer sensitivity and the runtime can exploit finer-grained control, which means a toolchain and a part that both accept more than one width.",
     "s:extreme": "Extreme low-bit networks are most justifiable when flash or bandwidth is the dominant bottleneck. They reach a device through a toolchain that accepts the width, trained with QAT.",

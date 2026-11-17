@@ -144,7 +144,7 @@
      four inputs shows the policy that input would get, which is the whole point
      of content-aware allocation and is hard to convey in a static drawing. */
   (function () {
-    var fig = $("#figure-12");
+    var fig = $("#figure-15");
     if (!fig) return;
     var ins = $$(".f12-in", fig), cells = $$(".f12-cell", fig), read = $(".f12-read", fig);
     if (!ins.length || !cells.length) return;
@@ -354,7 +354,7 @@
 
   /* ---------- Figure 11: clickable bit selector ---------- */
   (function () {
-    var svg = $("#figure-11 svg");
+    var svg = $("#figure-14 svg");
     if (!svg) return;
     var ROW = { "2": ["#CFE2F3", "#6C8EBF"], "3": ["#F9CB9C", "#D79B00"], "b": ["#B9E0B0", "#82B366"] };
     var DEFAULT = { "1": "2", "2": "3", "n": "b" };
@@ -476,7 +476,7 @@
 
   /* ---------- Figure 14: continuously looping step-through (gif-style) ---------- */
   (function () {
-    var fig = $("#figure-14");
+    var fig = $("#figure-17");
     if (!fig || reduced) return;
     var seq = [
       { a: ["f8a-ptm", "f8a-cd"], b: ["f8b-ptm"] },
@@ -689,7 +689,7 @@
 
     // A study row is about one paper, so clicking anywhere in it opens that
     // reference — without hijacking text selection or the citation itself.
-    ["table-3", "table-4", "table-5"].forEach(function (id) {
+    ["table-16", "table-17", "table-18"].forEach(function (id) {
       var w = $("#" + id);
       if (!w) return;
       w.classList.add("t-studies");
@@ -711,7 +711,7 @@
      now takes focus and reveals the same thing there. */
   (function () {
     // Figure 16: every pipeline stage, including the inspection icon
-    $$("#figure-16 .f9-node").forEach(function (n) {
+    $$("#figure-19 .f9-node").forEach(function (n) {
       focusable(n, plain(n.getAttribute("data-tip")), "button");
     });
     // Taxonomy (Figures 10 and 15) and supplement method chips navigate into the prose. They contain
@@ -781,7 +781,7 @@
      you add it, or a setting the route fixes for you. Clicking a branch narrows
      the question and keeps it; only Clear starts over. */
   (function () {
-    var fig = $("#figure-17.stack-fig");
+    var fig = $("#deployment-map.stack-fig");
     if (!fig) return;
     var G = (window.DATA || {}).guide;
     if (!G || !G.toolchains) return;
@@ -821,8 +821,8 @@
     var FMT = { INT1: "n:INT1", INT2: "n:INT2", INT4: "n:INT4", INT8: "n:INT8", INT16: "n:INT16" };
     var DEVMAP = [
       [/STM32N6/i, "h:n6"], [/STM32|Nucleo/i, "h:stm32"], [/Arduino|nRF52840/i, "h:nano33"], [/Spresense/i, "h:spresense"],
-      [/OpenMV|H7 Plus/i, "h:openmv"], [/SparkFun/i, "h:sparkfun"], [/Apollo/i, "h:apollo"],
-      [/ESP32-C3/i, "h:c3"], [/ESP32-C6/i, "h:c6"], [/ESP32-P4/i, "h:p4"], [/PULP/i, "h:pulp"],
+      [/OpenMV|H7 Plus/i, "h:openmv"], [/nRF5340/i, "h:nrf53"], [/Pico|RP2040/i, "h:pico"], [/Apollo/i, "h:apollo"],
+      [/ESP32-C3/i, "h:c3"], [/ESP32-C6/i, "h:c6"], [/ESP32-P4/i, "h:p4"], [/PULP|Wolf/i, "h:pulp"],
       [/MAX78000/i, "h:max000"], [/MAX78002/i, "h:max002"], [/GAP8/i, "h:gap8"], [/GAP9/i, "h:gap9"],
       [/Ethos|HX6538/i, "h:ethos"], [/MCXN/i, "h:mcxn"], [/MSPM0/i, "h:mspm0"]
     ];
@@ -1000,7 +1000,7 @@
       "edge impulse": "f:ei", "edgeimpulse": "f:ei", "cmsis": "f:cmsis", "cmsis-nn": "f:cmsis", "onnx": "f:onnx", "cube.ai": "f:cubeai", "stm32cube": "f:cubeai",
       "nntool": "f:gapflow", "autotiler": "f:gapflow", "gapflow": "f:gapflow", "ai8x": "f:ai8xt", "esp-nn": "f:espnn",
       "stm32": "h:stm32", "nucleo": "h:stm32", "arduino": "h:nano33", "nano 33": "h:nano33", "nrf52840": "h:nano33", "spresense": "h:spresense",
-      "openmv": "h:openmv", "apollo": "h:apollo", "esp32-c3": "h:c3", "esp32-c6": "h:c6", "esp32-p4": "h:p4", "pulp": "h:pulp",
+      "openmv": "h:openmv", "nrf5340": "h:nrf53", "pico": "h:pico", "rp2040": "h:pico", "mr. wolf": "h:pulp", "apollo": "h:apollo", "esp32-c3": "h:c3", "esp32-c6": "h:c6", "esp32-p4": "h:p4", "pulp": "h:pulp",
       "max78000": "h:max000", "max78002": "h:max002", "gap8": "h:gap8", "gap9": "h:gap9", "ethos": "h:ethos", "ethos-u55": "h:ethos",
       "stm32n6": "h:n6", "mcxn94": "h:mcxn", "nxp": "h:mcxn", "mspm0": "h:mspm0"
     };
@@ -1338,4 +1338,58 @@
       state: function () { return Q && { label: Q.label, app: Q.app, sel: Q.sel, free: Q.free, dead: !!Q.dead, reject: Q.reject, picked: pickedId(Q) }; }
     };
   })();
+})();
+
+/* =========================================================================
+   Figures 10-12 of the revised paper (PRISMA flow, studies by year, the
+   three levers). Their SVGs are generated from the paper's source by
+   tools/paper_sync.py; the hints are [data-tip] and use the shared tooltip.
+   ========================================================================= */
+(function () {
+  "use strict";
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  // Figure 10: a stream row lights the same stream in the identified and included boxes
+  var prisma = document.getElementById("figure-10");
+  if (prisma) {
+    var rows = $$(".pr-strm", prisma);
+    var light = function (s) { rows.forEach(function (r) { r.classList.toggle("on", !!s && r.getAttribute("data-s") === s); }); };
+    rows.forEach(function (r) {
+      r.addEventListener("mouseenter", function () { light(r.getAttribute("data-s")); });
+      r.addEventListener("focus", function () { light(r.getAttribute("data-s")); });
+      r.addEventListener("mouseleave", function () { light(null); });
+      r.addEventListener("blur", function () { light(null); });
+    });
+  }
+
+  // Figure 11: a legend entry shows that stream alone, and the totals follow it
+  var years = document.getElementById("figure-11");
+  if (years) {
+    var svg = years.querySelector("svg");
+    svg.classList.add("yr-fig");
+    var only = null;
+    var apply = function () {
+      svg.classList.toggle("filtered", !!only);
+      $$(".yr-leg", svg).forEach(function (g) {
+        var on = g.getAttribute("data-s") === only;
+        g.classList.toggle("on", on);
+        g.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      $$(".yr-col", svg).forEach(function (col) {
+        var sum = 0;
+        $$(".yr-seg", col).forEach(function (seg) {
+          var on = !only || seg.getAttribute("data-s") === only;
+          seg.classList.toggle("on", on);
+          if (on) sum += +seg.getAttribute("data-n");
+        });
+        var t = col.querySelector(".yr-tot");
+        if (t) t.textContent = sum;
+      });
+    };
+    $$(".yr-leg", svg).forEach(function (g) {
+      var pick = function () { only = only === g.getAttribute("data-s") ? null : g.getAttribute("data-s"); apply(); };
+      g.addEventListener("click", pick);
+      g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+    });
+  }
 })();

@@ -27,6 +27,23 @@ python -m http.server 8000
 (Serving over HTTP is required for the bibliography to load; opening
 `index.html` directly via `file://` will not render citations.)
 
+## Keeping the page in step with the paper
+
+The figures and tables that the revised paper adds or changes are generated
+from the paper's own source, so the page cannot drift from the PDF:
+
+```bash
+python3 tools/paper_sync.py ../QuantizationSurveyResponse   # after building the paper
+```
+
+It reads `main.tex`, the numbering in `response.aux`, `prisma_counts.tex`
+and `fig_years.tex`, and rewrites every block of `index.html` between
+`<!-- paper:LABEL -->` markers (Tables 2-18 and Figures 10-12), every figure
+caption, and the `hardware` and `apps` data in `assets/js/data.js`. Figure
+and table anchors (`#figure-N`, `#table-N`) carry the paper's numbers, which
+is what the PDF links to. Refresh the citation labels with
+`python3 tools/paper_refs.py ../QuantizationSurveyResponse/response.bbl`.
+
 ## Submission package
 
 TMLR Beyond PDF takes a zipped `submission_folder/` built by its Author Kit,
