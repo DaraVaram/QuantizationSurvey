@@ -1341,10 +1341,10 @@
 <caption><b>Table 7:</b> Mixed-precision accuracy and weight-storage reduction.</caption>
 <thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>ΔW</th></tr></thead>
 <tbody>
-<tr><td>InfoQ <d-cite key="akbulut2026infoq"></d-cite></td><td>QAT</td><td>3.2/3.9</td><td>70.6</td><td>70.0</td><td>−0.6</td><td>−42.4</td></tr>
-<tr><td>LIMPQ <d-cite key="tang2022mixed"></d-cite></td><td>QAT</td><td>4MP/4MP</td><td>70.5</td><td>70.8</td><td>+0.3</td><td>–</td></tr>
+<tr><td>InfoQ <d-cite key="akbulut2026infoq"></d-cite></td><td>QAT</td><td>2.9/3.9</td><td>70.6</td><td>70.0</td><td>−0.6</td><td>−42.4</td></tr>
+<tr><td>LIMPQ <d-cite key="tang2022mixed"></d-cite></td><td>QAT</td><td>4/4</td><td>70.5</td><td>70.8</td><td>+0.3</td><td>–</td></tr>
 <tr><td>NIPQ <d-cite key="NIPQ"></d-cite></td><td>QAT</td><td>4.5/3.7</td><td>70.5</td><td>69.5</td><td>−1.1</td><td>−40.1</td></tr>
-<tr><td>HTQ <d-cite key="htq"></d-cite></td><td>QAT</td><td>4.7/6</td><td>71.5</td><td>70.8</td><td>−0.7</td><td>−38.1</td></tr>
+<tr><td>HTQ <d-cite key="htq"></d-cite></td><td>QAT</td><td>5.9/4–8</td><td>71.5</td><td>70.8</td><td>−0.7</td><td>−38.1</td></tr>
 </tbody>
 </table>
 </div>
@@ -1356,8 +1356,8 @@
 <caption><b>Table 8:</b> Hardware-aware accuracy and resource costs. MobileNet changes correspond to minimum storage reductions under the reported 2 MB weight-memory limit.</caption>
 <thead><tr><th>Method</th><th>Regime</th><th>Precision (W/A)</th><th>FP32</th><th>Quantized</th><th>ΔAcc</th><th>Network</th><th>ΔW</th></tr></thead>
 <tbody>
-<tr><td>HAQ <d-cite key="rusci2020"></d-cite></td><td>QAT</td><td>5/32</td><td>72.0</td><td>71.4</td><td>−0.6</td><td>MobileNetV2</td><td>−11.7</td></tr>
-<tr><td><d-cite key="rusci2020" data-cite="textual"></d-cite></td><td>QAT</td><td>7.5/32</td><td>72.0</td><td>70.6</td><td>−1.4</td><td>MobileNetV2</td><td>−11.7</td></tr>
+<tr><td>HAQ <d-cite key="rusci2020"></d-cite></td><td>QAT</td><td>4.8/32</td><td>72.0</td><td>71.4</td><td>−0.6</td><td>MobileNetV2</td><td>−11.7</td></tr>
+<tr><td><d-cite key="rusci2020" data-cite="textual"></d-cite></td><td>QAT</td><td>4.2/32</td><td>72.0</td><td>70.6</td><td>−1.4</td><td>MobileNetV2</td><td>−11.7</td></tr>
 <tr><td>HAWQ-V3 <d-cite key="yao2021hawq"></d-cite></td><td>QAT</td><td>8/8</td><td>71.5</td><td>71.6</td><td>+0.1</td><td>ResNet-18</td><td>−35.0</td></tr>
 <tr><td>OHQ <d-cite key="huang2023chip"></d-cite></td><td>PTQ</td><td>8/8</td><td>73.2</td><td>71.5</td><td>−1.7</td><td>ResNet-18</td><td>−35.0</td></tr>
 </tbody>
@@ -1439,13 +1439,13 @@
 <tbody>
 <tr><td class="fam" rowspan="2">Extreme low-bit</td><td>HWGQ <d-cite key="cai2017deep"></d-cite></td><td>QAT</td><td>1/2</td><td>67.3</td><td>59.6</td><td>−7.7</td></tr>
 <tr><td>IR-Net <d-cite key="qin2020forward"></d-cite></td><td>QAT</td><td>1/32</td><td>69.6</td><td>66.5</td><td>−3.1</td></tr>
-<tr class="rule"><td class="fam" rowspan="4">Mixed precision</td><td>HTQ <d-cite key="htq"></d-cite></td><td>QAT</td><td>4.7/6</td><td>71.5</td><td>70.8</td><td>−0.7</td></tr>
-<tr><td>LIMPQ <d-cite key="tang2022mixed"></d-cite></td><td>QAT</td><td>4MP/4MP</td><td>70.5</td><td>70.8</td><td>+0.3</td></tr>
-<tr><td>InfoQ <d-cite key="akbulut2026infoq"></d-cite></td><td>QAT</td><td>3.2/3.9</td><td>70.6</td><td>70.0</td><td>−0.6</td></tr>
+<tr class="rule"><td class="fam" rowspan="4">Mixed precision</td><td>HTQ <d-cite key="htq"></d-cite></td><td>QAT</td><td>5.9/4–8</td><td>71.5</td><td>70.8</td><td>−0.7</td></tr>
+<tr><td>LIMPQ <d-cite key="tang2022mixed"></d-cite></td><td>QAT</td><td>4/4</td><td>70.5</td><td>70.8</td><td>+0.3</td></tr>
+<tr><td>InfoQ <d-cite key="akbulut2026infoq"></d-cite></td><td>QAT</td><td>2.9/3.9</td><td>70.6</td><td>70.0</td><td>−0.6</td></tr>
 <tr><td>NIPQ <d-cite key="NIPQ"></d-cite></td><td>QAT</td><td>4.5/3.7</td><td>70.5</td><td>69.5</td><td>−1.1</td></tr>
 <tr class="rule"><td class="fam" rowspan="4">Hardware-aware</td><td>HAWQ-V3 <d-cite key="yao2021hawq"></d-cite></td><td>QAT</td><td>8/8</td><td>71.5</td><td>71.6</td><td>+0.1</td></tr>
 <tr><td>HAWQ-V3 <d-cite key="yao2021hawq"></d-cite></td><td>QAT</td><td>4/4</td><td>71.5</td><td>68.5</td><td>−3.0</td></tr>
-<tr><td>HAWQ-V3 <d-cite key="yao2021hawq"></d-cite></td><td>QAT</td><td>7.2/7.2</td><td>71.5</td><td>70.4</td><td>−1.1</td></tr>
+<tr><td>HAWQ-V3 <d-cite key="yao2021hawq"></d-cite></td><td>QAT</td><td>6.2/7.2</td><td>71.5</td><td>70.4</td><td>−1.1</td></tr>
 <tr><td>OHQ <d-cite key="huang2023chip"></d-cite></td><td>PTQ</td><td>8/8</td><td>73.2</td><td>71.5</td><td>−1.7</td></tr>
 <tr class="rule"><td class="fam" rowspan="5">Redistribution</td><td>BR on LSQ <d-cite key="han2021improving"></d-cite></td><td>QAT</td><td>4/4</td><td>70.5</td><td>70.8</td><td>+0.3</td></tr>
 <tr><td>BR on LSQ <d-cite key="han2021improving"></d-cite></td><td>QAT</td><td>3/3</td><td>70.5</td><td>69.9</td><td>−0.6</td></tr>
